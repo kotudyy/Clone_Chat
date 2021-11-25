@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/activity_main.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/fragment__users.xml" value="0.24427083333333333" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/fragment_chat.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/fragment_users.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/rvitem_chat.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/layout/rvitem_user.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/menu/menu_chatting.xml" value="0.25885416666666666" />
+        <entry key="..\:/Users/Administrator/AndroidStudioProjects/Study2_Clone/Chatting/app/src/main/res/menu/menu_user.xml" value="0.25885416666666666" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
