@@ -3,8 +3,11 @@ package com.example.chatting
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import com.example.chatting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,4 +23,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, LoginActivity::class.java))
         return super.onOptionsItemSelected(item)
     }
+
 }
