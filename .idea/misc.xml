@@ -7,9 +7,15 @@
         <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_auth.xml" value="0.176" />
         <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_auth2.xml" value="0.24114583333333334" />
-        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_login.xml" value="0.176" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_main.xml" value="0.176" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/fragment_chat.xml" value="0.1" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/fragment_users.xml" value="0.2" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/rvitem_chat.xml" value="0.2" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/rvitem_user.xml" value="0.2" />
         <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/auth_menu.xml" value="0.264" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/menu_chatting.xml" value="0.1" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/menu_user.xml" value="0.264" />
       </map>
     </option>
   </component>
