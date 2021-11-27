@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+
         <entry key="app/src/main/res/drawable-v24/border_sendmsg.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable-v24/edit_round.xml" value="0.16510416666666666" />
         <entry key="app/src/main/res/drawable/border_round.xml" value="0.2984375" />
@@ -18,6 +19,25 @@
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Embedded JDK" project-jdk-type="JavaSDK">
+
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.1546875" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout-w936dp/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_auth.xml" value="0.176" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_auth2.xml" value="0.24114583333333334" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/activity_main.xml" value="0.176" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/fragment_chat.xml" value="0.1" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/fragment_users.xml" value="0.2" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/rvitem_chat.xml" value="0.2" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/layout/rvitem_user.xml" value="0.2" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/auth_menu.xml" value="0.264" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/menu_chatting.xml" value="0.1" />
+        <entry key="..\:/Users/rbtjr/AndroidStudioProjects/Clone_Chat/app/src/main/res/menu/menu_user.xml" value="0.264" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "771954164566",
+    "project_id": "clonechat-a64cf",
+    "storage_bucket": "clonechat-a64cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771954164566:android:4b3ed73a08d5e9656c0cf7",
+        "android_client_info": {
+          "package_name": "com.example.chatting"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771954164566-9aecgkr6gk22qgisdt5idj76dnm1622k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXo7AVEJBl1nEvmT5Q0dnz9XoLi5lgH1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771954164566-9aecgkr6gk22qgisdt5idj76dnm1622k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
