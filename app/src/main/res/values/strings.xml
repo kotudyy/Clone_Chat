@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Chatting</string>
-    <string name="title_activity_chat_room">ChatRoomActivity</string>
     <string name="toolbar_title_chatting">채팅</string>
     <string name="toolbar_title_user">친구</string>
 </resources>
