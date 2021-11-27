@@ -9,12 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chatting" >
+      
         <activity
             android:name=".ChatRoomActivity"
             android:exported="true"
             android:label="@string/title_activity_chat_room"
             android:theme="@style/Theme.Chatting.NoActionBar"
             android:parentActivityName="com.example.chatting.MainActivity"/>
+
+        android:theme="@style/Theme.Chatting"
+        android:name=".MyApplication">
+      
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
+      
+        <activity
+            android:name=".AuthActivity"
+            android:exported="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true" >
