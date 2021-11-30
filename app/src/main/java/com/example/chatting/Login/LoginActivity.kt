@@ -1,10 +1,11 @@
-package com.example.chatting
+package com.example.chatting.Login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {     //로그인 액티비티
