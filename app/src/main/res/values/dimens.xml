@@ -2,4 +2,11 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="style_margin">5dp</dimen>
+    <dimen name="style_padding">5dp</dimen>
+    <dimen name="message_size">15dp</dimen>
+    <dimen name="username_size">14dp</dimen>
+    <dimen name="profilename_size">15dp</dimen>
+    <dimen name="statusmessage_size">8dp</dimen>
 </resources>
