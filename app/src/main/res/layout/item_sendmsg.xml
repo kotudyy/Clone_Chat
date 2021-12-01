@@ -7,7 +7,7 @@
     android:paddingVertical="5dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_chatroom_sendmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
@@ -21,12 +21,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_chatroom_sendtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="오후 11:05"
         android:textSize="10dp"
         android:layout_marginRight="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toStartOf="@+id/textView" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_chatroom_sendmsg"
+        app:layout_constraintEnd_toStartOf="@+id/tv_chatroom_sendmsg" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

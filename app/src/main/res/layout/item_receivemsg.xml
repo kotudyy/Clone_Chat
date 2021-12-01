@@ -25,7 +25,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/tv_chat_username"
+        android:id="@+id/tv_chatroom_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="사용자"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="@+id/cardView" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_chatroom_receivemsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/border_receivemsg"
@@ -45,15 +45,16 @@
         android:textSize="@dimen/message_size"
         android:layout_marginLeft="@dimen/style_margin"
         app:layout_constraintStart_toEndOf="@+id/cardView"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chat_username" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_chatroom_username" />
 
     <TextView
+        android:id="@+id/tv_chatroom_receivetime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/style_margin"
         android:text="오후 11:05"
         android:textSize="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/textView" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_chatroom_receivemsg"
+        app:layout_constraintStart_toEndOf="@+id/tv_chatroom_receivemsg" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

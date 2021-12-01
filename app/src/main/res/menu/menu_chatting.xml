@@ -18,19 +18,19 @@
         android:id="@+id/chatting_menu_search"
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/icon_search"
         android:title="검색"/>
 
     <item
         android:id="@+id/chatting_menu_add"
         app:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/icon_addchat"
         android:title="새로운 채팅"/>
 
     <item
         android:id="@+id/chatting_menu_music"
         app:showAsAction="always"
-        android:icon="@android:drawable/ic_lock_silent_mode_off"
+        android:icon="@drawable/icon_music"
         android:title="음악"/>
 
 </menu>
