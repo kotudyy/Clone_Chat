@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
+import com.example.chatting.ChatFragment.ChatData
 import com.example.chatting.databinding.ActivityChatRoomBinding
 
 class ChatRoomActivity : AppCompatActivity() {
+    lateinit var userName: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityChatRoomBinding.inflate(layoutInflater)
@@ -16,6 +19,11 @@ class ChatRoomActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+
+        userName = intent.getSerializableExtra("userName") as String
+        binding.toolbar.setTitle(userName)
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
