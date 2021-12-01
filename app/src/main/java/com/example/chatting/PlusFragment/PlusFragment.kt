@@ -1,5 +1,6 @@
 package com.example.chatting.PlusFragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatting.Login.LoginActivity
+import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentPlusBinding
 
@@ -35,6 +38,7 @@ class PlusFragment : Fragment() {
                     }
                     R.id.user_menu_allsettings -> {
                         Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(activity,LoginActivity::class.java))
                         true
                     }
                     R.id.user_menu_music -> {
@@ -61,5 +65,13 @@ class PlusFragment : Fragment() {
         binding.rvPlus.layoutManager = LinearLayoutManager(this.context)
         return binding.root
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(MyApplication.checkAuth()) {
+        }else {
+            activity?.finish()
+        }
     }
 }
