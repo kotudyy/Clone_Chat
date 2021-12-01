@@ -8,8 +8,8 @@ import com.example.chatting.databinding.RvitemUserBinding
 class RvItemUserViewHolder(val binding: RvitemUserBinding): RecyclerView.ViewHolder(binding.root){
 
     fun setData(data: UserData){
-        binding.text1.text = "${data.text1}"
-        binding.text2.text = "${data.text2}"
+        binding.username.text = "${data.text1}"
+        binding.statusMessage.text = "${data.text2}"
     }
 }
 

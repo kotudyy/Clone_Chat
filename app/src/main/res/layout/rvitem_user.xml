@@ -1,31 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:paddingVertical="@dimen/style_margin">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="@dimen/style_margin"
+        app:cardCornerRadius="@dimen/message_size"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_chat_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_profile" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/text1"
+        android:id="@+id/username"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="test"
-        android:textSize="30sp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginLeft="30dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/style_margin"
+        android:text="사용자"
+        android:textSize="@dimen/profilename_size"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/status_message"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="test"
-        android:textSize="30sp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginRight="30dp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/border_receivemsg"
+        android:text="테스트입니다"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/statusmessage_size"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip4"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:text="카카오뮤직 - singer"
+        android:backgroundTint="#FFFFFF"
+        app:chipStrokeColor="@color/kakaomusic"
+        app:chipStrokeWidth="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cardView"
+        app:layout_constraintVertical_bias="0.47" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

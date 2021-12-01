@@ -3,11 +3,10 @@ package com.example.chatting
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-
+import com.example.chatting.Login.LoginActivity
+import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -17,8 +16,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.mainbtn.setOnClickListener {
-            val intent: Intent = Intent(this, ChatRoomActivity::class.java)
+            val intent: Intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(MyApplication.checkAuth()){
+            startActivity(Intent(this, ChatListActivity::class.java))
         }
     }
 
@@ -28,7 +34,6 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         startActivity(Intent(this, LoginActivity::class.java))
-        return super.onOptionsItemSelected(item)
+         return super.onOptionsItemSelected(item)
     }
-
 }

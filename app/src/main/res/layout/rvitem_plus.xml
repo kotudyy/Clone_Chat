@@ -17,43 +17,25 @@
         app:cardElevation="0dp">
 
         <ImageView
-            android:id="@+id/iv_chat_profile"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/img_profile"
+            android:src="@drawable/auth_icon"
             android:scaleType="centerCrop"/>
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/tv_chat_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="사용자"
-        android:textSize="@dimen/username_size"
-        android:layout_marginLeft="@dimen/style_margin"
-        app:layout_constraintStart_toEndOf="@+id/cardView"
-        app:layout_constraintTop_toTopOf="@+id/cardView" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_receivemsg"
+        android:layout_marginLeft="@dimen/style_margin"
         android:paddingHorizontal="10dp"
         android:paddingVertical="@dimen/style_margin"
-        android:text="테스트입니다"
+        android:text="설정값"
         android:textSize="@dimen/message_size"
-        android:layout_marginLeft="@dimen/style_margin"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintStart_toEndOf="@+id/cardView"
-        app:layout_constraintTop_toBottomOf="@+id/tv_chat_username" />
+        app:layout_constraintTop_toTopOf="@+id/cardView" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/style_margin"
-        android:text="오후 11:05"
-        android:textSize="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
