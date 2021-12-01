@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ChatFragment.ChatFragment">
+    tools:context=".PlusFragment.PlusFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,17 +12,17 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/chatting_toolbar"
+            android:id="@+id/plus_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/toolbar_title_chatting"/>
+            android:background="#12FF0000"
+            app:title="@string/toolbar_title_plus" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_chat"
+            android:id="@+id/rv_plus"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/rvitem_chat" />
+            android:scrollbars="vertical"/>
 
     </LinearLayout>
 

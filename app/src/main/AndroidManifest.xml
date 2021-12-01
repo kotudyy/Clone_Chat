@@ -17,10 +17,14 @@
             android:name=".ChatListActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ChatRoomActivity"
+            android:exported="false"
+            android:parentActivityName=".ChatListActivity"/>
+        <activity
+            android:name=".Login.LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".AuthActivity"
+            android:name=".Login.AuthActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
