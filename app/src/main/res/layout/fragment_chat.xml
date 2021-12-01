@@ -15,14 +15,14 @@
             android:id="@+id/chatting_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/toolbar_title_chatting"
-            android:background="#12FF0000"/>
+            app:title="@string/toolbar_title_chatting"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_chat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical"
+            tools:listitem="@layout/rvitem_chat" />
 
     </LinearLayout>
 
