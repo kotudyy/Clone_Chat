@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chatting">
         <activity
+            android:name=".ProfileDetail.MyProfileDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatListActivity"
             android:exported="false" />
         <activity
