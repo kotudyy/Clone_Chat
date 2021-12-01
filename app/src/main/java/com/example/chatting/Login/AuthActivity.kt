@@ -1,9 +1,10 @@
-package com.example.chatting
+package com.example.chatting.Login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {      //회원가입 액티비티

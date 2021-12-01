@@ -3,6 +3,7 @@ package com.example.chatting
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.chatting.ChatFragment.ChatFragment
+import com.example.chatting.PlusFragment.PlusFragment
 import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityChatListBinding
 import com.example.chatting.databinding.ActivityMainBinding
@@ -33,6 +34,11 @@ class ChatListActivity : AppCompatActivity() {
                     1 -> {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.mainFrameLayout, ChatFragment())
+                            .commit()
+                    }
+                    2-> {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.mainFrameLayout, PlusFragment())
                             .commit()
                     }
                 }
