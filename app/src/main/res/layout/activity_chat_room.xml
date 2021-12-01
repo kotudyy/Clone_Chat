@@ -12,15 +12,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-<!--        <com.google.android.material.appbar.CollapsingToolbarLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="242dp"-->
-<!--            app:contentScrim="?attr/colorPrimary"-->
-<!--            app:expandedTitleMarginBottom="50dp"-->
-<!--            app:expandedTitleMarginStart="48dp"-->
-<!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
-<!--            app:title="AppBar title">-->
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
