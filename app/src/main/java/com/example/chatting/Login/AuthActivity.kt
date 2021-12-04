@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityAuthBinding
-import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
     lateinit var binding: ActivityAuthBinding
@@ -27,23 +26,17 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                             sendTask -> if(sendTask.isSuccessful){      //이메일 전송
                         Toast.makeText(this,"회원가입에 성공했습니다. 전송된 메일을 확인해 주세요.", Toast.LENGTH_SHORT).show()
 
-                        // 회원가입 성공 시 profile 컬렉션에 회원 정보 저장
-                        val data = hashMapOf(
-                            "email" to email,
-                            "music" to "testmusic",
-                            "name" to "yeon",
-                            "status_message" to "teststatus"
+                        //회원가입 시 firebase에 새로운 ProfileData 추가 -> 이메일 인증 성공을 전제
+                        val userEmail = MyApplication.auth.currentUser?.email!!
+                        val userData = UserData(
+                            userEmail, "", "", ""
                         )
-                        FirebaseFirestore.getInstance().collection("profile")
-                            .add(data)
-                            .addOnSuccessListener {
-                                // 성공할 경우
-                                Toast.makeText(this, "데이터가 추가되었습니다", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { exception ->
-                                // 실패할 경우
-                                Log.w("MainActivity", "Error getting documents: $exception")
-                            }
+
+                        MyApplication.db.collection("profile_dongk00").document("$userEmail")
+                            .set(userData)
+                            .addOnSuccessListener { Toast.makeText(this,"프로필 정보 추가 완료", Toast.LENGTH_SHORT).show() }
+                            .addOnFailureListener { Toast.makeText(this,"프로필 정보 추가 실패", Toast.LENGTH_SHORT).show()  }
+
                     }else {
                         Toast.makeText(this,"메일 전송 실패", Toast.LENGTH_SHORT).show()
                     }

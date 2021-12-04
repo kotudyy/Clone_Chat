@@ -64,4 +64,13 @@
         android:text="로그아웃"
         android:textSize="20dp"
         android:visibility="gone"/>
+    <Button
+        android:id="@+id/openChatListBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoutBtn"
+        android:text="채팅 이용하기"
+        android:textSize="20dp"
+        android:visibility="gone"/>
+
 </RelativeLayout>
