@@ -10,9 +10,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
-import com.example.chatting.UserFragment.UserData
 import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityMainBinding
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
@@ -33,11 +33,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
         userData = intent.getParcelableExtra<UserData>("userData")!!
 
         binding.run{
-            Glide.with(this@MyProfileDetailActivity)
-                .load(userData.image)
-                .error(R.drawable.img_profile)
-                .into(this.myProfileImage)
-            myProfileName.text = userData.username
+
+            myProfileName.text = userData.name
             myProfileStatusMsg.text = userData.status_message
             myProfileMusic.text = userData.profile_music
 
@@ -81,6 +78,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             intent.type = "image/*"
             galleryIntent.launch(intent)
+
+            //스토리지에 사진 저장
         }
 
         //채팅 버튼 클릭 시

@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.ChatRoomActivity
+import com.example.chatting.Model.UserData
+import com.example.chatting.MyApplication
 import com.example.chatting.ProfileDetail.MyProfileDetailActivity
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemUserBinding
@@ -18,16 +20,7 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding): RecyclerView.ViewHol
 
     fun setData(data: UserData){
         binding.run {
-            if(data.image == ""){
-                this.ivChatProfile.setImageResource(R.drawable.img_profile)
-            }else{
-                Glide.with(itemView)
-                    .load(data.image)
-                    .placeholder(R.drawable.img_profile)
-                    .into(this.ivChatProfile)
-            }
-
-            username.text = data.username
+            username.text = data.name
             statusMessage.text = data.status_message
             profileMusic.text = data.profile_music
         }
@@ -47,9 +40,12 @@ class RvItemUserAdapter(var userData: MutableList<UserData>): RecyclerView.Adapt
         }
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView?.context, MyProfileDetailActivity::class.java)
+            val intent = Intent(holder.itemView.context, MyProfileDetailActivity::class.java)
             intent.putExtra("userData", userData[position])
             ContextCompat.startActivity(holder.itemView.context, intent, null)
+
+            val imgRef = MyApplication.storage.reference.child("profile_image/${data.email}.jpg")
+            Glide.with(holder.itemView.context).load(imgRef).error(R.drawable.img_profile).into(holder.binding.ivChatProfile)
         }
     }
 
@@ -57,9 +53,3 @@ class RvItemUserAdapter(var userData: MutableList<UserData>): RecyclerView.Adapt
 
 }
 
-@Parcelize
-data class UserData(
-    var image: String,
-    var username: String,
-    var status_message: String,
-    var profile_music: String ) : Parcelable
