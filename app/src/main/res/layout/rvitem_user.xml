@@ -48,9 +48,9 @@
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip4"
+        android:id="@+id/profile_music"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
+        android:layout_height="40dp"
         android:text="카카오뮤직 - singer"
         android:backgroundTint="#FFFFFF"
         app:chipStrokeColor="@color/kakaomusic"
@@ -58,6 +58,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.47" />
+        app:layout_constraintVertical_bias="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
