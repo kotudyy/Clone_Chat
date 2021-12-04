@@ -29,7 +29,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/style_margin"
-        android:text="사용자"
         android:textSize="@dimen/profilename_size"
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintStart_toEndOf="@+id/cardView"
@@ -41,14 +40,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:background="@drawable/border_receivemsg"
-        android:text="테스트입니다"
         android:textColor="@color/gray"
         android:textSize="@dimen/statusmessage_size"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip4"
+        android:id="@+id/music"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:text="카카오뮤직 - singer"
