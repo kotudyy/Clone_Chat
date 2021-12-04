@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.chatting.Model.ProfileData
+import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityAuthBinding
 
@@ -29,12 +29,12 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
 
                         //회원가입 시 firebase에 새로운 ProfileData 추가 -> 이메일 인증 성공을 전제
                         val userEmail = MyApplication.auth.currentUser?.email!!
-                        val profileData = ProfileData(
-                            userEmail, userEmail, "", "", ""
+                        val userData = UserData(
+                            userEmail, "", "", ""
                         )
 
                         MyApplication.db.collection("profile_dongk00").document("$userEmail")
-                            .set(profileData)
+                            .set(userData)
                             .addOnSuccessListener { Toast.makeText(this,"프로필 정보 추가 완료", Toast.LENGTH_SHORT).show() }
                             .addOnFailureListener { Toast.makeText(this,"프로필 정보 추가 실패", Toast.LENGTH_SHORT).show()  }
 

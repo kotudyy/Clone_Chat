@@ -1,5 +1,6 @@
 package com.example.chatting.UserFragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding
@@ -19,6 +21,7 @@ class UsersFragment : Fragment() {
     lateinit var adapter: RvItemUserAdapter
     val userData = mutableListOf<UserData>()
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,31 +64,31 @@ class UsersFragment : Fragment() {
         val documentName = MyApplication.auth.currentUser?.email
         userData.clear()
 
-        MyApplication.db.collection("profile_dongk00") // 내 정보 첫 번째 항목으로 출력
+        MyApplication.db.collection("profile") // 내 정보 첫 번째 항목으로 출력
             .whereEqualTo("email", documentName)
             .get()
             .addOnSuccessListener { document ->
                 for (field in document){
                     val myProfileData = UserData(
-                        "",
+                        field["email"] as String,
                         field["name"] as String,
-                        field["statusMsg"] as String,
-                        field["statusMusic"] as String)
-                    Log.d("test", myProfileData.toString())
+                        field["status_message"] as String,
+                        field["profile_music"] as String)
+
                     userData.add(myProfileData)
                     adapter.notifyDataSetChanged()
 
                     // 성공 시 나머지 항목들 출력
-                    MyApplication.db.collection("profile_dongk00")
+                    MyApplication.db.collection("profile")
                         .whereNotEqualTo("email", documentName)
                         .get()
                         .addOnSuccessListener { document ->
                             for (field in document){
                                 val myProfileData = UserData(
-                                    "",
+                                    field["email"] as String,
                                     field["name"] as String,
-                                    field["statusMsg"] as String,
-                                    field["statusMusic"] as String)
+                                    field["status_message"] as String,
+                                    field["profile_music"] as String)
                                 Log.d("test", myProfileData.toString())
                                 userData.add(myProfileData)
                                 adapter.notifyDataSetChanged()
