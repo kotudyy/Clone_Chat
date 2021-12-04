@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.example.chatting.ChatListActivity
+import com.example.chatting.MainActivity
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityLoginBinding
 
@@ -51,6 +53,10 @@ class LoginActivity : AppCompatActivity() {     //로그인 액티비티
                 }
             }
         }
+
+        binding.openChatListBtn.setOnClickListener{
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
     fun changeLoginStatus(status:String){
         if(status == "login"){
@@ -59,6 +65,7 @@ class LoginActivity : AppCompatActivity() {     //로그인 액티비티
                 binding.loginLinear.visibility = View.GONE
                 binding.btnLinear.visibility = View.GONE
                 binding.logoutBtn.visibility = View.VISIBLE
+                binding.openChatListBtn.visibility = View.VISIBLE
             }
         }
         else if(status == "logout"){
@@ -67,6 +74,7 @@ class LoginActivity : AppCompatActivity() {     //로그인 액티비티
                 binding.loginLinear.visibility = View.VISIBLE
                 binding.btnLinear.visibility = View.VISIBLE
                 binding.logoutBtn.visibility = View.GONE
+                binding.openChatListBtn.visibility = View.GONE
             }
         }
     }
