@@ -176,34 +176,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateInSampleSize(fileUri: Uri, reqWidth: Int, reqHeight: Int): Int {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-
-        try {
-            var inputStream = contentResolver.openInputStream(fileUri)
-            BitmapFactory.decodeStream(inputStream, null, options)
-            inputStream!!.close()
-            inputStream = null
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        val (height: Int, width: Int) = options.run{ outHeight to outWidth }
-        var insampleSize = 1
-
-        if(height > reqHeight || width > reqWidth){
-            val halfHeight = height / 2
-            val halfwidth = width / 2
-            while(halfHeight / insampleSize >= reqHeight || halfwidth / insampleSize >= reqWidth){
-                insampleSize *= 2
-            }
-        }
-
-        return insampleSize
-    }
-
-
     private fun saveStorage(imageKind:String) {
         val storage = MyApplication.storage
         val storageRef = storage.reference
