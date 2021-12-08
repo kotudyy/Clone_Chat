@@ -2,50 +2,69 @@ package com.example.chatting.ProfileDetail
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.transition.Transition
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
-import com.example.chatting.UserFragment.UsersFragment
-import com.example.chatting.databinding.ActivityMainBinding
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
 import com.example.chatting.util.myCheckPermission
 import com.google.firebase.storage.StorageReference
 import java.io.File
 import java.lang.Exception
+import java.io.InputStream
 
 class MyProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var userData: UserData
-    lateinit var filePath: String
 
-    val binding by lazy{ActivityMyProfileDetailBinding.inflate(layoutInflater)}
+    lateinit var filePath: String
+    private lateinit var userEmail: String
+    lateinit var filename: String
+
+    val binding by lazy { ActivityMyProfileDetailBinding.inflate(layoutInflater) }
+    var filepath: Uri? = null
+    val documentName = MyApplication.auth.currentUser?.email
+
+    private fun binding() {
+        //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
+        userData = intent.getParcelableExtra<UserData>("userData")!!
+
+        binding.run{
+            myProfileName.text = userData.name
+            myProfileStatusMsg.text = userData.statusMsg
+            myProfileMusic.text = userData.profileMusic
+            var imgRefProfile =
+                MyApplication.storage.reference.child("${userData.email}/profile.jpg")
+            var imgRefBackground =
+                MyApplication.storage.reference.child("${userData.email}/background.jpg")
+            Glide.with(this@MyProfileDetailActivity).load(imgRefProfile)
+                .error(R.drawable.img_profile).into(myProfileImage)
+            Glide.with(this@MyProfileDetailActivity).load(imgRefBackground)
+                .into(myProfileBackgroundImg)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         editState("normal")
 
-        //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
-        userData = intent.getParcelableExtra<UserData>("userData")!!
+        binding()
 
-        var imgRef = MyApplication.storage.reference.child("${userData.email}/profile.jpg")
-        Glide.with(this).load(imgRef).error(R.drawable.img_profile).into(binding.myProfileImage)
-
-        binding.run{
-            myProfileName.text = userData.name
-            myProfileStatusMsg.text = userData.statusMsg
-            myProfileMusic.text = userData.profileMusic
-        }
         //취소 버튼 클릭 시
         binding.myProfileBack.setOnClickListener { finish() }
         binding.myProfileBackEdit.setOnClickListener {
@@ -54,7 +73,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         //즐겨찾기 버튼 클릭 시
 
-        //프로필 사진 클릭 시
+        //갤러리 인텐트
         val galleryIntent =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val cursor = contentResolver.query(it.data!!.data as Uri,
@@ -63,8 +82,13 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     filePath = cursor?.getString(0) as String
                 }
                 if (it.resultCode == RESULT_OK) {
+
                         try{
-                            saveStorage("profile")
+                            saveStorage(filename)
+                            if (filename == "profile"){
+                            }
+                            elseif( filename == "background"){
+                            }
                             Glide
                                 .with(this)
                                 .load(it.data!!.data)
@@ -78,15 +102,28 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 }
             }
 
-        binding.myProfileImage.setOnClickListener{
+        //프로필 사진 클릭 시
+        binding.myProfileImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             intent.type = "image/*"
+
             try {
                 galleryIntent.launch(intent)
             }catch (e:Exception){
             }
             myCheckPermission(this)
-            //스토리지에 사진 저장
+            filename = "profile"
+            galleryIntent.launch(intent)
+        }
+
+        //배경 사진 편집 클릭 시
+        binding.myProfileEditCamera.setOnClickListener {
+            val intent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.type = "image/*"
+            filename = "background"
+            galleryIntent.launch(intent)
+
         }
 
         //채팅 버튼 클릭 시
@@ -98,9 +135,10 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         //저장 버튼 클릭 시
         binding.myProfileSaveEdit.setOnClickListener {
-            val documentName = MyApplication.auth.currentUser?.email
+            var flag: Boolean = false
 
             //이름 변경
+            var existingName = binding.myProfileName.text.toString()
             val changedName = binding.myProfileNameEdit.text.toString()
 
             if (changedName.isEmpty()) {
@@ -119,15 +157,11 @@ class MyProfileDetailActivity : AppCompatActivity() {
                                 editState("normal")
                             }
                             .addOnFailureListener { Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
-
-                    }
-                    .addOnFailureListener { Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
-            }
         }
     }
 
     private fun editState(state: String) {
-        when(state){
+        when (state) {
             "edit" -> {
                 binding.run {
                     myProfileChat.visibility = View.GONE
@@ -170,7 +204,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     myProfileBackEdit.visibility = View.GONE
                     myProfileSaveEdit.visibility = View.GONE
                     myProfileMusicEdit.visibility = View.GONE
-
                 }
             }
         }
@@ -186,6 +219,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
             Toast.makeText(this, "사진이 저장되었습니다.",Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
             Log.d("grusie","error : $it")
+
         }
     }
 }
