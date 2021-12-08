@@ -1,8 +1,7 @@
-package com.example.chatting.UserFragment
+package com.example.chatting.userFragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +16,11 @@ import com.example.chatting.databinding.FragmentUsersBinding
 
 class UsersFragment : Fragment() {
 
-    lateinit var binding: FragmentUsersBinding
+    private lateinit var binding: FragmentUsersBinding
+    private var userData = mutableListOf<UserData>()
     lateinit var adapter: RvItemUserAdapter
-    val userData = mutableListOf<UserData>()
+    private val documentName = MyApplication.auth.currentUser?.email
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,16 +53,17 @@ class UsersFragment : Fragment() {
             }
         }
 
-        //RecyclerView Adapter 연결
         adapter = RvItemUserAdapter(userData)
         binding.rvUser.adapter = adapter
         binding.rvUser.layoutManager = LinearLayoutManager(this.context)
 
-        //RecyclerView에 User 정보 삽입
+        loadMyProfile()
 
-        val documentName = MyApplication.auth.currentUser?.email
-        userData.clear()
+        return binding.root
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun loadMyProfile() {
         MyApplication.db.collection("profile") // 내 정보 첫 번째 항목으로 출력
             .whereEqualTo("email", documentName)
             .get()
@@ -72,38 +72,50 @@ class UsersFragment : Fragment() {
                     val myProfileData = UserData(
                         field["email"] as String,
                         field["name"] as String,
-                        field["status_message"] as String,
-                        field["profile_music"] as String)
+                        field["statusMsg"] as String,
+                        field["profileMusic"] as String,
+                    "//gs://clonechat-a64cf.appspot.com/${documentName}/profile",
+                    "//gs://clonechat-a64cf.appspot.com/${documentName}/background")
 
                     userData.add(myProfileData)
                     adapter.notifyDataSetChanged()
+                    //DiffUtil.itemCallback을 이용
 
                     // 성공 시 나머지 항목들 출력
-                    MyApplication.db.collection("profile")
-                        .whereNotEqualTo("email", documentName)
-                        .get()
-                        .addOnSuccessListener { document ->
-                            for (field in document){
-                                val myProfileData = UserData(
-                                    field["email"] as String,
-                                    field["name"] as String,
-                                    field["status_message"] as String,
-                                    field["profile_music"] as String)
-                                Log.d("test", myProfileData.toString())
-                                userData.add(myProfileData)
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-                        .addOnFailureListener {
-                            Log.d("test", "Failure...")
-                        }
+                    loadUserProfiles()
                 }
             }
             .addOnFailureListener {
-                Log.d("test", "Failure...")
+                Toast.makeText(this.context, "정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }
 
-
-        return binding.root
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun loadUserProfiles() {
+        MyApplication.db.collection("profile")
+            .whereNotEqualTo("email", documentName)
+            .get()
+            .addOnSuccessListener { document ->
+                for (field in document){
+                    val userEmail = field["email"] as String
+
+                    val myProfileData = UserData(
+                        field["email"] as String,
+                        field["name"] as String,
+                        field["statusMsg"] as String,
+                        field["profileMusic"] as String,
+                        //gs://clonechat-a64cf.appspot.com/dddongk00@gmail.com/profile
+                        "//gs://clonechat-a64cf.appspot.com/${userEmail}/profile",
+                        "//gs://clonechat-a64cf.appspot.com/${userEmail}/background")
+
+                    userData.add(myProfileData)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this.context, "정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }

@@ -4,9 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.chatting.ChatFragment.ChatFragment
 import com.example.chatting.PlusFragment.PlusFragment
-import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityChatListBinding
-import com.example.chatting.databinding.ActivityMainBinding
+import com.example.chatting.userFragment.UsersFragment
 import com.google.android.material.tabs.TabLayout
 
 class ChatListActivity : AppCompatActivity() {
