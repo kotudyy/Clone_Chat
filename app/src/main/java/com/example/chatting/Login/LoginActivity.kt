@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.chatting.ChatListActivity
-import com.example.chatting.MainActivity
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityLoginBinding
 
