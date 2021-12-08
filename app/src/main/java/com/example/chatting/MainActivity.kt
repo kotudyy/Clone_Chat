@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.example.chatting.Login.LoginActivity
-import com.example.chatting.MyApplication
+import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
@@ -18,13 +20,15 @@ class MainActivity : AppCompatActivity() {
         binding.mainbtn.setOnClickListener {
             val intent: Intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
         if(MyApplication.checkAuth()){
-            startActivity(Intent(this, ChatListActivity::class.java))
+            startActivity(Intent(this, UsersFragment::class.java))
+            finish()
         }
     }
 
@@ -36,4 +40,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, LoginActivity::class.java))
          return super.onOptionsItemSelected(item)
     }
+
 }

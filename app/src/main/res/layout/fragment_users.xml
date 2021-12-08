@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/toolbar_title_user"
-            android:background="#12FF0000"/>
+            android:background="@color/white"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_user"

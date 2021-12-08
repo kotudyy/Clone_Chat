@@ -2,43 +2,65 @@ package com.example.chatting.ProfileDetail
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.transition.Transition
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
-import com.example.chatting.UserFragment.UsersFragment
-import com.example.chatting.databinding.ActivityMainBinding
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
+import com.google.firebase.storage.StorageReference
 import java.lang.Exception
+import java.io.InputStream
 
 class MyProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var userData: UserData
+    private lateinit var userEmail: String
+    lateinit var filename: String
 
-    val binding by lazy{ActivityMyProfileDetailBinding.inflate(layoutInflater)}
+    val binding by lazy { ActivityMyProfileDetailBinding.inflate(layoutInflater) }
+    var filepath: Uri? = null
+    val documentName = MyApplication.auth.currentUser?.email
+
+    private fun binding() {
+        //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
+        userData = intent.getParcelableExtra<UserData>("userData")!!
+        userEmail = intent.getStringExtra("userEmail")!!
+
+        binding.run {
+            myProfileName.text = userData.name
+            myProfileStatusMsg.text = userData.status_message
+            myProfileMusic.text = userData.profile_music
+
+            var imgRefProfile =
+                MyApplication.storage.reference.child("${userEmail}/profile.jpg")
+            var imgRefBackground =
+                MyApplication.storage.reference.child("${userEmail}/background.jpg")
+            Glide.with(this@MyProfileDetailActivity).load(imgRefProfile)
+                .error(R.drawable.img_profile).into(myProfileImage)
+            Glide.with(this@MyProfileDetailActivity).load(imgRefBackground)
+                .into(myProfileBackgroundImg)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         editState("normal")
 
-        //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
-        userData = intent.getParcelableExtra<UserData>("userData")!!
+        binding()
 
-        binding.run{
-
-            myProfileName.text = userData.name
-            myProfileStatusMsg.text = userData.status_message
-            myProfileMusic.text = userData.profile_music
-
-        }
         //취소 버튼 클릭 시
         binding.myProfileBack.setOnClickListener { finish() }
         binding.myProfileBackEdit.setOnClickListener {
@@ -47,12 +69,13 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         //즐겨찾기 버튼 클릭 시
 
-        //프로필 사진 클릭 시
+        //갤러리 인텐트
         val galleryIntent =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == RESULT_OK) {
                     try {
                         val option = BitmapFactory.Options()
+                        filepath = it.data!!.data
                         option.inSampleSize = calculateInSampleSize(
                             it.data!!.data!!,
                             resources.getDimensionPixelSize(R.dimen.profile_image_size),
@@ -62,10 +85,27 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         var inputStream = contentResolver.openInputStream(it.data!!.data!!)
                         val bitmap = BitmapFactory.decodeStream(inputStream, null, option)
                         inputStream!!.close()
-                        inputStream=null
-                        bitmap?.let{
-                            binding.myProfileImage.setImageBitmap(bitmap)
-                        } ?: let{
+                        inputStream = null
+                        bitmap?.let {
+                            if (filename.equals("profile")) binding.myProfileImage.setImageBitmap(bitmap)
+                            else if(filename.equals("background")) binding.myProfileBackgroundImg.setImageBitmap(bitmap)
+
+                            val imgRef: StorageReference =
+                                MyApplication.storage.reference.child("$documentName/$filename.jpg")
+
+                            imgRef.run {
+                                imgRef.delete().addOnSuccessListener {
+                                }.addOnFailureListener {
+                                }
+                            }
+
+                            imgRef.run {
+                                filepath?.let { it1 -> putFile(it1) }
+                            }
+
+                            binding()
+
+                        } ?: let {
                             Toast.makeText(this, "Bitmap Null", Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
@@ -74,12 +114,21 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 }
             }
 
-        binding.myProfileImage.setOnClickListener{
+        //프로필 사진 클릭 시
+        binding.myProfileImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             intent.type = "image/*"
+            filename = "profile"
             galleryIntent.launch(intent)
+        }
 
-            //스토리지에 사진 저장
+        //배경 사진 편집 클릭 시
+        binding.myProfileEditCamera.setOnClickListener {
+            val intent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.type = "image/*"
+            filename = "background"
+            galleryIntent.launch(intent)
         }
 
         //채팅 버튼 클릭 시
@@ -91,37 +140,51 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         //저장 버튼 클릭 시
         binding.myProfileSaveEdit.setOnClickListener {
-            val documentName = MyApplication.auth.currentUser?.email
+            var flag: Boolean = false
 
             //이름 변경
+            var existingName = binding.myProfileName.text.toString()
             val changedName = binding.myProfileNameEdit.text.toString()
-            val existingName = binding.myProfileName.text.toString()
-
-            if (changedName.isEmpty() || changedName == existingName) {
-                Toast.makeText(this, "이름을 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
+            if (!changedName.equals("")) {
+                flag = true
+                existingName = changedName
             }
-            else {
-                MyApplication.db.collection("profile_dongk00").document("$documentName")
-                    .update("name", changedName)
-                    .addOnSuccessListener {
-                        // 이름 변경 성공 시 상태메세지도 변경 진행
-                        val changedStatusMsg = binding.myProfileStatusMsgEdit.text.toString()
-                        MyApplication.db.collection("profile_dongk00").document("$documentName")
-                            .update("statusMsg", changedStatusMsg)
-                            .addOnSuccessListener {
-                                //둘 다 성공이면 상태 변경
-                                editState("normal")
-                            }
-                            .addOnFailureListener { Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
 
+            var existingStatusMsg = binding.myProfileStatusMsg.text.toString()
+            val changedStatusMsg = binding.myProfileStatusMsgEdit.text.toString()
+            if (!changedStatusMsg.equals("")) {
+                flag = true
+                existingStatusMsg = changedStatusMsg
+            }
+
+            var existingProfileMusic = binding.myProfileMusic.text.toString()
+            val changedProfileMusic = binding.myProfileMusicEdit.text.toString()
+            if (!changedProfileMusic.equals("")) {
+                flag = true
+                existingProfileMusic = changedProfileMusic
+            }
+
+            if (!flag) {
+                Toast.makeText(this, "변경된 내용이 없습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                MyApplication.db.collection("profile").document("$documentName")
+                    .update(
+                        "name", existingName,
+                        "profileMusic", existingProfileMusic,
+                        "statusMsg", existingStatusMsg
+                    )
+                    .addOnSuccessListener {
                     }
-                    .addOnFailureListener { Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show()
+                    }
+                finish()
             }
         }
     }
 
     private fun editState(state: String) {
-        when(state){
+        when (state) {
             "edit" -> {
                 binding.run {
                     myProfileChat.visibility = View.GONE
@@ -144,7 +207,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
                 binding.myProfileNameEdit.hint = hintName
                 binding.myProfileStatusMsgEdit.hint = hintStatusMsg
-
             }
 
             "normal" -> {
@@ -162,7 +224,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     myProfileBackEdit.visibility = View.GONE
                     myProfileSaveEdit.visibility = View.GONE
                     myProfileMusicEdit.visibility = View.GONE
-
                 }
             }
         }
@@ -181,13 +242,13 @@ class MyProfileDetailActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        val (height: Int, width: Int) = options.run{ outHeight to outWidth }
+        val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var insampleSize = 1
 
-        if(height > reqHeight || width > reqWidth){
+        if (height > reqHeight || width > reqWidth) {
             val halfHeight = height / 2
             val halfwidth = width / 2
-            while(halfHeight / insampleSize >= reqHeight || halfwidth / insampleSize >= reqWidth){
+            while (halfHeight / insampleSize >= reqHeight || halfwidth / insampleSize >= reqWidth) {
                 insampleSize *= 2
             }
         }
