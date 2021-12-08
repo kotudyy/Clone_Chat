@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding
-
 
 class UsersFragment : Fragment() {
 
@@ -68,12 +68,13 @@ class UsersFragment : Fragment() {
             .whereEqualTo("email", documentName)
             .get()
             .addOnSuccessListener { document ->
-                for (field in document){
+                for (field in document) {
                     val myProfileData = UserData(
                         field["email"] as String,
                         field["name"] as String,
-                        field["status_message"] as String,
-                        field["profile_music"] as String)
+                        field["statusMsg"] as String,
+                        field["profileMusic"] as String
+                    )
 
                     userData.add(myProfileData)
                     adapter.notifyDataSetChanged()
@@ -83,12 +84,13 @@ class UsersFragment : Fragment() {
                         .whereNotEqualTo("email", documentName)
                         .get()
                         .addOnSuccessListener { document ->
-                            for (field in document){
+                            for (field in document) {
                                 val myProfileData = UserData(
                                     field["email"] as String,
                                     field["name"] as String,
-                                    field["status_message"] as String,
-                                    field["profile_music"] as String)
+                                    field["statusMsg"] as String,
+                                    field["profileMusic"] as String
+                                )
                                 Log.d("test", myProfileData.toString())
                                 userData.add(myProfileData)
                                 adapter.notifyDataSetChanged()
@@ -105,5 +107,12 @@ class UsersFragment : Fragment() {
 
 
         return binding.root
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+
+        adapter.notifyDataSetChanged()
     }
 }
