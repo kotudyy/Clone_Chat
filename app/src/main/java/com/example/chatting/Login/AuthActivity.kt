@@ -33,7 +33,7 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                             userEmail, "", "", ""
                         )
 
-                        MyApplication.db.collection("profile_dongk00").document("$userEmail")
+                        MyApplication.db.collection("profile").document("$userEmail")
                             .set(userData)
                             .addOnSuccessListener { Toast.makeText(this,"프로필 정보 추가 완료", Toast.LENGTH_SHORT).show() }
                             .addOnFailureListener { Toast.makeText(this,"프로필 정보 추가 실패", Toast.LENGTH_SHORT).show()  }
