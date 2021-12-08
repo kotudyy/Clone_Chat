@@ -9,5 +9,5 @@
     <dimen name="username_size">14dp</dimen>
     <dimen name="profilename_size">15dp</dimen>
     <dimen name="statusmessage_size">8dp</dimen>
-    <dimen name="profile_image_size">150dp</dimen>
+    <dimen name="profile_image_size">150</dimen>
 </resources>
