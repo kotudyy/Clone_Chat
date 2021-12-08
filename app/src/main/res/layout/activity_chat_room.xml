@@ -19,7 +19,8 @@
                 app:layout_collapseMode="pin"
                 app:title="userName"
                 android:background="@color/sky"
-                android:theme="@style/Toolbar"/>
+                android:theme="@style/Toolbar"
+                app:contentInsetStartWithNavigation="0dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView

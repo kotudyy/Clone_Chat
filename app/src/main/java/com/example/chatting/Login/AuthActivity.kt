@@ -1,11 +1,14 @@
 package com.example.chatting.Login
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.chatting.ChatListActivity
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
+import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
@@ -33,11 +36,12 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                             userEmail, "", "", ""
                         )
 
-                        MyApplication.db.collection("profile_dongk00").document("$userEmail")
+                        MyApplication.db.collection("profile").document("$userEmail")
                             .set(userData)
                             .addOnSuccessListener { Toast.makeText(this,"프로필 정보 추가 완료", Toast.LENGTH_SHORT).show() }
                             .addOnFailureListener { Toast.makeText(this,"프로필 정보 추가 실패", Toast.LENGTH_SHORT).show()  }
 
+                        finish()
                     }else {
                         Toast.makeText(this,"메일 전송 실패", Toast.LENGTH_SHORT).show()
                     }

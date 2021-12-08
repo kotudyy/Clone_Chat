@@ -38,7 +38,7 @@ class PlusFragment : Fragment() {
                     }
                     R.id.user_menu_allsettings -> {
                         Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(activity,LoginActivity::class.java))
+                        startActivity(Intent(activity, LoginActivity::class.java))
                         true
                     }
                     R.id.user_menu_music -> {

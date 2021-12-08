@@ -2,14 +2,16 @@ package com.example.chatting
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.example.chatting.ChatFragment.ChatFragment
 import com.example.chatting.PlusFragment.PlusFragment
+import com.example.chatting.R
 import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityChatListBinding
-import com.example.chatting.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 
 class ChatListActivity : AppCompatActivity() {
+    var mBackWait:Long = 0
 
     val binding by lazy { ActivityChatListBinding.inflate(layoutInflater) }
 
@@ -17,11 +19,14 @@ class ChatListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val transaction = supportFragmentManager.beginTransaction()
-            .add(R.id.mainFrameLayout, ChatFragment())
+//        val transaction = supportFragmentManager.beginTransaction()
+//            .add(R.id.mainFrameLayout, ChatFragment)
+//            .commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainFrameLayout, UsersFragment())
             .commit()
 
-        binding.tabLayout.selectTab(binding.tabLayout.getTabAt(1))
+        binding.tabLayout.selectTab(binding.tabLayout.getTabAt(0))
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab!!.position){
@@ -52,5 +57,15 @@ class ChatListActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 클릭
+        if (System.currentTimeMillis() - mBackWait >= 2000) {
+            mBackWait = System.currentTimeMillis()
+            Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_LONG).show()
+        } else {
+            finish() //액티비티 종료
+        }
     }
 }
