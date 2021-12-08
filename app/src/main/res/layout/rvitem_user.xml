@@ -38,10 +38,12 @@
     <TextView
         android:id="@+id/status_message"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="12dp"
+
         android:layout_marginStart="4dp"
+        android:text="상태메세지"
         android:background="@drawable/border_receivemsg"
-        android:text="테스트입니다"
+        android:maxWidth="200dp"
         android:textColor="@color/gray"
         android:textSize="@dimen/statusmessage_size"
         app:layout_constraintStart_toEndOf="@+id/cardView"
@@ -51,13 +53,14 @@
         android:id="@+id/profile_music"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:text="카카오뮤직 - singer"
         android:backgroundTint="#FFFFFF"
+        android:text="카카오뮤직 - singer"
+        android:maxWidth="150dp"
         app:chipStrokeColor="@color/kakaomusic"
         app:chipStrokeWidth="1dp"
         app:layout_constraintBottom_toBottomOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import android.view.MenuItem
 import com.example.chatting.Login.LoginActivity
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityMainBinding
+import com.example.chatting.util.myCheckPermission
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
