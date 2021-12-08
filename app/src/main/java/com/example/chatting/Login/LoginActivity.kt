@@ -10,7 +10,9 @@ import com.example.chatting.MainActivity
 import com.example.chatting.MyApplication
 import com.example.chatting.databinding.ActivityLoginBinding
 
-class LoginActivity : AppCompatActivity() {     //로그인 액티비티
+class LoginActivity : AppCompatActivity() {
+    var mBackWait:Long = 0
+    //로그인 액티비티
     lateinit var binding : ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,8 @@ class LoginActivity : AppCompatActivity() {     //로그인 액티비티
         }
 
         binding.openChatListBtn.setOnClickListener{
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, ChatListActivity::class.java))
+            finish()
         }
     }
     fun changeLoginStatus(status:String){
@@ -76,6 +79,24 @@ class LoginActivity : AppCompatActivity() {     //로그인 액티비티
                 binding.logoutBtn.visibility = View.GONE
                 binding.openChatListBtn.visibility = View.GONE
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(MyApplication.checkAuth()){
+            startActivity(Intent(this, ChatListActivity::class.java))
+            finish()
+        }
+    }
+
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 클릭
+        if (System.currentTimeMillis() - mBackWait >= 2000) {
+            mBackWait = System.currentTimeMillis()
+            Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_LONG).show()
+        } else {
+            finish() //액티비티 종료
         }
     }
 }
