@@ -2,6 +2,8 @@ package com.example.chatting.UserFragment
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -19,10 +21,16 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
     fun setData(data: UserData) {
         binding.run {
             username.text = data.name
-            statusMessage.text = data.status_message
-            profileMusic.text = data.profile_music
+            statusMessage.text = data.statusMsg
+            profileMusic.text = data.profileMusic
+
             val imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
-            Glide.with(binding.root.context).load(imgRef).error(R.drawable.img_profile).into(ivChatProfile)
+            Glide
+            .with(binding.root.context)
+            .load(imgRef)
+            .error(R.drawable.img_profile)
+            .into(ivChatProfile)     
+            
         }
     }
 
@@ -53,6 +61,9 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
             intent.putExtra("userEmail", userData[position].email)
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
+
+        var imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
+        Glide.with(holder.itemView.context).load(imgRef).error(R.drawable.img_profile).into(holder.binding.ivChatProfile)
     }
 
     override fun getItemCount(): Int = userData.size

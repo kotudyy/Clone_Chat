@@ -73,8 +73,7 @@ class UsersFragment : Fragment() {
                         field["email"] as String,
                         field["name"] as String,
                         field["statusMsg"] as String,
-                        field["profileMusic"] as String
-                    )
+                        field["profileMusic"] as String)
 
                     userData.add(myProfileData)
                     adapter.notifyDataSetChanged()
@@ -89,8 +88,8 @@ class UsersFragment : Fragment() {
                                     field["email"] as String,
                                     field["name"] as String,
                                     field["statusMsg"] as String,
-                                    field["profileMusic"] as String
-                                )
+                                    field["profileMusic"] as String)
+                                
                                 Log.d("test", myProfileData.toString())
                                 userData.add(myProfileData)
                                 adapter.notifyDataSetChanged()

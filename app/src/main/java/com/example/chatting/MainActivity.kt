@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.example.chatting.Login.LoginActivity
 import com.example.chatting.UserFragment.UsersFragment
 import com.example.chatting.databinding.ActivityMainBinding
+import com.example.chatting.util.myCheckPermission
 
 class MainActivity : AppCompatActivity() {
 
