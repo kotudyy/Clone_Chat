@@ -25,8 +25,7 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
             profileMusic.text = data.profileMusic
 
             val imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
-            Glide
-            .with(binding.root.context)
+            Glide.with(binding.root.context)
             .load(imgRef)
             .error(R.drawable.img_profile)
             .into(ivChatProfile)     
@@ -58,12 +57,14 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, MyProfileDetailActivity::class.java)
             intent.putExtra("userData", userData[position])
-            intent.putExtra("userEmail", userData[position].email)
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
 
-        var imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
-        Glide.with(holder.itemView.context).load(imgRef).error(R.drawable.img_profile).into(holder.binding.ivChatProfile)
+        val imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
+        Glide.with(holder.itemView.context)
+            .load(imgRef)
+            .error(R.drawable.img_profile)
+            .into(holder.binding.ivChatProfile)
     }
 
     override fun getItemCount(): Int = userData.size

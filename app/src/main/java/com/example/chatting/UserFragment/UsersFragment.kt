@@ -67,13 +67,13 @@ class UsersFragment : Fragment() {
         MyApplication.db.collection("profile") // 내 정보 첫 번째 항목으로 출력
             .whereEqualTo("email", documentName)
             .get()
-            .addOnSuccessListener { document ->
-                for (field in document) {
+            .addOnSuccessListener { myDocument ->
+                for (myField in myDocument) {
                     val myProfileData = UserData(
-                        field["email"] as String,
-                        field["name"] as String,
-                        field["statusMsg"] as String,
-                        field["profileMusic"] as String)
+                        myField["email"] as String,
+                        myField["name"] as String,
+                        myField["statusMsg"] as String,
+                        myField["profileMusic"] as String)
 
                     userData.add(myProfileData)
                     adapter.notifyDataSetChanged()
@@ -89,8 +89,7 @@ class UsersFragment : Fragment() {
                                     field["name"] as String,
                                     field["statusMsg"] as String,
                                     field["profileMusic"] as String)
-                                
-                                Log.d("test", myProfileData.toString())
+
                                 userData.add(myProfileData)
                                 adapter.notifyDataSetChanged()
                             }
@@ -103,8 +102,6 @@ class UsersFragment : Fragment() {
             .addOnFailureListener {
                 Log.d("test", "Failure...")
             }
-
-
         return binding.root
     }
 
