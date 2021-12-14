@@ -1,0 +1,88 @@
+package com.example.chatting
+
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
+import android.os.Parcelable
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.chatting.Model.Messages
+import com.example.chatting.databinding.ItemReceivemsgBinding
+import com.example.chatting.databinding.ItemSendmsgBinding
+import java.lang.RuntimeException
+import java.text.SimpleDateFormat
+
+
+class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    lateinit var context : Context
+    lateinit var time : String
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType){
+            0 -> {
+                val binding = ItemSendmsgBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+                sendViewHolder(binding)
+            }
+            1 -> {
+                val binding = ItemReceivemsgBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+                receiveViewHolder(binding)
+            }
+            else -> throw RuntimeException("Error")
+        }
+    }
+    inner class sendViewHolder(private val binding: ItemSendmsgBinding) :RecyclerView.ViewHolder(binding.root){
+        fun bind(data: Messages){
+            binding.apply{
+                tvChatroomSendmsg.text = data.message
+                tvChatroomSendtime.text = time
+            }
+        }
+    }
+    inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :RecyclerView.ViewHolder(binding.root){
+        fun bind(data: Messages){
+            binding.apply{
+                MyApplication.db.collection("profile")
+                        .whereEqualTo("email", data.sendEmail)
+                        .get()
+                        .addOnSuccessListener {document -> for (field in document) tvChatroomUsername.text = field["name"] as String}
+                tvChatroomReceivemsg.text = data.message
+                tvChatroomReceivetime.text = time
+
+                val imgRef = MyApplication.storage.reference.child("${data.sendEmail}/profile")
+                Glide.with(binding.root.context)
+                    .load(imgRef)
+                    .error(R.drawable.img_profile)
+                    .into(ivChatProfile)
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val data = messages[position]
+        time = SimpleDateFormat("hh:mm").format(data.timeStamp)
+        when (messages[position].type){
+            0 -> (holder as sendViewHolder).bind(data)
+            1 -> (holder as receiveViewHolder).bind(data)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+//        if(messages[position].sendEmail == MyApplication.auth.currentUser?.email)
+        return messages[position].type
+    }
+
+    override fun getItemCount(): Int {
+        if(messages!=null) return messages.size
+        else return 0
+    }
+
+
+}
