@@ -9,8 +9,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.chatting.ChatRoomActivity
+import com.example.chatting.Model.ChatData
+import com.example.chatting.Model.ChatData.chatRoomUser
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
@@ -102,8 +106,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         }
 
-        //채팅 버튼 클릭 시
-
         //편집 버튼 클릭 시
         binding.myProfileEdit.setOnClickListener {
             editState("edit")
@@ -124,6 +126,27 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 updateAndGetValue("profileMusic", newProfileMusic)
                 editState(checkProfileUser())
             }
+        }
+
+        //채팅 버튼 클릭 시
+        binding.myProfileChat.setOnClickListener {
+            val documentName = MyApplication.auth.currentUser?.email
+
+            //채팅방 검사
+
+            //채팅방 생성
+            val chatRoomId = "test"
+            val data = ChatData.chatRoomUser(documentName.toString(), userData.email)
+            MyApplication.realtime.child("chatRoomUser").child(chatRoomId)
+                .setValue(data)
+
+            //채팅방으로 이동
+            val intent = Intent(this, ChatRoomActivity::class.java)
+            intent.putExtra("userName", userData.name)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
+            finish()
         }
     }
 
