@@ -44,6 +44,7 @@
         android:text="테스트입니다"
         android:textSize="@dimen/message_size"
         android:layout_marginLeft="@dimen/style_margin"
+        android:maxWidth="250dp"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/tv_chatroom_username" />
 

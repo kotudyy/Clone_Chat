@@ -1,5 +1,6 @@
 package com.example.chatting.ProfileDetail
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.chatting.ChatRoomActivity
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
@@ -86,10 +88,10 @@ class MyProfileDetailActivity : AppCompatActivity() {
             try {
                 galleryIntent.launch(intent)
             } catch (e: Exception) {
+                myCheckPermission(this)
+                filename = "profile"
+                galleryIntent.launch(intent)
             }
-            myCheckPermission(this)
-            filename = "profile"
-            galleryIntent.launch(intent)
         }
 
         //배경 사진 편집 클릭 시
@@ -103,6 +105,14 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
 
         //채팅 버튼 클릭 시
+        binding.myProfileChat.setOnClickListener {
+            if(checkProfileUser()=="myProfile"){
+            } else{
+            }
+            try {
+                openChatRoom(this)
+            }catch (e:Exception){Log.d("grusie","$e")}
+        }
 
         //편집 버튼 클릭 시
         binding.myProfileEdit.setOnClickListener {
@@ -271,5 +281,13 @@ class MyProfileDetailActivity : AppCompatActivity() {
             .addOnFailureListener {
             Log.d("grusie", "error : $it")
         }
+    }
+
+    private fun openChatRoom(context: Context)
+    {
+        val intent = Intent(context, ChatRoomActivity::class.java)
+        intent.putExtra("userName",binding.myProfileName.text.toString())
+        intent.putExtra("userEmail",userData.email)
+        startActivity(intent)
     }
 }
