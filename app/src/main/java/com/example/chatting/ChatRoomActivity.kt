@@ -1,25 +1,33 @@
 package com.example.chatting
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.Model.Messages
-import com.example.chatting.Model.UserData
+import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.ktx.Firebase
+import java.lang.Exception
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
     lateinit var userEmail: String
+    var chatRoomId:String ?= null
     private val database = Firebase.database
-    private val myRef = database.getReference("Messages")
+    private val messageRef = database.getReference("Messages")
+    private val userRoomRef = database.getReference("UserRoom")
     private val Messages = mutableListOf<Messages>()
+    private val UserRoom = mutableListOf<UserRoom>()
     lateinit var adapter : ChatRoomAdatpter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +38,13 @@ class ChatRoomActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        userName = intent.getSerializableExtra("userName") as String
-        userEmail = intent.getSerializableExtra("userEmail") as String
-        binding.toolbar.setTitle(userName)
+        try {
+            userName = intent.getSerializableExtra("userName") as String
+            binding.toolbar.setTitle(userName)
+        } catch (e:Exception){}
+        try { userEmail = intent.getSerializableExtra("userEmail") as String }catch (e:Exception){}
+        try{ chatRoomId = intent.getStringExtra("chatRoomId") as String } catch (e:Exception){}
+        loadChatData()
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -70,19 +82,63 @@ class ChatRoomActivity : AppCompatActivity() {
 
         binding.btnSend.setOnClickListener{
             val msg = binding.etMessage.text.toString()   //msg
+            val time = System.currentTimeMillis()
             if(msg != null) {
                 val messageData = Messages(
                     message = msg,
-                    timeStamp = System.currentTimeMillis() ,
-                    sendEmail = MyApplication.auth.currentUser?.email.toString(),
-                    type = 1
+                    timestamp = time ,
+                    sender = MyApplication.auth.currentUser?.email.toString()
+                )
+                val userRoom = UserRoom(
+                    lastMessage = msg,
+                    timestamp = time ,
+                    sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 binding.etMessage.text.clear()
                 Messages.add(messageData)
-                Log.d("grusie", "${Messages[0].sendEmail}, ${Messages[0].message}")
-                myRef.push().setValue(Messages[Messages.size-1])
-                Toast.makeText(this,"$userEmail",Toast.LENGTH_SHORT).show()
+                UserRoom.add(userRoom)
+                messageRef.child("$chatRoomId").push().setValue(messageData)
+                userRoomRef.child("$chatRoomId").push().setValue(userRoom)
             }
         }
+    }
+
+    private fun loadChatData() {
+        val messagesDataListener = object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var message = ""
+                var timestamp: Long = 0
+                var sender = ""
+                for(chatRooms in snapshot.children){
+                    if(chatRooms.key as String == chatRoomId) {
+                        for (messageDoc in chatRooms.children) {
+                                for (messages in messageDoc.children) {
+                                    when (messages.key) {
+                                        "message" -> {
+                                            message = messages.value as String
+                                        }
+                                        "timestamp" -> {
+                                            timestamp = messages.value as Long
+                                        }
+                                        "sender" -> {
+                                            sender = messages.value as String
+                                        }
+                                    }
+                                }
+                            val msgData = Messages(
+                                message = message,
+                                timestamp = timestamp,
+                                sender = sender
+                            )
+                            Messages.add(msgData)
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("grusie","failed")
+            }
+        }
+        messageRef.addListenerForSingleValueEvent(messagesDataListener)
     }
 }

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var context : Context
     lateinit var time : String
+    var type : Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -50,13 +51,13 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
         fun bind(data: Messages){
             binding.apply{
                 MyApplication.db.collection("profile")
-                        .whereEqualTo("email", data.sendEmail)
+                        .whereEqualTo("email", data.sender)
                         .get()
                         .addOnSuccessListener {document -> for (field in document) tvChatroomUsername.text = field["name"] as String}
                 tvChatroomReceivemsg.text = data.message
                 tvChatroomReceivetime.text = time
 
-                val imgRef = MyApplication.storage.reference.child("${data.sendEmail}/profile")
+                val imgRef = MyApplication.storage.reference.child("${data.sender}/profile")
                 Glide.with(binding.root.context)
                     .load(imgRef)
                     .error(R.drawable.img_profile)
@@ -67,16 +68,19 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val data = messages[position]
-        time = SimpleDateFormat("hh:mm").format(data.timeStamp)
-        when (messages[position].type){
+        time = SimpleDateFormat("hh:mm").format(data.timestamp)
+        when (type){
             0 -> (holder as sendViewHolder).bind(data)
             1 -> (holder as receiveViewHolder).bind(data)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-//        if(messages[position].sendEmail == MyApplication.auth.currentUser?.email)
-        return messages[position].type
+        if(messages[position].sender == MyApplication.auth.currentUser?.email)
+            type = 0
+        else
+            type = 1
+        return type
     }
 
     override fun getItemCount(): Int {
