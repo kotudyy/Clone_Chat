@@ -9,12 +9,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatting.ChatRoomActivity
-import com.example.chatting.Model.ChatData
-import com.example.chatting.Model.ChatData.chatRoomUser
 import com.example.chatting.Model.UserData
 import com.example.chatting.MyApplication
 import com.example.chatting.R
@@ -51,7 +48,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val cursor = contentResolver.query(
                     it.data!!.data as Uri,
-                    arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null)
+                    arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null
+                )
 
                 cursor?.moveToFirst().let {
                     filePath = cursor?.getString(0) as String
@@ -66,8 +64,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                                 .apply(RequestOptions().override(150, 150))
                                 .centerCrop()
                                 .into(binding.myProfileImage)
-                        }
-                        else if(filename == "background") {
+                        } else if (filename == "background") {
                             Glide
                                 .with(this)
                                 .load(it.data!!.data)
@@ -118,7 +115,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
             val newStatusMsg = binding.myProfileStatusMsgEdit.text.toString()
             val newProfileMusic = binding.myProfileMusicEdit.text.toString()
 
-            if (newName.isEmpty()){
+            if (newName.isEmpty()) {
                 Toast.makeText(this, "이름을 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 updateAndGetValue("name", newName)
@@ -130,25 +127,41 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         //채팅 버튼 클릭 시
         binding.myProfileChat.setOnClickListener {
-            val documentName = MyApplication.auth.currentUser?.email
 
-            //채팅방 검사
-
-            //채팅방 생성
-            val chatRoomId = "test"
-            val data = ChatData.chatRoomUser(documentName.toString(), userData.email)
-            MyApplication.realtime.child("chatRoomUser").child(chatRoomId)
-                .setValue(data)
-
-            //채팅방으로 이동
-            val intent = Intent(this, ChatRoomActivity::class.java)
-            intent.putExtra("userName", userData.name)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-
-            finish()
+            if (isPreviousConversation()) {
+                getChatRoom()
+            } else {
+                createNewChatRoom()
+            }
         }
     }
+
+    private fun createNewChatRoom() {
+        val myEmailForKey = (MyApplication.auth.currentUser?.email)?.replace(".", ",")
+        val userEmailForKey = (userData.email).replace(".", ",")
+        val chatRoomId = "${myEmailForKey}-${userEmailForKey}"
+        val chatRoomUserRef = MyApplication.realtime.child("chatRoomUser").child(chatRoomId)
+        val chatRoomUsers = hashMapOf(
+            myEmailForKey to true,
+            userEmailForKey to true
+        )
+
+        chatRoomUserRef.setValue(chatRoomUsers)
+
+        val intent = Intent(this@MyProfileDetailActivity, ChatRoomActivity::class.java)
+        intent.putExtra("chatRoomID", chatRoomId)
+        startActivity(intent)
+    }
+
+    private fun getChatRoom() {
+        TODO("Not yet implemented")
+    }
+
+    //이전 대화 있는 지 체크
+    private fun isPreviousConversation(): Boolean {
+        return false
+    }
+
 
     private fun binding() {
         binding.run {
@@ -173,7 +186,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     private fun checkProfileUser(): String =
         //내 프로필인 경우 vs 내 프로필이 아닌 경우
-        if(userData.email == MyApplication.auth.currentUser?.email){
+        if (userData.email == MyApplication.auth.currentUser?.email) {
             "myProfile"
         } else {
             "notMyProfile"
@@ -193,7 +206,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     .document(userData.email)
                     .get()
                     .addOnSuccessListener { document ->
-                        when(field) {
+                        when (field) {
                             "name" -> {
                                 userData.name = document[field] as String
                             }
@@ -208,7 +221,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         binding()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
+                        Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show()
+                    }
             }
     }
 
@@ -288,11 +302,11 @@ class MyProfileDetailActivity : AppCompatActivity() {
         imgRef
             .putFile(file)
             .addOnSuccessListener {
-            Log.d("grusie", "저장됨")
-            Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
-        }
+                Log.d("grusie", "저장됨")
+                Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            }
             .addOnFailureListener {
-            Log.d("grusie", "error : $it")
-        }
+                Log.d("grusie", "error : $it")
+            }
     }
 }
