@@ -6,13 +6,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.Model.MessageData
 import com.example.chatting.databinding.ActivityChatRoomBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class ChatRoomActivity : AppCompatActivity() {
+    lateinit var chatRoomID : String
+    lateinit var chatRoomUser : String
+
     lateinit var binding: ActivityChatRoomBinding
-    lateinit var userName: String
     lateinit var adapter: RvItemChatMessageAdapter
     var messageData = mutableListOf<MessageData>()
     var userEmail = MyApplication.auth.currentUser?.email!!
@@ -26,8 +32,10 @@ class ChatRoomActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        userName = intent.getSerializableExtra("userName") as String
-        binding.toolbar.setTitle(userName)
+        chatRoomID = intent.getSerializableExtra("chatRoomID") as String
+        chatRoomUser = (chatRoomID.split("-")[1]).replace(",",".")
+
+        getChatRoomData()
 
         //RecyclerView Adapter 연결
         adapter = RvItemChatMessageAdapter(messageData)
@@ -71,8 +79,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 val data = MessageData(
                     binding.etMessage.text.toString(),
                     userEmail,
-                    stamp,
-                    1
+                    stamp
                 )
                 messageData.add(data)
                 adapter.notifyDataSetChanged()
@@ -84,4 +91,67 @@ class ChatRoomActivity : AppCompatActivity() {
         }
 
     }
+
+
+    //채팅방 메시지 가져오는 함수
+    private fun getChatRoomData() {
+        //setChatRoomTitle
+        MyApplication.db.collection("profile")
+            .document(chatRoomUser)
+            .get()
+            .addOnSuccessListener {
+                val chatUserName = it["name"] as String
+                binding.toolbar.title = chatUserName
+            }
+
+        //setChatRoomContent
+        val msgListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                //snapshot은 채팅방 내 message들 정보 전체 ->
+                //{Message3={sender=dongk000@gmail.com, message=hello2, timestamp=123151615},
+                // Message2={sender=dddongk00@gmail.com, message=hello, timestamp=12314142313},
+                // Message1=asdfsaf
+
+                for (msgInfo in snapshot.children){
+
+                    // snapshot.children은 message 각각의 정보 ->
+                    // {sender=dongk000@gmail.com, message=hello2, timestamp=123151615} ...
+
+                    for (msgInfoChild in msgInfo.children){
+
+                        // msgInfo.children은 message 내 각각의 정보들
+                        // sender, message, timestamp
+
+                        val sender : String
+                        val message : String
+                        val timestamp : Long
+
+                        when(msgInfoChild!!.key){
+                            "sender" -> {
+                                sender = msgInfoChild.value as String
+                            }
+                            "message" -> {
+                                message = msgInfoChild.value as String
+                            }
+                            "timestamp" -> {
+                                timestamp = msgInfoChild.value as Long
+                            }
+                        }
+
+                    }
+
+                    Log.d("test", "${msgInfo.value}")
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("test","Failed")
+            }
+        }
+
+        MyApplication.realtime.child(chatRoomID).addValueEventListener(msgListener)
+    }
+
 }

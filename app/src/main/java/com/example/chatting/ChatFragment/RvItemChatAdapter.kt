@@ -6,18 +6,30 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.ChatRoomActivity
+import com.example.chatting.Model.UserRoom
+import com.example.chatting.MyApplication
 import com.example.chatting.databinding.RvitemChatBinding
+import java.text.SimpleDateFormat
 
 class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun setData(data: ChatData) {
-        binding.tvChatUsername.text = "${data.chatUsername}"
-        binding.tvChatPreviewmsg.text = "${data.chatPreviewMsg}"
-        binding.tvChatTimestamp.text = "${data.chatTime}"
+    fun setData(data: UserRoom) {
+        val sdf = SimpleDateFormat("MM.dd hh:mm")
+
+        binding.apply {
+            MyApplication.db.collection("profile")
+                .whereEqualTo("email", data.sender)
+                .get()
+                .addOnSuccessListener { document ->
+                    for (field in document) tvChatUsername.text = field["name"] as String
+                }
+        }
+        binding.tvChatPreviewmsg.text = data.lastmessage
+        binding.tvChatTimestamp.text = sdf.format(data.timestamp)
     }
 }
 
-class RvItemChatAdapter(var chatData: MutableList<ChatData>) :
+class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
     RecyclerView.Adapter<RvItemChatViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvItemChatViewHolder =
         RvItemChatViewHolder(
@@ -34,7 +46,6 @@ class RvItemChatAdapter(var chatData: MutableList<ChatData>) :
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
-            intent.putExtra("userName", data.chatUsername)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
@@ -43,9 +54,3 @@ class RvItemChatAdapter(var chatData: MutableList<ChatData>) :
     override fun getItemCount(): Int = chatData.size
 
 }
-
-data class ChatData(
-    val chatUsername: String,
-    val chatPreviewMsg: String,
-    val chatTime: String,
-)

@@ -24,7 +24,7 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
             statusMessage.text = data.statusMsg
             profileMusic.text = data.profileMusic
 
-            val imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
+            val imgRef = MyApplication.storage.reference.child("${data.email}/profile")
             Glide.with(binding.root.context)
             .load(imgRef)
             .error(R.drawable.img_profile)
@@ -60,7 +60,7 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
 
-        val imgRef = MyApplication.storage.reference.child("${data.email}/profile.jpg")
+        val imgRef = MyApplication.storage.reference.child("${data.email}/profile")
         Glide.with(holder.itemView.context)
             .load(imgRef)
             .error(R.drawable.img_profile)
