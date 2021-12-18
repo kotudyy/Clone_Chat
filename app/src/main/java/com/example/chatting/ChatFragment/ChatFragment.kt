@@ -125,12 +125,14 @@ class ChatFragment : Fragment() {
                     var lastmessage = ""
                     var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
                     var timestamp: Long = 0
+
                     for (data in snapshot.children) {
                         when (data.key) {
                             "lastmessage" -> lastmessage = data.value as String
                             "timestamp" -> timestamp = data.value as Long
                         }
                     }
+
                     chatListDatas.add(UserRoom(chatroomid, lastmessage, timestamp, sender))
                     chatListDatas.sortByDescending { it.timestamp }     //시간 순으로 정렬
                     adapter.notifyDataSetChanged()
