@@ -3,6 +3,9 @@ package com.example.chatting
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -13,6 +16,7 @@ class MyApplication: MultiDexApplication() {
         lateinit var auth : FirebaseAuth
         lateinit var db: FirebaseFirestore
         lateinit var storage: FirebaseStorage
+        lateinit var realtime: DatabaseReference
         var email: String? = null
         fun checkAuth(): Boolean {      //이메일 인증 완료해야만 true 반환
             val currentUser = auth.currentUser
@@ -30,5 +34,6 @@ class MyApplication: MultiDexApplication() {
         auth = Firebase.auth
         db = FirebaseFirestore.getInstance()
         storage = Firebase.storage
+        realtime = Firebase.database.reference
     }
 }

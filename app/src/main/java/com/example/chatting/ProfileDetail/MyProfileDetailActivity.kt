@@ -61,7 +61,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val cursor = contentResolver.query(
                     it.data!!.data as Uri,
-                    arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null)
+                    arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null
+                )
 
                 cursor?.moveToFirst().let {
                     filePath = cursor?.getString(0) as String
@@ -76,8 +77,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                                 .apply(RequestOptions().override(150, 150))
                                 .centerCrop()
                                 .into(binding.myProfileImage)
-                        }
-                        else if(filename == "background") {
+                        } else if (filename == "background") {
                             Glide
                                 .with(this)
                                 .load(it.data!!.data)
@@ -116,13 +116,14 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
         }
 
+
         //채팅 버튼 클릭 시
         binding.myProfileChat.setOnClickListener {
             try {
                 createChatRoom()
             }catch (e:Exception){Log.d("grusie","$e")}
         }
-
+        
         //편집 버튼 클릭 시
         binding.myProfileEdit.setOnClickListener {
             editState("edit")
@@ -135,7 +136,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
             val newStatusMsg = binding.myProfileStatusMsgEdit.text.toString()
             val newProfileMusic = binding.myProfileMusicEdit.text.toString()
 
-            if (newName.isEmpty()){
+            if (newName.isEmpty()) {
                 Toast.makeText(this, "이름을 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 updateAndGetValue("name", newName)
@@ -144,8 +145,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 editState(checkProfileUser())
             }
         }
-    }
 
+        
     private fun binding() {
         binding.run {
             myProfileName.text = userData.name
@@ -169,7 +170,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     private fun checkProfileUser(): String =
         //내 프로필인 경우 vs 내 프로필이 아닌 경우
-        if(userData.email == MyApplication.auth.currentUser?.email){
+        if (userData.email == MyApplication.auth.currentUser?.email) {
             "myProfile"
         } else {
             "notMyProfile"
@@ -189,7 +190,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     .document(userData.email)
                     .get()
                     .addOnSuccessListener { document ->
-                        when(field) {
+                        when (field) {
                             "name" -> {
                                 userData.name = document[field] as String
                             }
@@ -204,7 +205,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         binding()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show() }
+                        Toast.makeText(this, "설정 실패", Toast.LENGTH_SHORT).show()
+                    }
             }
     }
 
@@ -284,12 +286,12 @@ class MyProfileDetailActivity : AppCompatActivity() {
         imgRef
             .putFile(file)
             .addOnSuccessListener {
-            Log.d("grusie", "저장됨")
-            Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
-        }
+                Log.d("grusie", "저장됨")
+                Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            }
             .addOnFailureListener {
-            Log.d("grusie", "error : $it")
-        }
+                Log.d("grusie", "error : $it")
+            }
     }
 
     private fun openChatRoom(context: Context)

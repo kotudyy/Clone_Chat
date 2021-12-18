@@ -61,6 +61,7 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
             intent.putExtra("userData", userData[position])
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
+
         val imgRef = MyApplication.storage.reference.child("${data.email}/profile")
         Glide.with(holder.itemView.context)
             .load(imgRef)

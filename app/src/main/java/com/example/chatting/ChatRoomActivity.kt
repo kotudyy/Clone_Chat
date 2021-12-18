@@ -1,5 +1,7 @@
 package com.example.chatting
 
+
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +10,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatting.Model.MessageData
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
@@ -29,14 +32,20 @@ class ChatRoomActivity : AppCompatActivity() {
     private val Messages = mutableListOf<Messages>()
     private val UserRoom = mutableListOf<UserRoom>()
     lateinit var adapter : ChatRoomAdatpter
+    lateinit var binding: ActivityChatRoomBinding
+    lateinit var adapter: RvItemChatMessageAdapter
+    var messageData = mutableListOf<MessageData>()
+    var userEmail = MyApplication.auth.currentUser?.email!!
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityChatRoomBinding.inflate(layoutInflater)
+        binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         try {
             userName = intent.getSerializableExtra("userName") as String
@@ -142,3 +151,4 @@ class ChatRoomActivity : AppCompatActivity() {
         messageRef.addListenerForSingleValueEvent(messagesDataListener)
     }
 }
+

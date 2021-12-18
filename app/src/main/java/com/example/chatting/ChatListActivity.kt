@@ -19,9 +19,6 @@ class ChatListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-//        val transaction = supportFragmentManager.beginTransaction()
-//            .add(R.id.mainFrameLayout, ChatFragment)
-//            .commit()
         supportFragmentManager.beginTransaction()
             .replace(R.id.mainFrameLayout, UsersFragment())
             .commit()

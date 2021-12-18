@@ -13,31 +13,36 @@ import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemChatBinding
 import java.text.SimpleDateFormat
-lateinit var time : String
-lateinit var name : String
 
 class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun setData(data: UserRoom) {
-        time = SimpleDateFormat("hh:mm").format(data.timestamp)
+
+        val sdf = SimpleDateFormat("MM.dd hh:mm")
 
         binding.apply {
             MyApplication.db.collection("profile")
                 .whereEqualTo("email", data.sender)
                 .get()
-                .addOnSuccessListener {document -> for (field in document) tvChatUsername.text = field["name"] as String}
-            tvChatPreviewmsg.text = "${data.lastMessage}"
-            tvChatTimestamp.text = time
-            val imgRef = MyApplication.storage.reference.child("${data.sender}/profile")
+                .addOnSuccessListener { document ->
+                    for (field in document) binding.tvChatUsername.text = field["name"] as String
+                }
+
+            val imgRefProfile = MyApplication.storage.reference.child("${data.sender}/profile")
             Glide.with(binding.root.context)
-                .load(imgRef)
+                .load(imgRefProfile)
                 .error(R.drawable.img_profile)
                 .into(ivChatProfile)
+
+            binding.tvChatPreviewmsg.text = data.lastmessage
+            binding.tvChatTimestamp.text = sdf.format(data.timestamp)
         }
     }
 }
 
-class RvItemChatAdapter(var userRoom: MutableList<UserRoom>) :
+
+class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
+
     RecyclerView.Adapter<RvItemChatViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvItemChatViewHolder =
         RvItemChatViewHolder(
@@ -59,12 +64,12 @@ class RvItemChatAdapter(var userRoom: MutableList<UserRoom>) :
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
-            intent.putExtra("userName", name)
+            intent.putExtra("chatRoomId", data.chatroomid)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
     }
 
-    override fun getItemCount(): Int = userRoom.size
+    override fun getItemCount(): Int = chatData.size
 
 }
