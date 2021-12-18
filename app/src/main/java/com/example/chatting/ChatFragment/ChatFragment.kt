@@ -7,13 +7,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chatting.Model.UserRoom
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
 
 class ChatFragment : Fragment() {
 
     lateinit var binding: FragmentChatBinding
-    val chatListDatas = mutableListOf<ChatData>()
+    val userRoomDatas = mutableListOf<UserRoom>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,26 +59,15 @@ class ChatFragment : Fragment() {
     }
 
     fun initDogRecyclerView() {
-        val adapter = RvItemChatAdapter(chatListDatas)
-        adapter.chatData = chatListDatas
+        val adapter = RvItemChatAdapter(userRoomDatas)
+        adapter.userRoom = userRoomDatas
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(context) //레이아웃 매니저 연결
     }
 
     fun initializelist() { //임의로 데이터 넣어서 만들어봄
-        with(chatListDatas) {
-            add(ChatData("one", "hello", "어제"))
-            add(ChatData("two", "world", "00:32"))
-            add(ChatData("three", "hi", "23:27"))
-            add(ChatData("four", "kakaoTalk", "03:24"))
-            add(ChatData("five", "Test", "01:59"))
-            add(ChatData("six", "message", "13:08"))
-            add(ChatData("one", "hello", "어제"))
-            add(ChatData("two", "world", "00:32"))
-            add(ChatData("three", "hi", "23:27"))
-            add(ChatData("four", "kakaoTalk", "03:24"))
-            add(ChatData("five", "Test", "01:59"))
-            add(ChatData("six", "message", "13:08"))
+        with(userRoomDatas) {
+            add(UserRoom("grusie@naver.com", "hello", System.currentTimeMillis()))
         }
     }
 }
