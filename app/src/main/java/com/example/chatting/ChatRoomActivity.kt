@@ -92,7 +92,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
     }
 
-
     //채팅방 메시지 가져오는 함수
     private fun getChatRoomData() {
         //setChatRoomTitle
