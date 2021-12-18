@@ -80,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
+/*
     override fun onResume() {
         super.onResume()
         if(MyApplication.checkAuth()){
@@ -88,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
     }
-
+*/
     override fun onBackPressed() {
         // 뒤로가기 버튼 클릭
         if (System.currentTimeMillis() - mBackWait >= 2000) {

@@ -1,5 +1,4 @@
 package com.example.chatting.Model
-
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -9,3 +8,4 @@ data class chatRoomUser(
     var user1: String,
     var user2: String
 ): Parcelable
+

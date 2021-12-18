@@ -28,8 +28,7 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
             Glide.with(binding.root.context)
             .load(imgRef)
             .error(R.drawable.img_profile)
-            .into(ivChatProfile)     
-            
+            .into(ivChatProfile)
         }
     }
 
@@ -46,6 +45,9 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
             )
         )
 
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
     override fun onBindViewHolder(holder: RvItemUserViewHolder, position: Int) {
         val data = userData[position]
         holder.setData(data)

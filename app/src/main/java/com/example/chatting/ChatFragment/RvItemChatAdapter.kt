@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun setData(data: UserRoom) {
+
         val sdf = SimpleDateFormat("MM.dd hh:mm")
 
         binding.apply {
@@ -39,7 +40,9 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
     }
 }
 
+
 class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
+
     RecyclerView.Adapter<RvItemChatViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvItemChatViewHolder =
         RvItemChatViewHolder(
@@ -51,8 +54,13 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
         )
 
     override fun onBindViewHolder(holder: RvItemChatViewHolder, position: Int) {
-        val data = chatData[position]
+        val data = userRoom[position]
         holder.setData(data)
+        var name : String = ""
+        MyApplication.db.collection("profile")
+            .whereEqualTo("email", data.sender)
+            .get()
+            .addOnSuccessListener {document -> for (field in document) name = field["name"] as String}
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
