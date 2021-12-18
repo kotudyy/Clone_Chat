@@ -1,5 +1,4 @@
 package com.example.chatting.Model
-
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -11,3 +10,4 @@ data class UserRoom(
     var timestamp: Long,
     var sender: String
 ): Parcelable
+

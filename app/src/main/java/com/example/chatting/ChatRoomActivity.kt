@@ -1,6 +1,8 @@
 package com.example.chatting
 
+
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,15 +11,27 @@ import android.text.TextWatcher
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.Model.MessageData
+import com.example.chatting.Model.Messages
+import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.auth.User
+import com.google.firebase.ktx.Firebase
+import java.lang.Exception
 
 class ChatRoomActivity : AppCompatActivity() {
-    lateinit var chatRoomID : String
-    lateinit var chatRoomUser : String
-
+    lateinit var userName: String
+    lateinit var userEmail: String
+    var chatRoomId:String ?= null
+    private val database = Firebase.database
+    private val messageRef = database.getReference("Messages")
+    private val userRoomRef = database.getReference("UserRoom")
+    private val Messages = mutableListOf<Messages>()
+    private val UserRoom = mutableListOf<UserRoom>()
+    lateinit var adapter : ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
     lateinit var adapter: RvItemChatMessageAdapter
     var messageData = mutableListOf<MessageData>()
@@ -32,15 +46,14 @@ class ChatRoomActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        chatRoomID = intent.getSerializableExtra("chatRoomID") as String
-        chatRoomUser = (chatRoomID.split("-")[1]).replace(",",".")
 
-        getChatRoomData()
-
-        //RecyclerView Adapter 연결
-        adapter = RvItemChatMessageAdapter(messageData)
-        binding.rvChatroom.adapter = adapter
-        binding.rvChatroom.layoutManager = LinearLayoutManager(this)
+        try {
+            userName = intent.getSerializableExtra("userName") as String
+            binding.toolbar.setTitle(userName)
+        } catch (e:Exception){}
+        try { userEmail = intent.getSerializableExtra("userEmail") as String }catch (e:Exception){}
+        try{ chatRoomId = intent.getStringExtra("chatRoomId") as String } catch (e:Exception){}
+        loadChatData()
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -72,85 +85,70 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
 
-        //전송 버튼
-        binding.btnSend.setOnClickListener {
-            if (binding.etMessage.length() > 0) {
-                val stamp = System.currentTimeMillis()
-                val data = MessageData(
-                    binding.etMessage.text.toString(),
-                    userEmail,
-                    stamp
+        adapter = ChatRoomAdatpter(Messages)
+        binding.rvChatroom.adapter = adapter
+        binding.rvChatroom.layoutManager = LinearLayoutManager(this)
+
+        binding.btnSend.setOnClickListener{
+            val msg = binding.etMessage.text.toString()   //msg
+            val time = System.currentTimeMillis()
+            if(msg != null) {
+                val messageData = Messages(
+                    message = msg,
+                    timestamp = time ,
+                    sender = MyApplication.auth.currentUser?.email.toString()
                 )
-                messageData.add(data)
-                adapter.notifyDataSetChanged()
-
-                MyApplication.realtime.child("Messages").child("test")
-                    .setValue(data)
+                val userRoom = UserRoom(
+                    lastMessage = msg,
+                    timestamp = time ,
+                    sender = MyApplication.auth.currentUser?.email.toString()
+                )
+                binding.etMessage.text.clear()
+                Messages.add(messageData)
+                UserRoom.add(userRoom)
+                messageRef.child("$chatRoomId").push().setValue(messageData)
+                userRoomRef.child("$chatRoomId").push().setValue(userRoom)
             }
-            binding.etMessage.text.clear()
         }
-
     }
 
-    //채팅방 메시지 가져오는 함수
-    private fun getChatRoomData() {
-        //setChatRoomTitle
-        MyApplication.db.collection("profile")
-            .document(chatRoomUser)
-            .get()
-            .addOnSuccessListener {
-                val chatUserName = it["name"] as String
-                binding.toolbar.title = chatUserName
-            }
-
-        //setChatRoomContent
-        val msgListener = object : ValueEventListener {
+    private fun loadChatData() {
+        val messagesDataListener = object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                //snapshot은 채팅방 내 message들 정보 전체 ->
-                //{Message3={sender=dongk000@gmail.com, message=hello2, timestamp=123151615},
-                // Message2={sender=dddongk00@gmail.com, message=hello, timestamp=12314142313},
-                // Message1=asdfsaf
-
-                for (msgInfo in snapshot.children){
-
-                    // snapshot.children은 message 각각의 정보 ->
-                    // {sender=dongk000@gmail.com, message=hello2, timestamp=123151615} ...
-
-                    for (msgInfoChild in msgInfo.children){
-
-                        // msgInfo.children은 message 내 각각의 정보들
-                        // sender, message, timestamp
-
-                        val sender : String
-                        val message : String
-                        val timestamp : Long
-
-                        when(msgInfoChild!!.key){
-                            "sender" -> {
-                                sender = msgInfoChild.value as String
-                            }
-                            "message" -> {
-                                message = msgInfoChild.value as String
-                            }
-                            "timestamp" -> {
-                                timestamp = msgInfoChild.value as Long
-                            }
+                var message = ""
+                var timestamp: Long = 0
+                var sender = ""
+                for(chatRooms in snapshot.children){
+                    if(chatRooms.key as String == chatRoomId) {
+                        for (messageDoc in chatRooms.children) {
+                                for (messages in messageDoc.children) {
+                                    when (messages.key) {
+                                        "message" -> {
+                                            message = messages.value as String
+                                        }
+                                        "timestamp" -> {
+                                            timestamp = messages.value as Long
+                                        }
+                                        "sender" -> {
+                                            sender = messages.value as String
+                                        }
+                                    }
+                                }
+                            val msgData = Messages(
+                                message = message,
+                                timestamp = timestamp,
+                                sender = sender
+                            )
+                            Messages.add(msgData)
                         }
-
                     }
-
-                    Log.d("test", "${msgInfo.value}")
                 }
-
             }
-
             override fun onCancelled(error: DatabaseError) {
-                Log.d("test","Failed")
+                Log.d("grusie","failed")
             }
         }
-
-        MyApplication.realtime.child(chatRoomID).addValueEventListener(msgListener)
+        messageRef.addListenerForSingleValueEvent(messagesDataListener)
     }
-
 }
+

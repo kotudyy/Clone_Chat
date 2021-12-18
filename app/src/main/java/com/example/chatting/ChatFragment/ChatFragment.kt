@@ -27,6 +27,7 @@ import kotlin.Comparator
 class ChatFragment : Fragment() {
 
     lateinit var binding: FragmentChatBinding
+
     val chatListDatas = mutableListOf<UserRoom>()
     var userEmail = MyApplication.auth.currentUser?.email!!
     var adapter = RvItemChatAdapter(chatListDatas)
@@ -79,6 +80,7 @@ class ChatFragment : Fragment() {
     }
 
     fun initDogRecyclerView() {
+
         adapter.chatData = chatListDatas
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(context) //레이아웃 매니저 연결
