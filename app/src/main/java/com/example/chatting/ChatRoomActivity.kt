@@ -33,9 +33,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private val UserRoom = mutableListOf<UserRoom>()
     lateinit var adapter : ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
-    lateinit var adapter: RvItemChatMessageAdapter
     var messageData = mutableListOf<MessageData>()
-    var userEmail = MyApplication.auth.currentUser?.email!!
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +97,8 @@ class ChatRoomActivity : AppCompatActivity() {
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 val userRoom = UserRoom(
-                    lastMessage = msg,
+                    chatroomid = chatRoomId!!,
+                    lastmessage = msg,
                     timestamp = time ,
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )

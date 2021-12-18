@@ -42,8 +42,8 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
 
 class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
-
     RecyclerView.Adapter<RvItemChatViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvItemChatViewHolder =
         RvItemChatViewHolder(
             RvitemChatBinding.inflate(
@@ -54,13 +54,8 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
         )
 
     override fun onBindViewHolder(holder: RvItemChatViewHolder, position: Int) {
-        val data = userRoom[position]
+        val data = chatData[position]
         holder.setData(data)
-        var name : String = ""
-        MyApplication.db.collection("profile")
-            .whereEqualTo("email", data.sender)
-            .get()
-            .addOnSuccessListener {document -> for (field in document) name = field["name"] as String}
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
