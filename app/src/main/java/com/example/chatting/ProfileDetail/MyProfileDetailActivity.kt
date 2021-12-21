@@ -36,7 +36,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
     val database = Firebase.database
     val chatRoomRef = database.getReference("chatRoomUser")
     var chatRoomId: String? = null
-    private val chatRoomUser = mutableListOf<String>()
     var user1: String? = null
     var user2: String? = null
 
