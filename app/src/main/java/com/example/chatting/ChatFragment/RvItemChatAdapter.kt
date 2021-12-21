@@ -1,13 +1,12 @@
 package com.example.chatting.ChatFragment
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.chatting.ChatRoomActivity
+import com.example.chatting.ChatRoom.ChatRoomActivity
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.MyApplication
 import com.example.chatting.R

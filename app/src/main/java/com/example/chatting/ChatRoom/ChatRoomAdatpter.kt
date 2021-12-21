@@ -1,20 +1,13 @@
-package com.example.chatting
+package com.example.chatting.ChatRoom
 
-import android.content.ClipData
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.os.Build
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.Model.Messages
+import com.example.chatting.MyApplication
+import com.example.chatting.R
 import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
 import java.lang.RuntimeException

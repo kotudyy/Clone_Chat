@@ -12,8 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.chatting.ChatRoomActivity
-import com.example.chatting.Model.Messages
+import com.example.chatting.ChatRoom.ChatRoomActivity
 import com.example.chatting.Model.UserData
 import com.example.chatting.Model.chatRoomUser
 import com.example.chatting.MyApplication
@@ -311,7 +310,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         user1 = null
                         user2 = null
                         for (chatRoomUserData in chatRoomInfo.children) {
-                            if (chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
+                            if (user1 == null && chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
                                 user1 = chatRoomUserData.value as String
                             } else if (chatRoomUserData.value == userData.email) {
                                 user2 = chatRoomUserData.value as String
