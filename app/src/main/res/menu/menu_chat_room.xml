@@ -5,7 +5,7 @@
 
     <group>
         <item
-            android:id="@+id/chatting_menu_edit"
+            android:id="@+id/chatting_menu_exit"
             android:title="채팅방 나가기" />
     </group>
 
