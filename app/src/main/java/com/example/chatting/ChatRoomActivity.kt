@@ -97,7 +97,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 val userRoom = UserRoom(
-                    chatroomid = chatRoomId!!,
+                    //chatroomid = chatRoomId!!,
                     lastmessage = msg,
                     timestamp = time ,
                     sender = MyApplication.auth.currentUser?.email.toString()
@@ -106,7 +106,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 Messages.add(messageData)
                 UserRoom.add(userRoom)
                 messageRef.child("$chatRoomId").push().setValue(messageData)
-                userRoomRef.child("$chatRoomId").push().setValue(userRoom)
+                userRoomRef.child("$chatRoomId").setValue(userRoom)
             }
         }
     }
