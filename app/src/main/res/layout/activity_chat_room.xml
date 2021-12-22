@@ -6,29 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ChatRoomActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chatroom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:title="userName"
-                android:background="@color/sky"
-                android:theme="@style/Toolbar"
-                app:contentInsetStartWithNavigation="0dp" />
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/sky"
+        android:theme="@style/Toolbar"
+        app:layout_collapseMode="pin"
+        app:title="userName" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_chatroom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_send"
-        android:layout_below="@+id/appbar"
+        android:layout_below="@+id/chatroom_toolbar"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
@@ -56,6 +48,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:src="@drawable/icon_send"
-        android:clickable="false"/>
+        android:clickable="false"
+        android:src="@drawable/icon_send" />
 </RelativeLayout>
