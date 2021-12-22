@@ -1,7 +1,9 @@
 package com.example.chatting.ProfileDetail
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,16 +11,18 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatting.ChatRoomActivity
-import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserData
 import com.example.chatting.Model.chatRoomUser
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
+import com.example.chatting.util.URIPathHelper
 import com.example.chatting.util.myCheckPermission
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,14 +35,14 @@ import java.lang.Exception
 class MyProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var userData: UserData
-    private lateinit var filePath: String
     private lateinit var filename: String
-    val database = Firebase.database
-    val chatRoomRef = database.getReference("chatRoomUser")
+    val chatRoomRef = Firebase.database.getReference("chatRoomUser")
     var chatRoomId: String? = null
-    private val chatRoomUser = mutableListOf<String>()
     var user1: String? = null
     var user2: String? = null
+    private lateinit var galleryIntent: ActivityResultLauncher<Intent>
+    private var profileImgFilePath: String? = null
+    private var backgroundImgFilePath: String? = null
 
     val binding by lazy { ActivityMyProfileDetailBinding.inflate(layoutInflater) }
 
@@ -47,6 +51,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
         userData = intent.getParcelableExtra<UserData>("userData")!!
+        Log.d("test", userData.toString())
         editState(checkProfileUser())
         binding()
 
@@ -57,63 +62,61 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
 
         //갤러리 인텐트
-        val galleryIntent =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        galleryIntent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+
+            if(it.resultCode == RESULT_OK){
+
                 val cursor = contentResolver.query(
                     it.data!!.data as Uri,
-                    arrayOf<String>(MediaStore.Images.Media.DATA), null, null, null
+                    arrayOf(MediaStore.Images.Media.DATA), null, null, null
                 )
 
-                cursor?.moveToFirst().let {
-                    filePath = cursor?.getString(0) as String
-                }
-                if (it.resultCode == RESULT_OK) {
-                    try {
-                        saveStorage(filename)
-                        if (filename == "profile") {
-                            Glide
-                                .with(this)
-                                .load(it.data!!.data)
-                                .apply(RequestOptions().override(150, 150))
-                                .centerCrop()
-                                .into(binding.myProfileImage)
-                        } else if (filename == "background") {
-                            Glide
-                                .with(this)
-                                .load(it.data!!.data)
-                                .centerCrop()
-                                .into(binding.myProfileBackgroundImg)
+                //val uriPathHelper = URIPathHelper()
+
+                when(filename){
+                    "profile" -> {
+                        Glide
+                            .with(this)
+                            .load(it.data!!.data)
+                            .apply(RequestOptions().override(150, 150))
+                            .centerCrop()
+                            .into(binding.myProfileImage)
+
+                        cursor?.moveToFirst().let{
+                            profileImgFilePath = cursor?.getString(0) as String
                         }
 
-                    } catch (e: Exception) {
-                        Log.d("grusie", "exception : $e")
+                        //profileImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
+
+                        Log.d("test-galleryintent", profileImgFilePath!!)
                     }
 
+                    "background" -> {
+                        Glide
+                            .with(this)
+                            .load(it.data!!.data)
+                            .centerCrop()
+                            .into(binding.myProfileBackEdit)
+
+                        cursor?.moveToFirst().let{
+                            backgroundImgFilePath = cursor?.getString(0) as String
+                        }
+
+                        Log.d("Test", backgroundImgFilePath!!)
+                    }
                 }
             }
+        }
+
 
         //프로필 사진 클릭 시
         binding.myProfileImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.type = "image/*"
-
-            try {
-                galleryIntent.launch(intent)
-            } catch (e: Exception) {
-                myCheckPermission(this)
-                filename = "profile"
-                galleryIntent.launch(intent)
-            }
+            launchGalleryApp("profile")
         }
 
         //배경 사진 편집 클릭 시
         binding.myProfileEditCamera.setOnClickListener {
-            val intent =
-                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.type = "image/*"
-            filename = "background"
-            galleryIntent.launch(intent)
-
+            launchGalleryApp("background")
         }
 
 
@@ -141,32 +144,74 @@ class MyProfileDetailActivity : AppCompatActivity() {
             if (newName.isEmpty()) {
                 Toast.makeText(this, "이름을 다시 설정해주세요.", Toast.LENGTH_SHORT).show()
             } else {
+
+                saveImages()
+                //setImages()
+
                 updateAndGetValue("name", newName)
                 updateAndGetValue("statusMsg", newStatusMsg)
                 updateAndGetValue("profileMusic", newProfileMusic)
+
                 editState(checkProfileUser())
             }
         }
-
     }
-        private fun binding() {
+
+    private fun setImages() {
+
+        val imgRefProfile =
+            MyApplication.storage.reference.child("${userData.email}/profile")
+        Log.d("test-setImages", "$imgRefProfile")
+
+        Glide
+            .with(this@MyProfileDetailActivity)
+            .load(imgRefProfile)
+            .error(R.drawable.img_profile)
+            .into(binding.myProfileImage)
+
+        val imgRefBackground =
+            MyApplication.storage.reference.child("${userData.email}/background")
+
+        Glide
+            .with(this@MyProfileDetailActivity)
+            .load(imgRefBackground)
+            .into(binding.myProfileBackgroundImg)
+    }
+
+    private fun saveImages() {
+        if(profileImgFilePath != null){
+            saveStorage("profile", profileImgFilePath!!)
+        }
+
+        if(backgroundImgFilePath != null){
+            saveStorage("background", backgroundImgFilePath!!)
+        }
+    }
+
+    private fun launchGalleryApp(imageKind: String) {
+
+        myCheckPermission(this)
+
+        if(ContextCompat.checkSelfPermission(
+                this@MyProfileDetailActivity,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED){
+
+                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    intent.type = "image/*"
+                    filename = imageKind
+                    galleryIntent.launch(intent)
+
+        }
+    }
+
+    private fun binding() {
             binding.run {
                 myProfileName.text = userData.name
                 myProfileStatusMsg.text = userData.statusMsg
                 myProfileMusic.text = userData.profileMusic
 
-                val imgRefProfile =
-                    MyApplication.storage.reference.child("${userData.email}/profile")
-                Glide.with(this@MyProfileDetailActivity)
-                    .load(imgRefProfile)
-                    .error(R.drawable.img_profile)
-                    .into(myProfileImage)
-
-                val imgRefBackground =
-                    MyApplication.storage.reference.child("${userData.email}/background")
-                Glide.with(this@MyProfileDetailActivity)
-                    .load(imgRefBackground)
-                    .into(myProfileBackgroundImg)
+                setImages()
             }
         }
 
@@ -179,9 +224,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
             }
 
         private fun updateAndGetValue(field: String, newValue: String) {
-
-            //생각해보니,,, userData RV adapter가 database에 있는 정보를 가져오면 친구들 프로필 수정도 내가 하는 것이고
-            //그럼 본인이 친구들 database에 접근하는 것인데,,, 이걸 방지하려면 개인이 기억하는 정보 저장 공간이 따로 필요할 것
 
             MyApplication.db.collection("profile")
                 .document(userData.email)
@@ -229,6 +271,9 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         myProfileBackEdit.visibility = View.VISIBLE
                         myProfileSaveEdit.visibility = View.VISIBLE
                         myProfileMusicEdit.visibility = View.VISIBLE
+                        myProfileEditCamera.visibility = View.VISIBLE
+
+                        myProfileImage.isEnabled = true
                     }
 
                     val hintName = binding.myProfileName.text
@@ -238,6 +283,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     binding.myProfileNameEdit.setText(hintName)
                     binding.myProfileStatusMsgEdit.setText(hintStatusMsg)
                     binding.myProfileMusicEdit.setText(hintProfileMusic)
+
+
 
                 }
 
@@ -256,6 +303,9 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         myProfileBackEdit.visibility = View.GONE
                         myProfileSaveEdit.visibility = View.GONE
                         myProfileMusicEdit.visibility = View.GONE
+                        myProfileEditCamera.visibility = View.GONE
+
+                        myProfileImage.isEnabled = false
                     }
                 }
 
@@ -274,22 +324,28 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         myProfileBackEdit.visibility = View.GONE
                         myProfileSaveEdit.visibility = View.GONE
                         myProfileMusicEdit.visibility = View.GONE
+                        myProfileEditCamera.visibility = View.GONE
+
+                        myProfileImage.isEnabled = false
                     }
                 }
             }
         }
 
-        private fun saveStorage(imageKind: String) {
+        private fun saveStorage(imageKind: String, filePath: String) {
             val storage = MyApplication.storage
             val storageRef = storage.reference
             val imgRef =
                 storageRef.child("${MyApplication.auth.currentUser?.email}/${imageKind}")
+            Log.d("test-saveStorage", "$imgRef")
             val file = Uri.fromFile(File(filePath))
+
             imgRef
                 .putFile(file)
                 .addOnSuccessListener {
-                    Log.d("grusie", "저장됨")
                     Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    setImages()
                 }
                 .addOnFailureListener {
                     Log.d("grusie", "error : $it")
