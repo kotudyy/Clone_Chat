@@ -1,7 +1,7 @@
 package com.example.chatting.Model
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class UserData(

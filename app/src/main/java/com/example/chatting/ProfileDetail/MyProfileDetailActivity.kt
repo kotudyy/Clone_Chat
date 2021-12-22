@@ -368,7 +368,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         user1 = null
                         user2 = null
                         for (chatRoomUserData in chatRoomInfo.children) {
-                            if (chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
+                            if (user1 == null && chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
                                 user1 = chatRoomUserData.value as String
                             } else if (chatRoomUserData.value == userData.email) {
                                 user2 = chatRoomUserData.value as String
