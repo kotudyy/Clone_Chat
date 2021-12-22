@@ -1,6 +1,6 @@
 package com.example.chatting.Model
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 //채팅방별 유저
 @Parcelize

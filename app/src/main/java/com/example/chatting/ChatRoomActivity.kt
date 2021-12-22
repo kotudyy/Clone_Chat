@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.ChatFragment.ChatFragment
 import com.example.chatting.ChatFragment.RvItemChatAdapter
 import com.example.chatting.Model.MessageData
@@ -41,7 +42,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private val UserRoom = mutableListOf<UserRoom>()
     lateinit var adapter: ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
-    var messageData = mutableListOf<MessageData>()
+    lateinit var myRecyclerView: RecyclerView
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +60,11 @@ class ChatRoomActivity : AppCompatActivity() {
             binding.chatroomToolbar.setTitle(userName)
         } catch (e: Exception) {
         }
+
+        adapter = ChatRoomAdatpter(Messages)
+        binding.rvChatroom.adapter = adapter
+        binding.rvChatroom.layoutManager = LinearLayoutManager(this)
+        myRecyclerView = binding.rvChatroom
         loadChatData()
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
@@ -93,9 +99,6 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
 
-        adapter = ChatRoomAdatpter(Messages)
-        binding.rvChatroom.adapter = adapter
-        binding.rvChatroom.layoutManager = LinearLayoutManager(this)
 
         binding.btnSend.setOnClickListener {
             val msg = binding.etMessage.text.toString()   //msg
@@ -116,6 +119,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 UserRoom.add(userRoom)
                 messageRef.child("$chatRoomId").push().setValue(messageData)
                 userRoomRef.child("$chatRoomId").setValue(userRoom)
+                myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
         }
     }
@@ -151,6 +155,8 @@ class ChatRoomActivity : AppCompatActivity() {
                         }
                     }
                 }
+                adapter.notifyDataSetChanged()
+                myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
 
             override fun onCancelled(error: DatabaseError) {
