@@ -38,6 +38,11 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
             binding.tvChatTimestamp.text = sdf.format(data.timestamp)
         }
     }
+
+    fun getUsername(): String {
+        return binding.tvChatUsername.text.toString()
+    }
+
 }
 
 
@@ -60,6 +65,7 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
             intent.putExtra("chatRoomId", data.chatroomid)
+            intent.putExtra("userName", holder.getUsername())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             ContextCompat.startActivity(holder.itemView.context, intent, null)
         }
@@ -67,4 +73,17 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
 
     override fun getItemCount(): Int = chatData.size
 
+    fun removeData(position: Int) {
+        MyApplication.realtime.child("chatRoomUser").child(chatData[position].chatroomid.toString())
+            .removeValue()
+
+        MyApplication.realtime.child("UserRoom").child(chatData[position].chatroomid.toString())
+            .removeValue()
+
+        MyApplication.realtime.child("Messages").child(chatData[position].chatroomid.toString())
+            .removeValue()
+
+        chatData.removeAt(position)
+        notifyItemRemoved(position)
+    }
 }

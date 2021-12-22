@@ -326,7 +326,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     if (chatRoomId == null) {
                         createChatRoomUser()
                     }
-                    openChatRoom(this@MyProfileDetailActivity)
+                    else openChatRoom(this@MyProfileDetailActivity)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
