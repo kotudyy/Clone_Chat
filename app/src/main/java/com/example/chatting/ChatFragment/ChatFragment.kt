@@ -128,9 +128,11 @@ class ChatFragment : Fragment() {
                         user1 = null
                         user2 = null
                         for (chatRoomUserData in chatRoomInfo.children) {
-                            if (chatRoomUserData.value == userEmail) {
+                            if (user1 == null && chatRoomUserData.value == userEmail) {
                                 user1 = chatRoomUserData.value as String
                             } else if (chatRoomUserData.value != userEmail) {
+                                user2 = chatRoomUserData.value as String
+                            } else if (user1 != null && chatRoomUserData.value == userEmail) {
                                 user2 = chatRoomUserData.value as String
                             }
 
