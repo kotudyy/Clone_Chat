@@ -20,8 +20,7 @@
             android:exported="false" />
         <activity
             android:name=".ChatRoomActivity"
-            android:exported="false"
-            android:parentActivityName=".ChatListActivity"/>
+            android:exported="false"/>
         <activity
             android:name=".Login.LoginActivity"
             android:exported="true" >

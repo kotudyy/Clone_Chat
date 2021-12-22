@@ -2,6 +2,7 @@ package com.example.chatting
 
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +10,14 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.chatting.ChatFragment.ChatFragment
+import com.example.chatting.ChatFragment.RvItemChatAdapter
 import com.example.chatting.Model.MessageData
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
@@ -25,13 +33,13 @@ import java.lang.Exception
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
     lateinit var userEmail: String
-    var chatRoomId:String ?= null
+    var chatRoomId: String? = null
     private val database = Firebase.database
     private val messageRef = database.getReference("Messages")
     private val userRoomRef = database.getReference("UserRoom")
     private val Messages = mutableListOf<Messages>()
     private val UserRoom = mutableListOf<UserRoom>()
-    lateinit var adapter : ChatRoomAdatpter
+    lateinit var adapter: ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
     var messageData = mutableListOf<MessageData>()
 
@@ -41,16 +49,16 @@ class ChatRoomActivity : AppCompatActivity() {
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.chatroomToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
+        try { userEmail = intent.getSerializableExtra("userEmail") as String } catch (e: Exception) { }
+        try { chatRoomId = intent.getStringExtra("chatRoomId") as String } catch (e: Exception) { }
         try {
-            userName = intent.getSerializableExtra("userName") as String
-            binding.toolbar.setTitle(userName)
-        } catch (e:Exception){}
-        try { userEmail = intent.getSerializableExtra("userEmail") as String }catch (e:Exception){}
-        try{ chatRoomId = intent.getStringExtra("chatRoomId") as String } catch (e:Exception){}
+            userName = intent.getStringExtra("userName") as String
+            binding.chatroomToolbar.setTitle(userName)
+        } catch (e: Exception) {
+        }
         loadChatData()
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
@@ -63,6 +71,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     binding.btnSend.isEnabled = false
                 }
             }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (binding.etMessage.length() > 0) {
                     binding.btnSend.setBackgroundColor(applicationContext.resources.getColor(R.color.yellow))
@@ -72,6 +81,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     binding.btnSend.isEnabled = false
                 }
             }
+
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (binding.etMessage.length() > 0) {
                     binding.btnSend.setBackgroundColor(applicationContext.resources.getColor(R.color.yellow))
@@ -87,19 +97,18 @@ class ChatRoomActivity : AppCompatActivity() {
         binding.rvChatroom.adapter = adapter
         binding.rvChatroom.layoutManager = LinearLayoutManager(this)
 
-        binding.btnSend.setOnClickListener{
+        binding.btnSend.setOnClickListener {
             val msg = binding.etMessage.text.toString()   //msg
             val time = System.currentTimeMillis()
-            if(msg != null) {
+            if (msg != null) {
                 val messageData = Messages(
                     message = msg,
-                    timestamp = time ,
+                    timestamp = time,
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 val userRoom = UserRoom(
-                    //chatroomid = chatRoomId!!,
                     lastmessage = msg,
-                    timestamp = time ,
+                    timestamp = time,
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 binding.etMessage.text.clear()
@@ -112,27 +121,27 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun loadChatData() {
-        val messagesDataListener = object: ValueEventListener {
+        val messagesDataListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var message = ""
                 var timestamp: Long = 0
                 var sender = ""
-                for(chatRooms in snapshot.children){
-                    if(chatRooms.key as String == chatRoomId) {
+                for (chatRooms in snapshot.children) {
+                    if (chatRooms.key as String == chatRoomId) {
                         for (messageDoc in chatRooms.children) {
-                                for (messages in messageDoc.children) {
-                                    when (messages.key) {
-                                        "message" -> {
-                                            message = messages.value as String
-                                        }
-                                        "timestamp" -> {
-                                            timestamp = messages.value as Long
-                                        }
-                                        "sender" -> {
-                                            sender = messages.value as String
-                                        }
+                            for (messages in messageDoc.children) {
+                                when (messages.key) {
+                                    "message" -> {
+                                        message = messages.value as String
+                                    }
+                                    "timestamp" -> {
+                                        timestamp = messages.value as Long
+                                    }
+                                    "sender" -> {
+                                        sender = messages.value as String
                                     }
                                 }
+                            }
                             val msgData = Messages(
                                 message = message,
                                 timestamp = timestamp,
@@ -143,11 +152,58 @@ class ChatRoomActivity : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Log.d("grusie","failed")
+                Log.d("grusie", "failed")
             }
         }
         messageRef.addListenerForSingleValueEvent(messagesDataListener)
+    }
+
+    //액션버튼 메뉴 액션바에 집어 넣기
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_chat_room, menu)
+        return true
+    }
+
+    //액션버튼 클릭 했을 때
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId){
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+            R.id.chatting_menu_exit -> {
+                AlertDialog.Builder(this).apply {
+                    setTitle("확인")
+                    setMessage("채팅방을 나가시겠습니까?")
+                    setPositiveButton(
+                        "OK",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            MyApplication.realtime.child("chatRoomUser")
+                                .child(chatRoomId.toString())
+                                .removeValue()
+
+                            MyApplication.realtime.child("UserRoom")
+                                .child(chatRoomId.toString())
+                                .removeValue()
+
+                            MyApplication.realtime.child("Messages")
+                                .child(chatRoomId.toString())
+                                .removeValue()
+                            finish()
+                        })
+                    setNegativeButton(
+                        "Cancel",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            dialog.dismiss()
+                        })
+                    show()
+                }
+                return super.onOptionsItemSelected(item)
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 }
 

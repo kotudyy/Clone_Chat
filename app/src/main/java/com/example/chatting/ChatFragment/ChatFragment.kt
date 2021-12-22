@@ -1,34 +1,30 @@
 package com.example.chatting.ChatFragment
 
-import android.R.attr
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.chatting.Model.UserData
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import android.R.attr.data
-import java.util.*
-import kotlin.Comparator
 
 
 class ChatFragment : Fragment() {
 
     lateinit var binding: FragmentChatBinding
 
-    val chatListDatas = mutableListOf<UserRoom>()
+    var chatListDatas = mutableListOf<UserRoom>()
     var userEmail = MyApplication.auth.currentUser?.email!!
     var adapter = RvItemChatAdapter(chatListDatas)
 
@@ -73,14 +69,51 @@ class ChatFragment : Fragment() {
             }
         }
 
-        searchChatRoom()
-        initDogRecyclerView()
+//        // 스와이프 시 삭제
+//        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback (
+//            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
+//        ){
+//            override fun onMove(
+//                recyclerView: RecyclerView,
+//                viewHolder: RecyclerView.ViewHolder,
+//                target: RecyclerView.ViewHolder
+//            ): Boolean {
+//                TODO("Not yet implemented")
+//            }
+////            override fun onMove(
+////                recyclerView: RecyclerView,
+////                viewHolder: RecyclerView.ViewHolder,
+////                target: RecyclerView.ViewHolder
+////            ): Boolean {
+////                val fromPos: Int = viewHolder.adapterPosition
+////                val toPos: Int = target.adapterPosition
+////                rvAdapter.swapData(fromPos, toPos)
+////                return true
+////            }
+//
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+//                adapter.removeData(viewHolder.layoutPosition)
+////                chatListDatas.removeAt(viewHolder.layoutPosition)
+////                adapter.notifyDataSetChanged()
+//                refreshFragment(this@ChatFragment, parentFragmentManager)
+//            }
+//        }
+//
+//        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.rvChat)
+
 
         return binding.root
     }
 
-    fun initDogRecyclerView() {
+    override fun onStart() {
+        super.onStart()
 
+        chatListDatas = mutableListOf<UserRoom>()
+        searchChatRoom()
+        initDogRecyclerView()
+    }
+
+    fun initDogRecyclerView() {
         adapter.chatData = chatListDatas
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(context) //레이아웃 매니저 연결
@@ -121,6 +154,7 @@ class ChatFragment : Fragment() {
     fun getChatRoomList(chatroomid: String, chatroomuser: String) {
         MyApplication.realtime.child("UserRoom").child(chatroomid)
             .addValueEventListener(object : ValueEventListener {
+                @SuppressLint("NotifyDataSetChanged")
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var lastmessage = ""
                     var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
