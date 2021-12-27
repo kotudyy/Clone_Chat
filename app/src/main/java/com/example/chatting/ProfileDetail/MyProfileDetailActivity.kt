@@ -59,6 +59,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         binding.myProfileBack.setOnClickListener { finish() }
         binding.myProfileBackEdit.setOnClickListener {
             editState(checkProfileUser())
+            setImages()
         }
 
         //갤러리 인텐트
@@ -66,28 +67,19 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
             if(it.resultCode == RESULT_OK){
 
-                val cursor = contentResolver.query(
-                    it.data!!.data as Uri,
-                    arrayOf(MediaStore.Images.Media.DATA), null, null, null
-                )
-
-                //val uriPathHelper = URIPathHelper()
+                val uriPathHelper = URIPathHelper()
 
                 when(filename){
+
                     "profile" -> {
                         Glide
                             .with(this)
                             .load(it.data!!.data)
+                            .error(R.drawable.img_profile)
                             .apply(RequestOptions().override(150, 150))
-                            .centerCrop()
                             .into(binding.myProfileImage)
 
-                        cursor?.moveToFirst().let{
-                            profileImgFilePath = cursor?.getString(0) as String
-                        }
-
-                        //profileImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
-
+                        profileImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
                         Log.d("test-galleryintent", profileImgFilePath!!)
                     }
 
@@ -96,12 +88,9 @@ class MyProfileDetailActivity : AppCompatActivity() {
                             .with(this)
                             .load(it.data!!.data)
                             .centerCrop()
-                            .into(binding.myProfileBackEdit)
+                            .into(binding.myProfileBackgroundImg)
 
-                        cursor?.moveToFirst().let{
-                            backgroundImgFilePath = cursor?.getString(0) as String
-                        }
-
+                        backgroundImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
                         Log.d("Test", backgroundImgFilePath!!)
                     }
                 }
@@ -159,23 +148,33 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     private fun setImages() {
 
-        val imgRefProfile =
-            MyApplication.storage.reference.child("${userData.email}/profile")
-        Log.d("test-setImages", "$imgRefProfile")
+        MyApplication.storage.reference.child("${userData.email}/profile")
+            .downloadUrl
+            .addOnSuccessListener {
+                Glide
+                    .with(this@MyProfileDetailActivity)
+                    .load(it)
+                    .apply(RequestOptions().override(150, 150))
+                    .error(R.drawable.img_profile)
+                    .into(binding.myProfileImage)
+            }
 
-        Glide
-            .with(this@MyProfileDetailActivity)
-            .load(imgRefProfile)
-            .error(R.drawable.img_profile)
-            .into(binding.myProfileImage)
+            .addOnFailureListener {
+                Glide
+                    .with(this@MyProfileDetailActivity)
+                    .load(R.drawable.img_profile)
+                    .into(binding.myProfileImage)
+            }
 
-        val imgRefBackground =
-            MyApplication.storage.reference.child("${userData.email}/background")
-
-        Glide
-            .with(this@MyProfileDetailActivity)
-            .load(imgRefBackground)
-            .into(binding.myProfileBackgroundImg)
+        MyApplication.storage.reference.child("${userData.email}/background")
+            .downloadUrl
+            .addOnSuccessListener {
+                Glide
+                    .with(this@MyProfileDetailActivity)
+                    .load(it)
+                    .centerCrop()
+                    .into(binding.myProfileBackgroundImg)
+            }
     }
 
     private fun saveImages() {
@@ -216,7 +215,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
 
         private fun checkProfileUser(): String =
-            //내 프로필인 경우 vs 내 프로필이 아닌 경우
+
             if (userData.email == MyApplication.auth.currentUser?.email) {
                 "myProfile"
             } else {
@@ -342,7 +341,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
             imgRef
                 .putFile(file)
-                .addOnSuccessListener {
+                .addOnSuccessListener { taskSnapShot ->
                     Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
 
                     setImages()
