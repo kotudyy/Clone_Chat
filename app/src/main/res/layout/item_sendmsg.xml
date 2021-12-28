@@ -7,6 +7,16 @@
     android:paddingVertical="5dp">
 
     <TextView
+        android:id="@+id/tv_sendmsg_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="10dp"
+        android:textColor="@color/yellow"
+        app:layout_constraintBottom_toTopOf="@+id/tv_chatroom_sendtime"
+        app:layout_constraintEnd_toEndOf="@+id/tv_chatroom_sendtime" />
+
+    <TextView
         android:id="@+id/tv_chatroom_sendmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
