@@ -20,6 +20,7 @@
             android:exported="false" />
         <activity
             android:name=".ChatRoomActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"/>
         <activity
             android:name=".Login.LoginActivity"
