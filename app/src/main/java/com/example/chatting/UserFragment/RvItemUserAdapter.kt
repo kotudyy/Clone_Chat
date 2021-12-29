@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.Model.UserData
@@ -24,11 +25,14 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
             statusMessage.text = data.statusMsg
             profileMusic.text = data.profileMusic
 
-            val imgRef = MyApplication.storage.reference.child("${data.email}/profile")
-            Glide.with(binding.root.context)
-            .load(imgRef)
-            .error(R.drawable.img_profile)
-            .into(ivChatProfile)
+            MyApplication.storage.reference.child("${data.email}/profile")
+                .downloadUrl
+                .addOnSuccessListener {
+                    Glide.with(binding.root.context)
+                        .load(it)
+                        .error(R.drawable.img_profile)
+                        .into(ivChatProfile)
+                }
         }
     }
 
@@ -45,9 +49,6 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
             )
         )
 
-    override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
-    }
     override fun onBindViewHolder(holder: RvItemUserViewHolder, position: Int) {
         val data = userData[position]
         holder.setData(data)

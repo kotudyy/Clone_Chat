@@ -8,5 +8,5 @@ data class UserData(
     var email: String,
     var name: String,
     var statusMsg: String,
-    var profileMusic: String
+    var profileMusic: String,
 ) : Parcelable
