@@ -1,20 +1,14 @@
 package com.example.chatting
 
-import android.content.ClipData
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.os.Build
-import android.os.Parcelable
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.Model.Messages
+import com.example.chatting.databinding.ItemDatetxtBinding
 import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
 import java.lang.RuntimeException
@@ -24,6 +18,8 @@ import java.text.SimpleDateFormat
 class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var context : Context
     lateinit var time : String
+    lateinit var lastDate : String
+    lateinit var currentDate : String
     var type : Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -35,6 +31,10 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
             1 -> {
                 val binding = ItemReceivemsgBinding.inflate(LayoutInflater.from(parent.context),parent,false)
                 receiveViewHolder(binding)
+            }
+            2 -> {
+                val binding = ItemDatetxtBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+                dateViewHolder(binding)
             }
             else -> throw RuntimeException("Error")
         }
@@ -65,21 +65,33 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
             }
         }
     }
+    inner class dateViewHolder(private val binding: ItemDatetxtBinding) :RecyclerView.ViewHolder(binding.root){
+        fun bind(data : Messages){
+            binding.apply{
+                tvChatroomDatetxt.text = SimpleDateFormat("yyyy년 MM월 dd일").format(data.timestamp)
+            }
+        }
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val data = messages[position]
         time = SimpleDateFormat("hh:mm").format(data.timestamp)
+
         when (type){
             0 -> (holder as sendViewHolder).bind(data)
             1 -> (holder as receiveViewHolder).bind(data)
+            2 -> (holder as dateViewHolder).bind(data)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         if(messages[position].sender == MyApplication.auth.currentUser?.email)
             type = 0
+        else if(messages[position].sender == "")
+            type = 2
         else
             type = 1
+
         return type
     }
 
@@ -87,6 +99,4 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
         if(messages!=null) return messages.size
         else return 0
     }
-
-
 }
