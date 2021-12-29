@@ -3,7 +3,6 @@ package com.example.chatting
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,24 +11,21 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatting.ChatFragment.ChatFragment
-import com.example.chatting.ChatFragment.RvItemChatAdapter
-import com.example.chatting.Model.MessageData
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import kotlin.properties.Delegates
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
@@ -43,12 +39,15 @@ class ChatRoomActivity : AppCompatActivity() {
     lateinit var adapter: ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
     lateinit var myRecyclerView: RecyclerView
+    var lastDate:Long = 0
+    var currentDate:Long = 0
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         setSupportActionBar(binding.chatroomToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -65,6 +64,8 @@ class ChatRoomActivity : AppCompatActivity() {
         binding.rvChatroom.adapter = adapter
         binding.rvChatroom.layoutManager = LinearLayoutManager(this)
         myRecyclerView = binding.rvChatroom
+
+        adapter.notifyDataSetChanged()
         loadChatData()
 
         binding.etMessage.addTextChangedListener(object : TextWatcher {
@@ -99,11 +100,16 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
 
+        myRecyclerView.addOnLayoutChangeListener { view, i, i2, i3, bottom, i5, i6, i7, oldBottom ->
+            if(bottom < oldBottom)
+                binding.rvChatroom.scrollBy(0, oldBottom - bottom)
+        }
 
+        //메세지 보내기 버튼 클릭시
         binding.btnSend.setOnClickListener {
             val msg = binding.etMessage.text.toString()   //msg
             val time = System.currentTimeMillis()
-            if (msg != null) {
+            if (msg != "") {
                 val messageData = Messages(
                     message = msg,
                     timestamp = time,
@@ -115,10 +121,13 @@ class ChatRoomActivity : AppCompatActivity() {
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
                 binding.etMessage.text.clear()
+                currentDate = messageData.timestamp
+                dateCalc()
                 Messages.add(messageData)
                 UserRoom.add(userRoom)
                 messageRef.child("$chatRoomId").push().setValue(messageData)
                 userRoomRef.child("$chatRoomId").setValue(userRoom)
+                adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
         }
@@ -151,7 +160,13 @@ class ChatRoomActivity : AppCompatActivity() {
                                 timestamp = timestamp,
                                 sender = sender
                             )
+                            dateCalc()
                             Messages.add(msgData)
+                            if(Messages.size>=2)
+                                lastDate = Messages[Messages.size-2].timestamp
+                            else
+                                lastDate = 0
+                            currentDate = Messages[Messages.size-1].timestamp
                         }
                     }
                 }
@@ -163,7 +178,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 Log.d("grusie", "failed")
             }
         }
-        messageRef.addListenerForSingleValueEvent(messagesDataListener)
+        messageRef.addValueEventListener(messagesDataListener)
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
@@ -209,6 +224,19 @@ class ChatRoomActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun dateCalc() {
+        if(SimpleDateFormat("yyyy년 MM월 dd일").format(lastDate) < SimpleDateFormat("yyyy년 MM월 dd일").format(currentDate)){
+            lastDate = currentDate
+            Messages.add(
+                Messages(
+                message = "",
+                timestamp = currentDate,
+                sender = ""
+                )
+            )
         }
     }
 }
