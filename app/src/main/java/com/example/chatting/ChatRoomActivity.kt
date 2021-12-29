@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -22,6 +23,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.text.SimpleDateFormat
@@ -39,8 +41,9 @@ class ChatRoomActivity : AppCompatActivity() {
     lateinit var adapter: ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
     lateinit var myRecyclerView: RecyclerView
-    var lastDate:Long = 0
-    var currentDate:Long = 0
+    var lastDate:Long ?= 0
+    var currentDate:Long ?= 0
+    var loadMsg : Messages ?= null
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,8 +125,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 )
                 binding.etMessage.text.clear()
                 currentDate = messageData.timestamp
-                dateCalc()
-                Messages.add(messageData)
                 UserRoom.add(userRoom)
                 messageRef.child("$chatRoomId").push().setValue(messageData)
                 userRoomRef.child("$chatRoomId").setValue(userRoom)
@@ -132,53 +133,39 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun loadChatData() {
-        val messagesDataListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                var message = ""
-                var timestamp: Long = 0
-                var sender = ""
-                for (chatRooms in snapshot.children) {
-                    if (chatRooms.key as String == chatRoomId) {
-                        for (messageDoc in chatRooms.children) {
-                            for (messages in messageDoc.children) {
-                                when (messages.key) {
-                                    "message" -> {
-                                        message = messages.value as String
-                                    }
-                                    "timestamp" -> {
-                                        timestamp = messages.value as Long
-                                    }
-                                    "sender" -> {
-                                        sender = messages.value as String
-                                    }
-                                }
-                            }
-                            val msgData = Messages(
-                                message = message,
-                                timestamp = timestamp,
-                                sender = sender
-                            )
-                            dateCalc()
-                            Messages.add(msgData)
-                            if(Messages.size>=2)
-                                lastDate = Messages[Messages.size-2].timestamp
-                            else
-                                lastDate = 0
-                            currentDate = Messages[Messages.size-1].timestamp
-                        }
-                    }
-                }
+        val messagesDataListener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                lastDate = loadMsg?.timestamp
+                loadMsg = snapshot.getValue<Messages>()!!
+                currentDate = loadMsg?.timestamp
+                dateCalc()
+                Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
 
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                snapshot.getValue<Messages>()?.let { adapter.removeItem(it) }
+                if(Messages[Messages.size-1].sender == ""){
+                    Messages.removeAt(Messages.size-1)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
             override fun onCancelled(error: DatabaseError) {
-                Log.d("grusie", "failed")
+                TODO("Not yet implemented")
             }
         }
-        messageRef.addValueEventListener(messagesDataListener)
+        messageRef.child("$chatRoomId").addChildEventListener(messagesDataListener)
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
@@ -228,16 +215,24 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     fun dateCalc() {
-        if(SimpleDateFormat("yyyy년 MM월 dd일").format(lastDate) < SimpleDateFormat("yyyy년 MM월 dd일").format(currentDate)){
-            lastDate = currentDate
-            Messages.add(
-                Messages(
-                message = "",
-                timestamp = currentDate,
-                sender = ""
-                )
-            )
+        if(lastDate != null && currentDate !=null) {
+            if(SimpleDateFormat("yyyy년 MM월 dd일").format(lastDate) < SimpleDateFormat("yyyy년 MM월 dd일").format(currentDate)) {
+                lastDate = currentDate
+                addDate()
+            }
         }
+        else if(lastDate == null){
+            addDate()
+        }
+    }
+
+    fun addDate() {
+        Messages.add(
+            Messages(
+                message = "",
+                timestamp = currentDate!!,
+                sender = ""
+            ))
     }
 }
 
