@@ -1,7 +1,6 @@
 package com.example.chatting.ChatFragment
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -13,12 +12,18 @@ import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemChatBinding
 import java.text.SimpleDateFormat
+import java.util.*
 
 class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun setData(data: UserRoom) {
+        val cal = Calendar.getInstance()
+        cal.time = Date()
 
-        val sdf = SimpleDateFormat("MM.dd hh:mm")
+        val today = cal.time
+        cal.add(Calendar.DATE, -1)
+        val yesterday = cal.time
+        cal.add(Calendar.DATE, 1)
 
         binding.apply {
             MyApplication.db.collection("profile")
@@ -35,7 +40,29 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 .into(ivChatProfile)
 
             binding.tvChatPreviewmsg.text = data.lastmessage
-            binding.tvChatTimestamp.text = sdf.format(data.timestamp)
+
+            val year = SimpleDateFormat("yyyy")
+            val date = SimpleDateFormat("MM.dd")
+
+            //연도 체크
+            if(year.format(data.timestamp) == year.format(today)) {
+                //오늘인 경우
+                if(date.format(data.timestamp) == date.format(today)) {
+                    val sdf = SimpleDateFormat("hh:mm")
+                    binding.tvChatTimestamp.text = sdf.format(data.timestamp)
+                }
+                //어제인 경우
+                else if(date.format(data.timestamp) == date.format(yesterday)) {
+                    binding.tvChatTimestamp.text = "어제"
+                }
+                else {
+                    val sdf = SimpleDateFormat("MM월 dd일")
+                    binding.tvChatTimestamp.text = sdf.format(data.timestamp)
+                }
+            } else {
+                val sdf = SimpleDateFormat("yyyy.MM.dd")
+                binding.tvChatTimestamp.text = sdf.format(data.timestamp)
+            }
         }
     }
 
@@ -72,18 +99,4 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
     }
 
     override fun getItemCount(): Int = chatData.size
-
-    fun removeData(position: Int) {
-        MyApplication.realtime.child("chatRoomUser").child(chatData[position].chatroomid.toString())
-            .removeValue()
-
-        MyApplication.realtime.child("UserRoom").child(chatData[position].chatroomid.toString())
-            .removeValue()
-
-        MyApplication.realtime.child("Messages").child(chatData[position].chatroomid.toString())
-            .removeValue()
-
-        chatData.removeAt(position)
-        notifyItemRemoved(position)
-    }
 }
