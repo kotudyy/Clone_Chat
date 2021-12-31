@@ -99,4 +99,9 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
         if(messages!=null) return messages.size
         else return 0
     }
+
+    fun removeItem(removeMsg: Messages){
+        messages.remove(removeMsg)
+        notifyDataSetChanged()
+    }
 }
