@@ -1,7 +1,7 @@
 package com.example.chatting.Model
 
 data class Messages(
-    val message: String,
-    val timestamp: Long,
-    val sender: String,
+    var message: String = "",
+    var timestamp: Long = 0,
+    var sender: String = "",
 )
