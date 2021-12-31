@@ -51,7 +51,6 @@ class ChatRoomActivity : AppCompatActivity() {
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         setSupportActionBar(binding.chatroomToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -63,7 +62,10 @@ class ChatRoomActivity : AppCompatActivity() {
         } catch (e: Exception) {
         }
 
-        adapter = ChatRoomAdatpter(Messages)
+        setUserLastVisited()
+
+        adapter = ChatRoomAdatpter(Messages, chatRoomId!!)
+
         binding.rvChatroom.adapter = adapter
         binding.rvChatroom.layoutManager = LinearLayoutManager(this)
         myRecyclerView = binding.rvChatroom
@@ -143,6 +145,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
+
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -233,6 +236,25 @@ class ChatRoomActivity : AppCompatActivity() {
                 timestamp = currentDate!!,
                 sender = ""
             ))
+    }
+
+    private fun setUserLastVisited(){
+        MyApplication.realtime.child("chatRoomUser").child(chatRoomId!!)
+            .get()
+            .addOnSuccessListener {
+                for (user in it.children){
+                    if(user.value == MyApplication.auth.currentUser?.email) {
+                        val enteringUser = user.key as String
+                        MyApplication.realtime.child("UserLastVisited").child(chatRoomId!!).child(enteringUser)
+                            .setValue(System.currentTimeMillis())
+                    }
+                }
+            }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        setUserLastVisited()
     }
 }
 
