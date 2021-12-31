@@ -15,7 +15,7 @@ import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 
 
-class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var context : Context
     lateinit var time : String
     lateinit var lastDate : String
@@ -45,15 +45,46 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adap
                 tvChatroomSendmsg.text = data.message
                 tvChatroomSendtime.text = time
             }
+
+            //총 유저 수를 count에 저장
+            var count = 0
+            MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
+                .get()
+                .addOnSuccessListener {
+                    for(user in it.children) {
+                        count += 1
+                    }
+                }
+
+            //메세지 timestamp와 UserLastVisited의 timestamp 비교
+            val msgTimeStamp = data.timestamp
+            val userLastVisitedTimeStamp = mutableListOf<Long>()
+
+            MyApplication.realtime.child("UserLastVisited").child(chatRoomID)
+                .get()
+                .addOnSuccessListener {
+                    for(timestamp in it.children)
+                        userLastVisitedTimeStamp.add(timestamp.value as Long)
+
+                    for (timestamp in userLastVisitedTimeStamp){
+                        if (msgTimeStamp < timestamp) {
+                            count -= 1
+                        }
+                    }
+
+                    binding.tvSendmsgRead.text = count.toString()
+                }
         }
     }
     inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :RecyclerView.ViewHolder(binding.root){
         fun bind(data: Messages){
-            binding.apply{
+            binding.apply {
                 MyApplication.db.collection("profile")
-                        .whereEqualTo("email", data.sender)
-                        .get()
-                        .addOnSuccessListener {document -> for (field in document) tvChatroomUsername.text = field["name"] as String}
+                    .whereEqualTo("email", data.sender)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        for (field in document) tvChatroomUsername.text = field["name"] as String
+                    }
                 tvChatroomReceivemsg.text = data.message
                 tvChatroomReceivetime.text = time
 
