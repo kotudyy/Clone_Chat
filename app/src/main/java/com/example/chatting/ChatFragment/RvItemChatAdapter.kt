@@ -75,7 +75,6 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
             // 채팅방별 안 읽은 메시지 개수
             var myIdKey = ""
-            var lastVisitedTime: Long = 0
 
             Log.d("@@chatRoomId", data.chatroomid.toString())
             MyApplication.realtime.child("chatRoomUser").child(data.chatroomid.toString())
@@ -88,15 +87,13 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                         }
                     }
 
-                    lastVisitedTime = getLastVisitedTime(data.chatroomid.toString(), myIdKey)
-
-                    getChatNum(data.chatroomid.toString(), lastVisitedTime)
+                    getLastVisitedTime(data.chatroomid.toString(), myIdKey)
                 }
         }
     }
 
     // 채팅방 마지막 접속 시간 가져오는 함수
-    fun getLastVisitedTime(chatRoomId: String, idKey: String): Long {
+    fun getLastVisitedTime(chatRoomId: String, idKey: String) {
         var time: Long = 0
 
         MyApplication.realtime.child("UserLastVisited").child(chatRoomId)
@@ -106,11 +103,10 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                     when (data.key) {
                         idKey -> time = data.value as Long
                     }
+                    getChatNum(chatRoomId, time)
                     Log.d("@@lastVisitedTime", time.toString())
                 }
             }
-
-        return time
     }
 
 
@@ -126,10 +122,13 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                         "timestamp" -> timestamp = data_time.value as Long
                     }
 
-//                    if (timestamp > lastVisitedTime) {
-//                    chatNum++
-//                    Log.d("@@chatNum++", chatNum.toString())
-//                }
+                    if (timestamp > lastVisitedTime) {
+                        Log.d("@@timestamp++", timestamp.toString())
+                        Log.d("@@lastvisitedTime++", lastVisitedTime.toString())
+
+                        chatNum++
+                        Log.d("@@chatNum++", chatNum.toString())
+                    }
                 }
             }
 
