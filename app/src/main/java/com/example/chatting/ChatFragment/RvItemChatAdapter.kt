@@ -75,6 +75,7 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
             // 채팅방별 안 읽은 메시지 개수
             var myIdKey = ""
+            var lastVisitedTime: Long = 0
 
             Log.d("@@chatRoomId", data.chatroomid.toString())
             MyApplication.realtime.child("chatRoomUser").child(data.chatroomid.toString())
@@ -82,31 +83,39 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 .addOnSuccessListener {
                     for (data in it.children) {
                         when (data.value) {
-                            MyApplication.auth.currentUser?.email -> myIdKey =
-                                data.key as String
+                            MyApplication.auth.currentUser?.email ->
+                            {
+                                myIdKey = data.key as String
+                            }
+
                         }
                     }
 
-                    getLastVisitedTime(data.chatroomid.toString(), myIdKey)
+                    lastVisitedTime = getLastVisitedTime(data.chatroomid.toString(), myIdKey)
+
+                    getChatNum(data.chatroomid.toString(), lastVisitedTime)
                 }
         }
     }
-
     // 채팅방 마지막 접속 시간 가져오는 함수
-    fun getLastVisitedTime(chatRoomId: String, idKey: String) {
+    fun getLastVisitedTime(chatRoomId: String, idKey: String): Long
+    {
         var time: Long = 0
+        Log.d("#chatRoomId","$chatRoomId")
 
         MyApplication.realtime.child("UserLastVisited").child(chatRoomId)
             .get()
             .addOnSuccessListener {
                 for (data in it.children) {
+                    Log.d("##time", "idKey : $idKey, rtKey : ${data.key}")
                     when (data.key) {
                         idKey -> time = data.value as Long
                     }
-                    getChatNum(chatRoomId, time)
-                    Log.d("@@lastVisitedTime", time.toString())
                 }
             }
+        Log.d("##time2","$time")
+        while(time != null){}
+            return time
     }
 
 
@@ -121,14 +130,12 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                     when (data_time.key) {
                         "timestamp" -> timestamp = data_time.value as Long
                     }
+                }
 
-                    if (timestamp > lastVisitedTime) {
-                        Log.d("@@timestamp++", timestamp.toString())
-                        Log.d("@@lastvisitedTime++", lastVisitedTime.toString())
-
-                        chatNum++
-                        Log.d("@@chatNum++", chatNum.toString())
-                    }
+                if (timestamp > lastVisitedTime) {
+                    Log.d("@@compare", "timestamp : $timestamp, lastVisited : $lastVisitedTime")
+                    chatNum++
+                    Log.d("@@chatNum++", chatNum.toString())
                 }
             }
 
