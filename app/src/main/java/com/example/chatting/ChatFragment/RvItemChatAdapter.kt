@@ -82,11 +82,11 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 .addOnSuccessListener {
                     for (data in it.children) {
                         when (data.value) {
-                            MyApplication.auth.currentUser?.email -> myIdKey =
-                                data.key as String
+                            MyApplication.auth.currentUser?.email -> {
+                                myIdKey = data.key as String
+                            }
                         }
                     }
-
                     getLastVisitedTime(data.chatroomid.toString(), myIdKey)
                 }
         }
@@ -100,15 +100,14 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
             .get()
             .addOnSuccessListener {
                 for (data in it.children) {
-                    when (data.key) {
-                        idKey -> time = data.value as Long
+                    if(data.key == idKey){
+                        time = data.value as Long
+                        getChatNum(chatRoomId, time)
                     }
-                    getChatNum(chatRoomId, time)
                     Log.d("@@lastVisitedTime", time.toString())
                 }
             }
     }
-
 
     // 안 읽은 메시지 수 체크하는 함수
     fun getChatNum(chatRoomId: String, lastVisitedTime: Long) {

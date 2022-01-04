@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
+import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -135,17 +136,18 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 lastDate = loadMsg?.timestamp
                 loadMsg = snapshot.getValue<Messages>()!!
                 currentDate = loadMsg?.timestamp
+                setUserLastVisitedWithTerm(currentDate!!)
                 dateCalc()
                 Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
-
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -247,6 +249,20 @@ class ChatRoomActivity : AppCompatActivity() {
                         val enteringUser = user.key as String
                         MyApplication.realtime.child("UserLastVisited").child(chatRoomId!!).child(enteringUser)
                             .setValue(System.currentTimeMillis())
+                    }
+                }
+            }
+    }
+
+    private fun setUserLastVisitedWithTerm(time: Long){
+        MyApplication.realtime.child("chatRoomUser").child(chatRoomId!!)
+            .get()
+            .addOnSuccessListener {
+                for (user in it.children){
+                    if(user.value == MyApplication.auth.currentUser?.email) {
+                        val enteringUser = user.key as String
+                        MyApplication.realtime.child("UserLastVisited").child(chatRoomId!!).child(enteringUser)
+                            .setValue(time-1)
                     }
                 }
             }
