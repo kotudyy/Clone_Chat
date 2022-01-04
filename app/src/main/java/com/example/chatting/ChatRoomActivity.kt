@@ -63,7 +63,7 @@ class ChatRoomActivity : AppCompatActivity() {
         } catch (e: Exception) {
         }
 
-        setUserLastVisited()
+        setUserLastVisited("In")
 
         adapter = ChatRoomAdatpter(Messages, chatRoomId!!)
 
@@ -143,7 +143,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 lastDate = loadMsg?.timestamp
                 loadMsg = snapshot.getValue<Messages>()!!
                 currentDate = loadMsg?.timestamp
-                setUserLastVisitedWithTerm(currentDate!!)
                 dateCalc()
                 Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
@@ -239,29 +238,24 @@ class ChatRoomActivity : AppCompatActivity() {
             ))
     }
 
-    private fun setUserLastVisited(){
+    private fun setUserLastVisited(InOut: String){
         MyApplication.realtime.child("chatRoomUser").child(chatRoomId!!)
             .get()
             .addOnSuccessListener {
                 for (user in it.children){
                     if(user.value == MyApplication.auth.currentUser?.email) {
                         val enteringUser = user.key as String
-                        MyApplication.realtime.child("UserLastVisited").child(chatRoomId!!).child(enteringUser)
-                            .setValue(System.currentTimeMillis())
-                    }
-                }
-            }
-    }
+                        when (InOut) {
+                            "In" -> {
+                                MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomId!!).child(enteringUser)
+                                    .setValue(System.currentTimeMillis())
+                            }
 
-    private fun setUserLastVisitedWithTerm(time: Long){
-        MyApplication.realtime.child("chatRoomUser").child(chatRoomId!!)
-            .get()
-            .addOnSuccessListener {
-                for (user in it.children){
-                    if(user.value == MyApplication.auth.currentUser?.email) {
-                        val enteringUser = user.key as String
-                        MyApplication.realtime.child("UserLastVisited").child(chatRoomId!!).child(enteringUser)
-                            .setValue(time-1)
+                            "Out" -> {
+                                MyApplication.realtime.child("UserLastVisitedOut").child(chatRoomId!!).child(enteringUser)
+                                    .setValue(System.currentTimeMillis())
+                            }
+                        }
                     }
                 }
             }
@@ -269,7 +263,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        setUserLastVisited()
+        setUserLastVisited("Out")
     }
 }
 
