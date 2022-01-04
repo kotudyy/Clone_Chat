@@ -135,6 +135,7 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

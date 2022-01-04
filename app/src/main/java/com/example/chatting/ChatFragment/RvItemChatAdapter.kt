@@ -15,16 +15,10 @@ import com.example.chatting.Model.UserRoom
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemChatBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHolder(binding.root) {
-
     fun setData(data: UserRoom) {
         val cal = Calendar.getInstance()
         cal.time = Date()
@@ -75,9 +69,7 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
             // 채팅방별 안 읽은 메시지 개수
             var myIdKey = ""
-            var lastVisitedTime: Long = 0
 
-            Log.d("@@chatRoomId", data.chatroomid.toString())
             MyApplication.realtime.child("chatRoomUser").child(data.chatroomid.toString())
                 .get()
                 .addOnSuccessListener {
@@ -87,37 +79,31 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                             {
                                 myIdKey = data.key as String
                             }
-
                         }
                     }
 
-                    lastVisitedTime = getLastVisitedTime(data.chatroomid.toString(), myIdKey)
-
-                    getChatNum(data.chatroomid.toString(), lastVisitedTime)
+                    getLastVisitedTime(data.chatroomid.toString(), myIdKey)
                 }
         }
     }
+
     // 채팅방 마지막 접속 시간 가져오는 함수
-    fun getLastVisitedTime(chatRoomId: String, idKey: String): Long
+    fun getLastVisitedTime(chatRoomId: String, idKey: String)
     {
         var time: Long = 0
-        Log.d("#chatRoomId","$chatRoomId")
-
-        MyApplication.realtime.child("UserLastVisited").child(chatRoomId)
-            .get()
-            .addOnSuccessListener {
-                for (data in it.children) {
-                    Log.d("##time", "idKey : $idKey, rtKey : ${data.key}")
-                    when (data.key) {
-                        idKey -> time = data.value as Long
+            MyApplication.realtime.child("UserLastVisited").child(chatRoomId)
+                .get()
+                .addOnSuccessListener {
+                    for (data in it.children) {
+                        when (data.key) {
+                            idKey -> {
+                                time = data.value as Long
+                                getChatNum(chatRoomId, time)
+                            }
+                        }
                     }
                 }
-            }
-        Log.d("##time2","$time")
-        while(time != null){}
-            return time
     }
-
 
     // 안 읽은 메시지 수 체크하는 함수
     fun getChatNum(chatRoomId: String, lastVisitedTime: Long) {
@@ -133,9 +119,7 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 }
 
                 if (timestamp > lastVisitedTime) {
-                    Log.d("@@compare", "timestamp : $timestamp, lastVisited : $lastVisitedTime")
                     chatNum++
-                    Log.d("@@chatNum++", chatNum.toString())
                 }
             }
 
@@ -145,16 +129,13 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 binding.cardViewChatNum.visibility = View.VISIBLE
                 binding.tvChatNum.text = chatNum.toString()
             }
-
         }
     }
 
     fun getUsername(): String {
         return binding.tvChatUsername.text.toString()
     }
-
 }
-
 
 class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
     RecyclerView.Adapter<RvItemChatViewHolder>() {
