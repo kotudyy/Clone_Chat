@@ -135,6 +135,7 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -145,7 +146,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
-
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -156,7 +156,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 snapshot.getValue<Messages>()?.let { adapter.removeItem(it) }
                 if(Messages[Messages.size-1].sender == ""){
                     Messages.removeAt(Messages.size-1)
-                    adapter.notifyDataSetChanged()
                 }
             }
 
