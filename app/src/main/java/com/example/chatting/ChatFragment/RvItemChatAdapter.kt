@@ -75,13 +75,11 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                 .addOnSuccessListener {
                     for (data in it.children) {
                         when (data.value) {
-                            MyApplication.auth.currentUser?.email ->
-                            {
+                            MyApplication.auth.currentUser?.email -> {
                                 myIdKey = data.key as String
                             }
                         }
                     }
-
                     getLastVisitedTime(data.chatroomid.toString(), myIdKey)
                 }
         }
