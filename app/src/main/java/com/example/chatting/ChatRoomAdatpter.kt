@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -44,36 +45,49 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             binding.apply{
                 tvChatroomSendmsg.text = data.message
                 tvChatroomSendtime.text = time
-            }
 
-            //총 유저 수를 count에 저장
-            var count = 0
-            MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
-                .get()
-                .addOnSuccessListener {
-                    for(user in it.children) {
-                        count += 1
-                    }
-                }
+                //총 유저 수를 count에 저장 본인 제외
+                var myUser = ""
+                var count = 0
 
-            //메세지 timestamp와 UserLastVisited의 timestamp 비교
-            val msgTimeStamp = data.timestamp
-            val userLastVisitedTimeStamp = mutableListOf<Long>()
-
-            MyApplication.realtime.child("UserLastVisited").child(chatRoomID)
-                .get()
-                .addOnSuccessListener {
-                    for(timestamp in it.children)
-                        userLastVisitedTimeStamp.add(timestamp.value as Long)
-
-                    for (timestamp in userLastVisitedTimeStamp){
-                        if (msgTimeStamp < timestamp) {
-                            count -= 1
+                MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
+                    .get()
+                    .addOnSuccessListener {
+                        for(user in it.children) {
+                            if (user.value as String == MyApplication.auth.currentUser?.email){
+                                myUser = user.key as String
+                            } else {
+                                count += 1
+                            }
                         }
-                    }
+                        //메세지 timestamp와 UserLastVisited의 timestamp 비교
+                        val msgTimeStamp = data.timestamp
+                        val userLastVisitedTimeStamp = mutableListOf<Long>()
 
-                    binding.tvSendmsgRead.text = count.toString()
-                }
+                        MyApplication.realtime.child("UserLastVisited").child(chatRoomID)
+                            .get()
+                            .addOnSuccessListener {
+                                for(timestamp in it.children){
+                                    if(timestamp.key != myUser){
+                                        userLastVisitedTimeStamp.add(timestamp.value as Long)
+                                        Log.d("test",userLastVisitedTimeStamp.toString())
+                                    }
+                                }
+
+                                for (timestamp in userLastVisitedTimeStamp){
+                                    if (msgTimeStamp < timestamp) {
+                                        count -= 1
+                                    }
+                                }
+
+                                if(count == 0){
+                                    tvSendmsgRead.visibility = View.GONE
+                                } else {
+                                    tvSendmsgRead.text = count.toString()
+                                }
+                            }
+                    }
+            }
         }
     }
     inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :RecyclerView.ViewHolder(binding.root){
@@ -93,6 +107,51 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     .load(imgRef)
                     .error(R.drawable.img_profile)
                     .into(ivChatProfile)
+
+                //총 유저 수를 count에 저장 본인 제외
+                var myUser = ""
+                var count = 0
+
+                MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
+                    .get()
+                    .addOnSuccessListener {
+                        for(user in it.children) {
+                            if (user.value as String == MyApplication.auth.currentUser?.email){
+                                myUser = user.key as String
+                            } else {
+                                count += 1
+                            }
+                        }
+
+
+                        //메세지 timestamp와 UserLastVisited의 timestamp 비교
+                        val msgTimeStamp = data.timestamp
+                        val userLastVisitedTimeStamp = mutableListOf<Long>()
+
+                        MyApplication.realtime.child("UserLastVisited").child(chatRoomID)
+                            .get()
+                            .addOnSuccessListener {
+                                for(timestamp in it.children){
+                                    if(timestamp.key != myUser){
+                                        userLastVisitedTimeStamp.add(timestamp.value as Long)
+                                        Log.d("test",userLastVisitedTimeStamp.toString())
+                                    }
+                                }
+
+                                for (timestamp in userLastVisitedTimeStamp){
+                                    if (msgTimeStamp < timestamp) {
+                                        count -= 1
+                                    }
+                                }
+
+                                if(count == 0){
+                                    tvReceivemsgRead.visibility = View.GONE
+                                } else {
+                                    tvReceivemsgRead.text = count.toString()
+                                }
+                            }
+                    }
+
             }
         }
     }
