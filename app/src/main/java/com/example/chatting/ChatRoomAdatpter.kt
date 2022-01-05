@@ -54,45 +54,55 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                 tvChatroomSendmsg.text = data.message
                 tvChatroomSendtime.text = time
 
-                //총 유저 수를 count에 저장 본인 제외
                 var myUser = ""
-                var count = 0
+                var count = 1
+                val msgTimeStamp = data.timestamp
+                var userLastVisitedInTimeStamp: Long = 0
+                var userLastVisitedOutTimeStamp: Long = 0
 
                 MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
                     .get()
-                    .addOnSuccessListener {
-                        for (user in it.children) {
+                    .addOnSuccessListener { users ->
+                        for (user in users.children) {
                             if (user.value as String == MyApplication.auth.currentUser?.email) {
                                 myUser = user.key as String
-                            } else {
-                                count += 1
                             }
                         }
-                        //메세지 timestamp와 UserLastVisited의 timestamp 비교
-                        val msgTimeStamp = data.timestamp
-                        val userLastVisitedTimeStamp = mutableListOf<Long>()
 
-                        MyApplication.realtime.child("UserLastVisited").child(chatRoomID)
+                        MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomID)
                             .get()
-                            .addOnSuccessListener {
-                                for (timestamp in it.children) {
+                            .addOnSuccessListener { InTimestamps ->
+                                for (timestamp in InTimestamps.children) {
                                     if (timestamp.key != myUser) {
-                                        userLastVisitedTimeStamp.add(timestamp.value as Long)
-                                        Log.d("test", userLastVisitedTimeStamp.toString())
+                                        userLastVisitedInTimeStamp = timestamp.value as Long
+                                        Log.d("test-userLastVisitedIn", userLastVisitedInTimeStamp.toString())
                                     }
                                 }
 
-                                for (timestamp in userLastVisitedTimeStamp) {
-                                    if (msgTimeStamp < timestamp) {
-                                        count -= 1
-                                    }
-                                }
+                                MyApplication.realtime.child("UserLastVisitedOut").child(chatRoomID)
+                                    .get()
+                                    .addOnSuccessListener { OutTimestamps ->
+                                        for (timestamp in OutTimestamps.children) {
+                                            if (timestamp.key != myUser) {
+                                                userLastVisitedOutTimeStamp = timestamp.value as Long
+                                                Log.d("test-userLastVisitedOut", userLastVisitedOutTimeStamp.toString())
+                                            }
+                                        }
 
-                                if (count == 0) {
-                                    tvSendmsgRead.visibility = View.GONE
-                                } else {
-                                    tvSendmsgRead.text = count.toString()
-                                }
+                                        if (userLastVisitedInTimeStamp < userLastVisitedOutTimeStamp) {
+                                            if (msgTimeStamp < userLastVisitedOutTimeStamp) {
+                                                count -= 1
+                                            }
+                                        } else {
+                                            count -= 1
+                                        }
+
+                                        if (count == 0) {
+                                            tvSendmsgRead.visibility = View.GONE
+                                        } else {
+                                            tvSendmsgRead.text = count.toString()
+                                        }
+                                    }
                             }
                     }
             }
@@ -118,9 +128,11 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     .error(R.drawable.img_profile)
                     .into(ivChatProfile)
 
-                //총 유저 수를 count에 저장 본인 제외
                 var myUser = ""
-                var count = 0
+                var count = 1
+                val msgTimeStamp = data.timestamp
+                var userLastVisitedInTimeStamp: Long = 0
+                var userLastVisitedOutTimeStamp: Long = 0
 
                 MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
                     .get()
@@ -128,25 +140,19 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                         for (user in users.children) {
                             if (user.value as String == MyApplication.auth.currentUser?.email) {
                                 myUser = user.key as String
-                            } else {
-                                count += 1
-                                Log.d("test-count", count.toString())
                             }
                         }
-
-                        //메세지 timestamp와 UserLastVisited의 timestamp 비교
-                        val msgTimeStamp = data.timestamp
-                        Log.d("test-msgTimeStamp", msgTimeStamp.toString())
-                        val userLastVisitedInTimeStamp = mutableListOf<Long>()
-                        val userLastVisitedOutTimeStamp = mutableListOf<Long>()
 
                         MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomID)
                             .get()
                             .addOnSuccessListener { InTimestamps ->
                                 for (timestamp in InTimestamps.children) {
                                     if (timestamp.key != myUser) {
-                                        userLastVisitedInTimeStamp.add(timestamp.value as Long)
-                                        Log.d("test-userLastVisitedIn", userLastVisitedInTimeStamp.toString())
+                                        userLastVisitedInTimeStamp = timestamp.value as Long
+                                        Log.d(
+                                            "test-userLastVisitedIn",
+                                            userLastVisitedInTimeStamp.toString()
+                                        )
                                     }
                                 }
 
@@ -155,22 +161,21 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                                     .addOnSuccessListener { OutTimestamps ->
                                         for (timestamp in OutTimestamps.children) {
                                             if (timestamp.key != myUser) {
-                                                userLastVisitedOutTimeStamp.add(timestamp.value as Long)
-                                                Log.d("test-userLastVisitedOut", userLastVisitedOutTimeStamp.toString())
+                                                userLastVisitedOutTimeStamp =
+                                                    timestamp.value as Long
+                                                Log.d(
+                                                    "test-userLastVisitedOut",
+                                                    userLastVisitedOutTimeStamp.toString()
+                                                )
                                             }
                                         }
 
-                                        for (index in 0 until userLastVisitedInTimeStamp.size-1) {
-                                            if (userLastVisitedInTimeStamp[index] < userLastVisitedOutTimeStamp[index]) {
-                                                for (timestamp in userLastVisitedOutTimeStamp) {
-                                                    if (msgTimeStamp < timestamp) {
-                                                        count -= 1
-                                                        Log.d("test-notEntered", count.toString())
-                                                    }
-                                                }
-                                            } else {
+                                        if (userLastVisitedInTimeStamp < userLastVisitedOutTimeStamp) {
+                                            if (msgTimeStamp < userLastVisitedOutTimeStamp) {
                                                 count -= 1
                                             }
+                                        } else {
+                                            count -= 1
                                         }
 
                                         if (count == 0) {
