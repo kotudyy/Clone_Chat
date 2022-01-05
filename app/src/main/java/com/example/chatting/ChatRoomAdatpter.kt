@@ -12,6 +12,11 @@ import com.example.chatting.Model.Messages
 import com.example.chatting.databinding.ItemDatetxtBinding
 import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 
@@ -54,57 +59,11 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                 tvChatroomSendmsg.text = data.message
                 tvChatroomSendtime.text = time
 
-                var myUser = ""
-                var count = 1
-                val msgTimeStamp = data.timestamp
-                var userLastVisitedInTimeStamp: Long = 0
-                var userLastVisitedOutTimeStamp: Long = 0
-
-                MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
-                    .get()
-                    .addOnSuccessListener { users ->
-                        for (user in users.children) {
-                            if (user.value as String == MyApplication.auth.currentUser?.email) {
-                                myUser = user.key as String
-                            }
-                        }
-
-                        MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomID)
-                            .get()
-                            .addOnSuccessListener { InTimestamps ->
-                                for (timestamp in InTimestamps.children) {
-                                    if (timestamp.key != myUser) {
-                                        userLastVisitedInTimeStamp = timestamp.value as Long
-                                        Log.d("test-userLastVisitedIn", userLastVisitedInTimeStamp.toString())
-                                    }
-                                }
-
-                                MyApplication.realtime.child("UserLastVisitedOut").child(chatRoomID)
-                                    .get()
-                                    .addOnSuccessListener { OutTimestamps ->
-                                        for (timestamp in OutTimestamps.children) {
-                                            if (timestamp.key != myUser) {
-                                                userLastVisitedOutTimeStamp = timestamp.value as Long
-                                                Log.d("test-userLastVisitedOut", userLastVisitedOutTimeStamp.toString())
-                                            }
-                                        }
-
-                                        if (userLastVisitedInTimeStamp < userLastVisitedOutTimeStamp) {
-                                            if (msgTimeStamp < userLastVisitedOutTimeStamp) {
-                                                count -= 1
-                                            }
-                                        } else {
-                                            count -= 1
-                                        }
-
-                                        if (count == 0) {
-                                            tvSendmsgRead.visibility = View.GONE
-                                        } else {
-                                            tvSendmsgRead.text = count.toString()
-                                        }
-                                    }
-                            }
-                    }
+                if(data.read){
+                    tvSendmsgRead.visibility = View.GONE
+                } else {
+                    tvSendmsgRead.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -127,65 +86,6 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     .load(imgRef)
                     .error(R.drawable.img_profile)
                     .into(ivChatProfile)
-
-                var myUser = ""
-                var count = 1
-                val msgTimeStamp = data.timestamp
-                var userLastVisitedInTimeStamp: Long = 0
-                var userLastVisitedOutTimeStamp: Long = 0
-
-                MyApplication.realtime.child("chatRoomUser").child(chatRoomID)
-                    .get()
-                    .addOnSuccessListener { users ->
-                        for (user in users.children) {
-                            if (user.value as String == MyApplication.auth.currentUser?.email) {
-                                myUser = user.key as String
-                            }
-                        }
-
-                        MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomID)
-                            .get()
-                            .addOnSuccessListener { InTimestamps ->
-                                for (timestamp in InTimestamps.children) {
-                                    if (timestamp.key != myUser) {
-                                        userLastVisitedInTimeStamp = timestamp.value as Long
-                                        Log.d(
-                                            "test-userLastVisitedIn",
-                                            userLastVisitedInTimeStamp.toString()
-                                        )
-                                    }
-                                }
-
-                                MyApplication.realtime.child("UserLastVisitedOut").child(chatRoomID)
-                                    .get()
-                                    .addOnSuccessListener { OutTimestamps ->
-                                        for (timestamp in OutTimestamps.children) {
-                                            if (timestamp.key != myUser) {
-                                                userLastVisitedOutTimeStamp =
-                                                    timestamp.value as Long
-                                                Log.d(
-                                                    "test-userLastVisitedOut",
-                                                    userLastVisitedOutTimeStamp.toString()
-                                                )
-                                            }
-                                        }
-
-                                        if (userLastVisitedInTimeStamp < userLastVisitedOutTimeStamp) {
-                                            if (msgTimeStamp < userLastVisitedOutTimeStamp) {
-                                                count -= 1
-                                            }
-                                        } else {
-                                            count -= 1
-                                        }
-
-                                        if (count == 0) {
-                                            tvReceivemsgRead.visibility = View.GONE
-                                        } else {
-                                            tvReceivemsgRead.text = count.toString()
-                                        }
-                                    }
-                            }
-                    }
             }
         }
     }
