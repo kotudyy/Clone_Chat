@@ -63,7 +63,7 @@ class ChatRoomActivity : AppCompatActivity() {
         } catch (e: Exception) {
         }
 
-        setUserLastVisited("In")
+        setMessagesRead()
 
         adapter = ChatRoomAdatpter(Messages, chatRoomId!!)
 
@@ -137,6 +137,28 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
+    private fun setMessagesRead() {
+        val keys = mutableListOf<String>()
+
+        messageRef.child(chatRoomId!!)
+            .get()
+            .addOnSuccessListener { messages ->
+                for (message in messages.children){
+                    keys.add(message.key!!)
+                }
+
+                for (key in keys){
+                    messageRef.child(chatRoomId!!).child(key).child("sender")
+                        .get()
+                        .addOnSuccessListener {
+                            if(it.value != MyApplication.auth.currentUser?.email){
+                                messageRef.child(chatRoomId!!).child(key).child("read").setValue(true)
+                            }
+                        }
+                }
+            }
+    }
+
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -150,7 +172,7 @@ class ChatRoomActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
+                adapter.notifyDataSetChanged()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -161,11 +183,9 @@ class ChatRoomActivity : AppCompatActivity() {
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
         }
         messageRef.child("$chatRoomId").addChildEventListener(messagesDataListener)
@@ -236,34 +256,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 timestamp = currentDate!!,
                 sender = ""
             ))
-    }
-
-    private fun setUserLastVisited(InOut: String){
-        MyApplication.realtime.child("chatRoomUser").child(chatRoomId!!)
-            .get()
-            .addOnSuccessListener {
-                for (user in it.children){
-                    if(user.value == MyApplication.auth.currentUser?.email) {
-                        val enteringUser = user.key as String
-                        when (InOut) {
-                            "In" -> {
-                                MyApplication.realtime.child("UserLastVisitedIn").child(chatRoomId!!).child(enteringUser)
-                                    .setValue(System.currentTimeMillis())
-                            }
-
-                            "Out" -> {
-                                MyApplication.realtime.child("UserLastVisitedOut").child(chatRoomId!!).child(enteringUser)
-                                    .setValue(System.currentTimeMillis())
-                            }
-                        }
-                    }
-                }
-            }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        setUserLastVisited("Out")
     }
 }
 
