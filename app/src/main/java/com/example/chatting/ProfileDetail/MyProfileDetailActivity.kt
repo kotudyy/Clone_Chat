@@ -360,36 +360,30 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
 
         private fun createChatRoom() {
-            val valueListener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for (chatRoomInfo in snapshot.children) {
-                        chatRoomId = null
-                        user1 = null
-                        user2 = null
-                        for (chatRoomUserData in chatRoomInfo.children) {
-                            if (user1 == null && chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
-                                user1 = chatRoomUserData.value as String
-                            } else if (chatRoomUserData.value == userData.email) {
-                                user2 = chatRoomUserData.value as String
-                            }
-                        }
-                        if (user1 != null && user2 != null) {
-                            chatRoomId = chatRoomInfo.key
-                            break
+            chatRoomRef.get().addOnSuccessListener {
+                for (chatRoomInfo in it.children){
+                    chatRoomId = null
+                    user1 = null
+                    user2 = null
+                    for (chatRoomUserData in chatRoomInfo.children) {
+                        if (user1 == null && chatRoomUserData.value == MyApplication.auth.currentUser?.email) {
+                            user1 = chatRoomUserData.value as String
+                        } else if (chatRoomUserData.value == userData.email) {
+                            user2 = chatRoomUserData.value as String
                         }
                     }
-                    if (chatRoomId == null) {
-                        createChatRoomUser()
+                    if (user1 != null && user2 != null) {
+                        chatRoomId = chatRoomInfo.key
+                        break
                     }
-                    else openChatRoom(this@MyProfileDetailActivity)
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("grusie", "failed")
+                if (chatRoomId == null) {
+                    createChatRoomUser()
                 }
+                else openChatRoom(this@MyProfileDetailActivity)
             }
-            chatRoomRef.addValueEventListener(valueListener)
         }
+
 
         private fun createChatRoomUser() {
             val chatRoomUserdata = chatRoomUser(
