@@ -163,27 +163,7 @@ class ChatFragment : Fragment() {
         MyApplication.realtime.child("chatRoomUser").addChildEventListener(userDataListener)
     }
 
-    fun getChatRoomList(chatroomid: String, chatroomuser: String) {/*
-        Log.d("count","count")
-        MyApplication.realtime.child("UserRoom").get().addOnSuccessListener {
-            for (data in it.children){
-                if(data.key == chatroomid){
-                    var lastmessage = ""
-                    var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
-                    var timestamp: Long = 0
-                    for (dataInfo in data.children){
-                        if(dataInfo.key == "lastmessage")
-                            lastmessage = dataInfo.value as String
-                        if(dataInfo.key == "timestamp")
-                            timestamp = dataInfo.value as Long
-                    }
-                    chatListDatas.add(UserRoom(chatroomid, lastmessage, timestamp, sender))
-                    chatListDatas.sortByDescending { it.timestamp }     //시간 순으로 정렬
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        }
-        */
+    fun getChatRoomList(chatroomid: String, chatroomuser: String) {
         val chatRoomListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 if(snapshot.key == chatroomid) {
