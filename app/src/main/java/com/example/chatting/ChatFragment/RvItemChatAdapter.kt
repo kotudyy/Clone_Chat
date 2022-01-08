@@ -68,59 +68,21 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
 
             // 채팅방별 안 읽은 메시지 개수
-            var myIdKey = ""
-
-            MyApplication.realtime.child("chatRoomUser").child(data.chatroomid.toString())
-                .get()
-                .addOnSuccessListener {
-                    for (data in it.children) {
-                        when (data.value) {
-                            MyApplication.auth.currentUser?.email -> {
-                                myIdKey = data.key as String
-                            }
-                        }
-                    }
-                    getLastVisitedTime(data.chatroomid.toString(), myIdKey)
-                }
+            getChatNum(data.chatroomid.toString())
         }
     }
 
-    // 채팅방 마지막 접속 시간 가져오는 함수
-    fun getLastVisitedTime(chatRoomId: String, idKey: String)
-    {
-        var time: Long = 0
-            MyApplication.realtime.child("UserLastVisited").child(chatRoomId)
-                .get()
-                .addOnSuccessListener {
-                    for (data in it.children) {
-                        when (data.key) {
-                            idKey -> {
-                                time = data.value as Long
-                                getChatNum(chatRoomId, time)
-                            }
-                        }
-                    }
-                }
-    }
-
     // 안 읽은 메시지 수 체크하는 함수
-    fun getChatNum(chatRoomId: String, lastVisitedTime: Long) {
+    fun getChatNum(chatRoomId: String) {
         var chatNum = 0
+        var flag = true
         MyApplication.realtime.child("Messages").child(chatRoomId).get().addOnSuccessListener {
-            var timestamp: Long = 0
-
             for (data in it.children) {
-                for (data_time in data.children) {
-                    when (data_time.key) {
-                        "timestamp" -> timestamp = data_time.value as Long
-                    }
-                }
-
-                if (timestamp > lastVisitedTime) {
-                    chatNum++
+                for (data_chat in data.children) {
+                    if(data_chat.key == "read" && !(data_chat.value as Boolean)) flag = false
+                    if(!flag && data_chat.key == "sender" && data_chat.value != MyApplication.auth.currentUser?.email) chatNum++
                 }
             }
-
             if (chatNum == 0) {
                 binding.cardViewChatNum.visibility = View.INVISIBLE
             } else {
