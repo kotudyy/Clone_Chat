@@ -6,10 +6,8 @@ import android.content.DialogInterface
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -18,17 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.databinding.ActivityChatRoomBinding
-import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.text.SimpleDateFormat
-import kotlin.properties.Delegates
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
@@ -137,28 +132,6 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    private fun setMessagesRead() {
-        val keys = mutableListOf<String>()
-
-        messageRef.child(chatRoomId!!)
-            .get()
-            .addOnSuccessListener { messages ->
-                for (message in messages.children){
-                    keys.add(message.key!!)
-                }
-
-                for (key in keys){
-                    messageRef.child(chatRoomId!!).child(key).child("sender")
-                        .get()
-                        .addOnSuccessListener {
-                            if(it.value != MyApplication.auth.currentUser?.email){
-                                messageRef.child(chatRoomId!!).child(key).child("read").setValue(true)
-                            }
-                        }
-                }
-            }
-    }
-
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -166,6 +139,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 loadMsg = snapshot.getValue<Messages>()!!
                 currentDate = loadMsg?.timestamp
                 dateCalc()
+                setNewMessageRead(snapshot.key!!)
                 Messages.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
@@ -189,6 +163,37 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
         messageRef.child("$chatRoomId").addChildEventListener(messagesDataListener)
+    }
+
+    private fun setMessagesRead() {
+        val keys = mutableListOf<String>()
+        messageRef.child(chatRoomId!!)
+            .get()
+            .addOnSuccessListener { messages ->
+                for (message in messages.children){
+                    keys.add(message.key!!)
+                }
+                for (key in keys){
+                    messageRef.child(chatRoomId!!).child(key).child("sender")
+                        .get()
+                        .addOnSuccessListener {
+                            if(it.value != MyApplication.auth.currentUser?.email){
+                                messageRef.child(chatRoomId!!).child(key).child("read").setValue(true)
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun setNewMessageRead(key: String) {
+        messageRef.child(chatRoomId!!).child(key).child("sender")
+            .get()
+            .addOnSuccessListener {
+                if(it.value.toString() != MyApplication.auth.currentUser?.email){
+                    messageRef.child(chatRoomId!!).child(key).child("read")
+                        .setValue(true)
+                }
+            }
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
