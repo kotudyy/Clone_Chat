@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
+import com.example.chatting.Model.chatRoomUser
 import com.example.chatting.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
@@ -124,62 +125,78 @@ class ChatFragment : Fragment() {
 
     //채팅방 리스트 가져오기 searchChatRoom() -> getChatRoomList()
     fun searchChatRoom() {
-        MyApplication.realtime.child("chatRoomUser")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    for (chatRoomInfo in snapshot.children) {
-                        user1 = null
-                        user2 = null
-                        for (chatRoomUserData in chatRoomInfo.children) {
-                            if (user1 == null && chatRoomUserData.value == userEmail) {
-                                user1 = chatRoomUserData.value as String
-                            } else if (chatRoomUserData.value != userEmail) {
-                                user2 = chatRoomUserData.value as String
-                            } else if (user1 != null && chatRoomUserData.value == userEmail) {
-                                user2 = chatRoomUserData.value as String
-                            }
-
-                            if (user1 != null && user2 != null) {
-                                if (user1 == userEmail) {
-                                    chatRoomId = chatRoomInfo.key as String
-                                    getChatRoomList(chatRoomId!!, user2!!)
-                                }
-                                break
-                            }
-                        }
+        val userDataListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                user1 = null
+                user2 = null
+                val chatRoomUserData = snapshot.getValue<chatRoomUser>()!!
+                Log.d("chatRoomuserdata", "${chatRoomUserData}")
+                user1 = chatRoomUserData.user1
+                user2 = chatRoomUserData.user2
+                if(chatRoomUserData.user2 == userEmail){
+                    user1 = chatRoomUserData.user2
+                    user2 = chatRoomUserData.user1
+                }
+                    if (user1 == userEmail) {
+                        chatRoomId = snapshot.key as String
+                        getChatRoomList(chatRoomId!!, user2!!)
+                        adapter.notifyDataSetChanged()
                     }
-                }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("error", "failed")
-                }
-            })
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        }
+        MyApplication.realtime.child("chatRoomUser").addChildEventListener(userDataListener)
     }
 
     fun getChatRoomList(chatroomid: String, chatroomuser: String) {
-        MyApplication.realtime.child("UserRoom").child(chatroomid)
-            .addValueEventListener(object : ValueEventListener {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onDataChange(snapshot: DataSnapshot) {
+        val chatRoomListener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                if(snapshot.key == chatroomid) {
                     var lastmessage = ""
                     var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
                     var timestamp: Long = 0
-
-                    for (data in snapshot.children) {
-                        when (data.key) {
-                            "lastmessage" -> lastmessage = data.value as String
-                            "timestamp" -> timestamp = data.value as Long
-                        }
-                    }
+                    val userRoomData = snapshot.getValue<UserRoom>()!!
+                    Log.d("snapshot", "${userRoomData}")
+                    lastmessage = userRoomData.lastmessage
+                    timestamp = userRoomData.timestamp
 
                     chatListDatas.add(UserRoom(chatroomid, lastmessage, timestamp, sender))
+                    Log.d("snapshot", "chatListDatas${chatListDatas}")
                     chatListDatas.sortByDescending { it.timestamp }     //시간 순으로 정렬
                     adapter.notifyDataSetChanged()
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("error", "failed")
-                }
-            })
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        }
+        MyApplication.realtime.child("UserRoom").addChildEventListener(chatRoomListener)
     }
 }
