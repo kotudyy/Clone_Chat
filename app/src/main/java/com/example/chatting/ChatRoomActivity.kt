@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -189,9 +190,12 @@ class ChatRoomActivity : AppCompatActivity() {
         messageRef.child(chatRoomId!!).child(key).child("sender")
             .get()
             .addOnSuccessListener {
-                if(it.value.toString() != MyApplication.auth.currentUser?.email){
+                if(it.value != MyApplication.auth.currentUser?.email){
                     messageRef.child(chatRoomId!!).child(key).child("read")
                         .setValue(true)
+                        .addOnSuccessListener {
+                            adapter.notifyDataSetChanged()
+                        }
                 }
             }
     }
