@@ -186,9 +186,16 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun setNewMessageRead(key: String) {
-        messageRef.child(chatRoomId!!).child(key).child("read")
-            .setValue(true)
+        messageRef.child(chatRoomId!!).child(key).child("sender")
+            .get()
+            .addOnSuccessListener {
+                if(it.value.toString() != MyApplication.auth.currentUser?.email){
+                    messageRef.child(chatRoomId!!).child(key).child("read")
+                        .setValue(true)
+                }
+            }
     }
+
     //액션버튼 메뉴 액션바에 집어 넣기
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_chat_room, menu)
