@@ -36,7 +36,8 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var userData: UserData
     private lateinit var filename: String
-    val chatRoomRef = Firebase.database.getReference("chatRoomUser")
+    private val chatRoomRef = Firebase.database.getReference("chatRoomUser")
+    private val userStatusRef = Firebase.database.getReference("UserStatus")
     var chatRoomId: String? = null
     var user1: String? = null
     var user2: String? = null
@@ -378,18 +379,31 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     }
                 }
                 if (chatRoomId == null) {
-                    createChatRoomUser()
+                    createChatRoomData()
                 }
                 else openChatRoom(this@MyProfileDetailActivity)
             }
         }
 
+    private fun createChatRoomData() {
+        //랜덤 key 발급
+        val key = chatRoomRef.push().key
+        Log.d("test",  key!!)
 
-        private fun createChatRoomUser() {
-            val chatRoomUserdata = chatRoomUser(
-                user1 = MyApplication.auth.currentUser?.email!!,
-                user2 = userData.email
-            )
-            chatRoomRef.child("").push().setValue(chatRoomUserdata)
-        }
+        //chatRoomUser 생성
+        val chatRoomUserdata = chatRoomUser(
+            user1 = MyApplication.auth.currentUser?.email!!,
+            user2 = userData.email
+        )
+        chatRoomRef.child(key).setValue(chatRoomUserdata)
+
+        //UserStatus 생성
+        val userStatusData = chatRoomUser(
+            user1 = "In",
+            user2 = "N"
+        )
+        userStatusRef.child(key).setValue(userStatusData)
+
+        Toast.makeText(applicationContext, "채팅방 생성 완료", Toast.LENGTH_SHORT).show()
     }
+}
