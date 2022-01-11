@@ -52,7 +52,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
         }
     }
 
-    inner class sendViewHolder(private val binding: ItemSendmsgBinding) :
+    inner class sendViewHolder(val binding: ItemSendmsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Messages) {
             binding.apply {
@@ -65,41 +65,9 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     tvSendmsgRead.visibility = View.VISIBLE
                 }
             }
-
-            val messageReadListener = object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    if (data.read){
-                        binding.tvSendmsgRead.visibility = View.INVISIBLE
-                    } else{
-                        binding.tvSendmsgRead.visibility = View.VISIBLE
-                    }
-                }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    if (data.read){
-                        binding.tvSendmsgRead.visibility = View.INVISIBLE
-                    } else{
-                        binding.tvSendmsgRead.visibility = View.VISIBLE
-                    }
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
-            }
-            MyApplication.realtime.child("Messages").child(chatRoomID)
-                .addChildEventListener(messageReadListener)
         }
     }
+
 
     inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
