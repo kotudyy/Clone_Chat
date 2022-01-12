@@ -52,7 +52,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
         }
     }
 
-    inner class sendViewHolder(private val binding: ItemSendmsgBinding) :
+    inner class sendViewHolder(val binding: ItemSendmsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Messages) {
             binding.apply {
@@ -67,6 +67,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             }
         }
     }
+
 
     inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
