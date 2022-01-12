@@ -123,6 +123,11 @@ class ChatRoomActivity : AppCompatActivity() {
                     sender = MyApplication.auth.currentUser?.email.toString(),
                     read = false
                 )
+                val userRoom = UserRoom(
+                    lastmessage = msg,
+                    timestamp = time,
+                    sender = MyApplication.auth.currentUser?.email.toString()
+                )
 
                 val key = messageRef.child("$chatRoomId").push().key
 
@@ -141,23 +146,14 @@ class ChatRoomActivity : AppCompatActivity() {
                                             messageRef.child("$chatRoomId").child(key!!).setValue(messageData)
                                         }
 
+                                        userRoomRef.child("$chatRoomId").setValue(userRoom)
                                         adapter.notifyDataSetChanged()
+                                        currentDate = messageData.timestamp
                                         myRecyclerView.scrollToPosition(adapter.itemCount-1)
                                     }
                             }
                         }
                     }
-
-                val userRoom = UserRoom(
-                    lastmessage = msg,
-                    timestamp = time,
-                    sender = MyApplication.auth.currentUser?.email.toString()
-                )
-                userRoomRef.child("$chatRoomId").setValue(userRoom)
-
-                currentDate = messageData.timestamp
-
-
             }
         }
     }
