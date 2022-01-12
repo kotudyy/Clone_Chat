@@ -171,40 +171,14 @@ class ChatRoomActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.d("test", "$snapshot $previousChildName")
-                val newMessage = Messages()
-                for (v in snapshot.children) {
-                    when(v.key){
-                        "message" -> {
-                            newMessage.message = v.value as String
-                        }
-
-                        "sender" -> {
-                            newMessage.sender = v.value as String
-                        }
-
-                        "read" -> {
-                            newMessage.read = v.value as Boolean
-                        }
-
-                        "timestamp" -> {
-                            newMessage.timestamp = v.value as Long
-                        }
-                    }
+                val newMsgList = mutableListOf<Messages>()
+                for(message in messageList){
+                    val msg = message.copy(read = true)
+                    newMsgList.add(msg)
                 }
-
-                var index = 0
-
-                for (message in messageList){
-                    if(!message.read && message.sender == MyApplication.auth.currentUser?.email){
-                        messageList[index] = newMessage
-                        Log.d("test", "$newMessage $index")
-                        adapter.notifyDataSetChanged()
-                    }
-                    index ++
-                }
-
-
+                messageList.clear()
+                messageList.addAll(newMsgList)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
