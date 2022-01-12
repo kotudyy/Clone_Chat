@@ -295,31 +295,9 @@ class ChatRoomActivity : AppCompatActivity() {
             ))
     }
 
-    private fun setMessagesRead() {
-        val keys = mutableListOf<String>()
-        messageRef.child(chatRoomId!!)
-            .get()
-            .addOnSuccessListener { messages ->
-                for (message in messages.children){
-                    keys.add(message.key!!)
-                }
-                for (key in keys){
-                    messageRef.child(chatRoomId!!).child(key).child("sender")
-                        .get()
-                        .addOnSuccessListener {
-                            if(it.value != MyApplication.auth.currentUser?.email){
-                                messageRef.child(chatRoomId!!).child(key).child("read").setValue(true)
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-                }
-            }
-    }
-
     override fun onResume() {
         super.onResume()
         setUserStatus("In")
-        setMessagesRead()
     }
 
     override fun onStop() {
