@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
+import com.example.chatting.Model.chatRoomUser
 import com.example.chatting.databinding.ActivityChatRoomBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -24,6 +26,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.text.SimpleDateFormat
+import kotlin.math.log
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
@@ -32,14 +35,17 @@ class ChatRoomActivity : AppCompatActivity() {
     private val database = Firebase.database
     private val messageRef = database.getReference("Messages")
     private val userRoomRef = database.getReference("UserRoom")
-    private val Messages = mutableListOf<Messages>()
-    private val UserRoom = mutableListOf<UserRoom>()
+    private val chatRoomUserRef = database.getReference("chatRoomUser")
+    private val userStatusRef = database.getReference("UserStatus")
+
+    private val messageList = mutableListOf<Messages>()
     lateinit var adapter: ChatRoomAdatpter
     lateinit var binding: ActivityChatRoomBinding
     lateinit var myRecyclerView: RecyclerView
     var lastDate:Long ?= 0
     var currentDate:Long ?= 0
     var loadMsg : Messages ?= null
+    var myUser = ""
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +64,7 @@ class ChatRoomActivity : AppCompatActivity() {
         } catch (e: Exception) {
         }
 
-        setMessagesRead()
-
-        adapter = ChatRoomAdatpter(Messages, chatRoomId!!)
+        adapter = ChatRoomAdatpter(messageList, chatRoomId!!)
 
         binding.rvChatroom.adapter = adapter
         binding.rvChatroom.layoutManager = LinearLayoutManager(this)
@@ -111,23 +115,49 @@ class ChatRoomActivity : AppCompatActivity() {
             val msg = binding.etMessage.text.toString()   //msg
             val time = System.currentTimeMillis()
             if (msg != "") {
+                binding.etMessage.text.clear()
+
                 val messageData = Messages(
                     message = msg,
                     timestamp = time,
-                    sender = MyApplication.auth.currentUser?.email.toString()
+                    sender = MyApplication.auth.currentUser?.email.toString(),
+                    read = false
                 )
+
+                val key = messageRef.child("$chatRoomId").push().key
+
+                chatRoomUserRef.child(chatRoomId!!)
+                    .get()
+                    .addOnSuccessListener {
+                        for (user in it.children){
+                            if(user.value != MyApplication.auth.currentUser?.email){
+                                userStatusRef.child(chatRoomId!!).child(user.key!!)
+                                    .get()
+                                    .addOnSuccessListener { userStatus ->
+                                        if(userStatus.value == "In"){
+                                            val msg = messageData.copy(read = true)
+                                            messageRef.child("$chatRoomId").child(key!!).setValue(msg)
+                                        } else {
+                                            messageRef.child("$chatRoomId").child(key!!).setValue(messageData)
+                                        }
+
+                                        adapter.notifyDataSetChanged()
+                                        myRecyclerView.scrollToPosition(adapter.itemCount-1)
+                                    }
+                            }
+                        }
+                    }
+
                 val userRoom = UserRoom(
                     lastmessage = msg,
                     timestamp = time,
                     sender = MyApplication.auth.currentUser?.email.toString()
                 )
-                binding.etMessage.text.clear()
-                currentDate = messageData.timestamp
-                UserRoom.add(userRoom)
-                messageRef.child("$chatRoomId").push().setValue(messageData)
                 userRoomRef.child("$chatRoomId").setValue(userRoom)
-                adapter.notifyDataSetChanged()
-                myRecyclerView.scrollToPosition(adapter.itemCount-1)
+
+                currentDate = messageData.timestamp
+
+
             }
         }
     }
@@ -139,20 +169,52 @@ class ChatRoomActivity : AppCompatActivity() {
                 loadMsg = snapshot.getValue<Messages>()!!
                 currentDate = loadMsg?.timestamp
                 dateCalc()
-                setNewMessageRead(snapshot.key!!)
-                Messages.add(loadMsg!!)
+                messageList.add(loadMsg!!)
                 adapter.notifyDataSetChanged()
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                adapter.notifyDataSetChanged()
+                Log.d("test", "$snapshot $previousChildName")
+                val newMessage = Messages()
+                for (v in snapshot.children) {
+                    when(v.key){
+                        "message" -> {
+                            newMessage.message = v.value as String
+                        }
+
+                        "sender" -> {
+                            newMessage.sender = v.value as String
+                        }
+
+                        "read" -> {
+                            newMessage.read = v.value as Boolean
+                        }
+
+                        "timestamp" -> {
+                            newMessage.timestamp = v.value as Long
+                        }
+                    }
+                }
+
+                var index = 0
+
+                for (message in messageList){
+                    if(!message.read && message.sender == MyApplication.auth.currentUser?.email){
+                        messageList[index] = newMessage
+                        Log.d("test", "$newMessage $index")
+                        adapter.notifyDataSetChanged()
+                    }
+                    index ++
+                }
+
+
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 snapshot.getValue<Messages>()?.let { adapter.removeItem(it) }
-                if(Messages[Messages.size-1].sender == ""){
-                    Messages.removeAt(Messages.size-1)
+                if(messageList[messageList.size-1].sender == ""){
+                    messageList.removeAt(messageList.size-1)
                 }
             }
 
@@ -163,37 +225,7 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
         messageRef.child("$chatRoomId").addChildEventListener(messagesDataListener)
-    }
 
-    private fun setMessagesRead() {
-        val keys = mutableListOf<String>()
-        messageRef.child(chatRoomId!!)
-            .get()
-            .addOnSuccessListener { messages ->
-                for (message in messages.children){
-                    keys.add(message.key!!)
-                }
-                for (key in keys){
-                    messageRef.child(chatRoomId!!).child(key).child("sender")
-                        .get()
-                        .addOnSuccessListener {
-                            if(it.value != MyApplication.auth.currentUser?.email){
-                                messageRef.child(chatRoomId!!).child(key).child("read").setValue(true)
-                            }
-                        }
-                }
-            }
-    }
-
-    private fun setNewMessageRead(key: String) {
-        messageRef.child(chatRoomId!!).child(key).child("sender")
-            .get()
-            .addOnSuccessListener {
-                if(it.value.toString() != MyApplication.auth.currentUser?.email){
-                    messageRef.child(chatRoomId!!).child(key).child("read")
-                        .setValue(true)
-                }
-            }
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
@@ -255,12 +287,35 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     fun addDate() {
-        Messages.add(
+        messageList.add(
             Messages(
                 message = "",
                 timestamp = currentDate!!,
                 sender = ""
             ))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setUserStatus("In")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        setUserStatus("Out")
+    }
+
+    private fun setUserStatus(userStatus: String) {
+        chatRoomUserRef.child(chatRoomId!!)
+            .get()
+            .addOnSuccessListener {
+                for (user in it.children){
+                    if (user.value == MyApplication.auth.currentUser?.email){
+                        myUser = user.key as String
+                        userStatusRef.child(chatRoomId!!).child(user.key!!).setValue(userStatus)
+                    }
+                }
+            }
     }
 }
 
