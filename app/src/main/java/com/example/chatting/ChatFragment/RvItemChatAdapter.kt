@@ -1,8 +1,6 @@
 package com.example.chatting.ChatFragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.ChatRoomActivity
-import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.MyApplication
 import com.example.chatting.R
@@ -19,7 +16,6 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.getValue
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,11 +29,14 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
                     for (field in document) tvChatUsername.text = field["name"] as String
                 }
 
-            val imgRefProfile = MyApplication.storage.reference.child("${data.sender}/profile")
-            Glide.with(binding.root.context)
-                .load(imgRefProfile)
-                .error(R.drawable.img_profile)
-                .into(ivChatProfile)
+            MyApplication.storage.reference.child("${data.sender}/profile")
+                .downloadUrl
+                .addOnSuccessListener {
+                    Glide.with(binding.root.context)
+                        .load(it)
+                        .error(R.drawable.img_profile)
+                        .into(ivChatProfile)
+                }
 
             tvChatPreviewmsg.text = data.lastmessage
 
@@ -71,22 +70,22 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
     }
 
     //Update LastMessage Information
-    fun updateChat(chatroomid: String) {
+    private fun updateChat(chatRoomID: String) {
         val chatRoomListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                if(snapshot.key == chatroomid) {
-                    var lastmessage = ""
+                if(snapshot.key == chatRoomID) {
+                    var lastMessage = ""
                     var timestamp: Long = 0
                     val userRoomData = snapshot.getValue<UserRoom>()!!
-                    lastmessage = userRoomData.lastmessage
+                    lastMessage = userRoomData.lastmessage
                     timestamp = userRoomData.timestamp
 
-                    binding.tvChatPreviewmsg.text = lastmessage
+                    binding.tvChatPreviewmsg.text = lastMessage
                     dateCalc(timestamp)
-                    getChatNum(chatroomid)
+                    getChatNum(chatRoomID)
                 }
             }
 
@@ -158,7 +157,7 @@ class RvItemChatAdapter(var chatData: MutableList<UserRoom>) :
         holder.setData(data)
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView?.context, ChatRoomActivity::class.java)
+            val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
             intent.putExtra("chatRoomId", data.chatroomid)
             intent.putExtra("userName", holder.getUsername())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
