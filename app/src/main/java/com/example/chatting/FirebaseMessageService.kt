@@ -13,7 +13,8 @@ import com.google.firebase.messaging.RemoteMessage
 
 class FirebaseMessageService : FirebaseMessagingService() {
     override fun onNewToken(p0: String){
-            Log.d("grusie", "Refreshed token: $p0")
+        Log.d("grusie", "Refreshed token: $p0")
+        MyApplication.prefs.globalToken = p0
     }
 
     override fun onMessageReceived(p0: RemoteMessage){
