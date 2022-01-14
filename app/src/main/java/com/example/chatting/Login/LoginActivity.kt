@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import com.example.chatting.ChatListActivity
 import com.example.chatting.MyApplication
+import com.example.chatting.MySharedPreferences
 import com.example.chatting.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -45,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
                         //로그인 성공
                         MyApplication.email = email
                         changeLoginStatus("login")
+                        saveToken()
                     }else{
                         //발송된 메일로 인증 확인을 안 한 경우
                         Toast.makeText(baseContext,"전송된 메일로 이메일 인증이 되지 않았습니다.", Toast.LENGTH_SHORT).show()
@@ -60,6 +62,14 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    //로그인 성공시 토큰 저장
+    private fun saveToken() {
+        var map= mutableMapOf<String, Any>()
+        map["token"] ="${MyApplication.prefs.globalToken}"
+        MyApplication.db.collection("profile").document("${MyApplication.email}").update(map)
+    }
+
     fun changeLoginStatus(status:String){
         if(status == "login"){
             binding.run {
