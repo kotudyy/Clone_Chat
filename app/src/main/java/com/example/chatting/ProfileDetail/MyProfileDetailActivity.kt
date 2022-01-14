@@ -1,7 +1,6 @@
 package com.example.chatting.ProfileDetail
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,9 +23,6 @@ import com.example.chatting.R
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
 import com.example.chatting.util.URIPathHelper
 import com.example.chatting.util.myCheckPermission
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.io.File
@@ -38,9 +34,9 @@ class MyProfileDetailActivity : AppCompatActivity() {
     private lateinit var filename: String
     private val chatRoomRef = Firebase.database.getReference("chatRoomUser")
     private val userStatusRef = Firebase.database.getReference("UserStatus")
-    var chatRoomId: String? = null
-    var user1: String? = null
-    var user2: String? = null
+    private var chatRoomId: String? = null
+    private var user1: String? = null
+    private var user2: String? = null
     private lateinit var galleryIntent: ActivityResultLauncher<Intent>
     private var profileImgFilePath: String? = null
     private var backgroundImgFilePath: String? = null
@@ -51,7 +47,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
-        userData = intent.getParcelableExtra<UserData>("userData")!!
+        userData = intent.getParcelableExtra("userData")!!
         Log.d("test", userData.toString())
         editState(checkProfileUser())
         binding()
@@ -342,7 +338,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
             imgRef
                 .putFile(file)
-                .addOnSuccessListener { taskSnapShot ->
+                .addOnSuccessListener {
                     Toast.makeText(this, "사진이 저장되었습니다.", Toast.LENGTH_SHORT).show()
 
                     setImages()
@@ -350,14 +346,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Log.d("grusie", "error : $it")
                 }
-        }
-
-        private fun openChatRoom(context: Context) {
-            val intent = Intent(context, ChatRoomActivity::class.java)
-            intent.putExtra("userName", binding.myProfileName.text.toString())
-            intent.putExtra("userEmail", userData.email)
-            intent.putExtra("chatRoomId", chatRoomId)
-            startActivity(intent)
         }
 
         private fun createChatRoom() {
@@ -377,18 +365,20 @@ class MyProfileDetailActivity : AppCompatActivity() {
                         chatRoomId = chatRoomInfo.key
                         break
                     }
+
                 }
+
                 if (chatRoomId == null) {
                     createChatRoomData()
+                } else {
+                    openChatRoom()
                 }
-                else openChatRoom(this@MyProfileDetailActivity)
             }
         }
 
     private fun createChatRoomData() {
         //랜덤 key 발급
-        val key = chatRoomRef.push().key
-        Log.d("test",  key!!)
+        val key = chatRoomRef.push().key!!
 
         //chatRoomUser 생성
         val chatRoomUserdata = chatRoomUser(
@@ -405,5 +395,19 @@ class MyProfileDetailActivity : AppCompatActivity() {
         userStatusRef.child(key).setValue(userStatusData)
 
         Toast.makeText(applicationContext, "채팅방 생성 완료", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this@MyProfileDetailActivity, ChatRoomActivity::class.java)
+        intent.putExtra("userName", binding.myProfileName.text.toString())
+        intent.putExtra("userEmail", userData.email)
+        intent.putExtra("chatRoomId", key)
+        startActivity(intent)
+    }
+
+    private fun openChatRoom() {
+        val intent = Intent(this@MyProfileDetailActivity, ChatRoomActivity::class.java)
+        intent.putExtra("userName", binding.myProfileName.text.toString())
+        intent.putExtra("userEmail", userData.email)
+        intent.putExtra("chatRoomId", chatRoomId)
+        startActivity(intent)
     }
 }
