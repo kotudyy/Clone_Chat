@@ -46,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
                         //로그인 성공
                         MyApplication.email = email
                         changeLoginStatus("login")
-                        saveToken()
                     }else{
                         //발송된 메일로 인증 확인을 안 한 경우
                         Toast.makeText(baseContext,"전송된 메일로 이메일 인증이 되지 않았습니다.", Toast.LENGTH_SHORT).show()
@@ -58,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.openChatListBtn.setOnClickListener{
+            saveToken()
             startActivity(Intent(this, ChatListActivity::class.java))
             finish()
         }
