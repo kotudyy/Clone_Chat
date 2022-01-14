@@ -134,7 +134,11 @@ class ChatRoomActivity : AppCompatActivity() {
                 chatRoomUserRef.child(chatRoomId!!)
                     .get()
                     .addOnSuccessListener {
+                        val userList = mutableListOf<String>()
+
                         for (user in it.children){
+                            //본인이 아닌 다른 사람의 In Out 여부를 확인 후 read = true/false 결정
+                                // -> 본인과의 대화이면 if 문에 해당 X
                             if(user.value != MyApplication.auth.currentUser?.email){
                                 userStatusRef.child(chatRoomId!!).child(user.key!!)
                                     .get()
@@ -152,6 +156,16 @@ class ChatRoomActivity : AppCompatActivity() {
                                         myRecyclerView.scrollToPosition(adapter.itemCount-1)
                                     }
                             }
+                            userList.add(user.value as String)
+                        }
+
+                        if(userList[0] == userList[1]){
+                            val msg = messageData.copy(read = true)
+                            messageRef.child("$chatRoomId").child(key!!).setValue(msg)
+                            userRoomRef.child("$chatRoomId").setValue(userRoom)
+                            adapter.notifyDataSetChanged()
+                            currentDate = messageData.timestamp
+                            myRecyclerView.scrollToPosition(adapter.itemCount-1)
                         }
                     }
             }
