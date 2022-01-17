@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,13 +10,23 @@
         android:id="@+id/loginTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:text="로그인"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/loginLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginTextView">
+
         <EditText
             android:id="@+id/authEmail"
             android:layout_width="match_parent"
@@ -29,41 +39,22 @@
             android:id="@+id/authPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:hint="password"
             android:inputType="textPassword" />
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/btnLinear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/loginLinear"
-        android:layout_marginTop="30dp"
-        android:weightSum="2">
-        <Button
-            android:id="@+id/authBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="회원가입"
-            android:textSize="20dp"
-            android:layout_weight="1"/>
-        <Button
-            android:id="@+id/loginBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="로그인"
-            android:textSize="20dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+
     <Button
         android:id="@+id/logoutBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/loginTextView"
+        android:layout_marginTop="30dp"
         android:text="로그아웃"
         android:textSize="20dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/loginLinear" />
+
     <Button
         android:id="@+id/openChatListBtn"
         android:layout_width="match_parent"
@@ -71,6 +62,35 @@
         android:layout_below="@+id/logoutBtn"
         android:text="채팅 이용하기"
         android:textSize="20dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/btnLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginLinear"
+        android:orientation="vertical"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@+id/loginLinear"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/authBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="회원가입"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/loginLinear" />
+
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="로그인"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/authBtn" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package com.example.chatting.ChatFragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
