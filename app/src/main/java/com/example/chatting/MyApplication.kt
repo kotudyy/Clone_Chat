@@ -17,6 +17,7 @@ class MyApplication: MultiDexApplication() {
         lateinit var db: FirebaseFirestore
         lateinit var storage: FirebaseStorage
         lateinit var realtime: DatabaseReference
+        lateinit var prefs : MySharedPreferences
         var email: String? = null
         fun checkAuth(): Boolean {      //이메일 인증 완료해야만 true 반환
             val currentUser = auth.currentUser
@@ -30,6 +31,7 @@ class MyApplication: MultiDexApplication() {
     }
 
     override fun onCreate() {
+        prefs = MySharedPreferences(applicationContext)
         super.onCreate()
         auth = Firebase.auth
         db = FirebaseFirestore.getInstance()

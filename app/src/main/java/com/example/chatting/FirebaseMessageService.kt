@@ -13,7 +13,8 @@ import com.google.firebase.messaging.RemoteMessage
 
 class FirebaseMessageService : FirebaseMessagingService() {
     override fun onNewToken(p0: String){
-            Log.d("grusie", "Refreshed token: $p0")
+        Log.d("grusie", "Refreshed token: $p0")
+        MyApplication.prefs.globalToken = p0
     }
 
     override fun onMessageReceived(p0: RemoteMessage){
@@ -24,6 +25,8 @@ class FirebaseMessageService : FirebaseMessagingService() {
         val serverData = p0.data as Map<String, String>
 
         val chatRoomId = serverData["ChatRoomID"]
+        Log.d("grusie", "serverData : $serverData")
+        Log.d("grusie", "chatRoomID : $chatRoomId")
         Log.d("test", chatRoomId ?: "nothing")
 
         val serverMsg = ServerMsg(
@@ -54,12 +57,13 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                     Log.d("test", "success")
                                     serverMsg.name = documentSnapShot.getString("name")!!
                                     Log.d("test", serverMsg.toString())
+                                    Log.d("grusie","serverMsg : $serverMsg")
                                     notifyMessage(serverMsg)
                                 }
                         }
                     }
                 }
-            }
+            }.addOnFailureListener { Log.d("grusie","fail") }
 
 
     }
