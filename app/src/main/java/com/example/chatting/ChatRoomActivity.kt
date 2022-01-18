@@ -46,6 +46,8 @@ class ChatRoomActivity : AppCompatActivity() {
     var currentDate:Long ?= 0
     var loadMsg : Messages ?= null
     var myUser = ""
+    val sendMsg = SendMessage()
+    var oppToken = ""
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,6 +150,17 @@ class ChatRoomActivity : AppCompatActivity() {
                                             messageRef.child("$chatRoomId").child(key!!).setValue(msg)
                                         } else {
                                             messageRef.child("$chatRoomId").child(key!!).setValue(messageData)
+                                            MyApplication.db.collection("profile")
+                                                .whereEqualTo("email", user.value)
+                                                .get()
+                                                .addOnSuccessListener { document ->
+                                                    for (field in document) {
+                                                        oppToken = field["token"] as String
+                                                        Log.d("grusie","oppToken : $oppToken")
+                                                        sendMsg.sendNoti(oppToken,"$chatRoomId");
+                                                        break
+                                                    }
+                                                }
                                         }
 
                                         userRoomRef.child("$chatRoomId").setValue(userRoom)

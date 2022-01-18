@@ -92,7 +92,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
         }
 
         builder.apply {
-            setSmallIcon(android.R.drawable.ic_notification_overlay)  //스몰 아이콘
+            setSmallIcon(R.drawable.kakao_notification_icon)  //스몰 아이콘
             setContentTitle(message.name)
             setContentText(message.text)
             setWhen(message.timestamp)
