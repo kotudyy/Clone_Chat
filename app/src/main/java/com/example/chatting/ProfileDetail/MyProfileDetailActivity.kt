@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -15,10 +14,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.chatting.ChatRoomActivity
+import com.example.chatting.ChatRoom.ChatRoomActivity
 import com.example.chatting.Model.UserData
 import com.example.chatting.Model.chatRoomUser
-import com.example.chatting.MyApplication
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
 import com.example.chatting.util.URIPathHelper
@@ -48,7 +47,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         //리사이클러 뷰 항목 클릭시 넘어온 userData 정보를 화면 뷰에 구성
         userData = intent.getParcelableExtra("userData")!!
-        Log.d("test", userData.toString())
         editState(checkProfileUser())
         binding()
 
@@ -77,7 +75,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                             .into(binding.myProfileImage)
 
                         profileImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
-                        Log.d("test-galleryintent", profileImgFilePath!!)
                     }
 
                     "background" -> {
@@ -88,7 +85,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                             .into(binding.myProfileBackgroundImg)
 
                         backgroundImgFilePath = uriPathHelper.getPath(this, it.data!!.data!!)
-                        Log.d("Test", backgroundImgFilePath!!)
                     }
                 }
             }
@@ -111,7 +107,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
             try {
                 createChatRoom()
             } catch (e: Exception) {
-                Log.d("grusie", "$e")
             }
         }
 
@@ -333,7 +328,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
             val storageRef = storage.reference
             val imgRef =
                 storageRef.child("${MyApplication.auth.currentUser?.email}/${imageKind}")
-            Log.d("test-saveStorage", "$imgRef")
             val file = Uri.fromFile(File(filePath))
 
             imgRef
@@ -344,7 +338,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     setImages()
                 }
                 .addOnFailureListener {
-                    Log.d("grusie", "error : $it")
                 }
         }
 

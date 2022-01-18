@@ -1,33 +1,29 @@
-package com.example.chatting
+package com.example.chatting.FcmMessaging
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.chatting.ChatRoom.ChatRoomActivity
 import com.example.chatting.Model.ServerMsg
+import com.example.chatting.storage.MyApplication
+import com.example.chatting.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class FirebaseMessageService : FirebaseMessagingService() {
     override fun onNewToken(p0: String){
-        Log.d("grusie", "Refreshed token: $p0")
         MyApplication.prefs.globalToken = p0
     }
 
     override fun onMessageReceived(p0: RemoteMessage){
         super.onMessageReceived(p0)
-        Log.d("grusie", "fcm message : ${p0.notification}")
-        Log.d("grusie","fcm message : ${p0.data}")
 
         val serverData = p0.data as Map<String, String>
 
         val chatRoomId = serverData["ChatRoomID"]
-        Log.d("grusie", "serverData : $serverData")
-        Log.d("grusie", "chatRoomID : $chatRoomId")
-        Log.d("test", chatRoomId ?: "nothing")
 
         val serverMsg = ServerMsg(
             "name",
@@ -50,20 +46,16 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
                         "sender" -> {
                             val sender = info.value as String
-                            Log.d("Test", sender)
                             MyApplication.db.collection("profile").document(sender)
                                 .get()
                                 .addOnSuccessListener { documentSnapShot ->
-                                    Log.d("test", "success")
                                     serverMsg.name = documentSnapShot.getString("name")!!
-                                    Log.d("test", serverMsg.toString())
-                                    Log.d("grusie","serverMsg : $serverMsg")
                                     notifyMessage(serverMsg)
                                 }
                         }
                     }
                 }
-            }.addOnFailureListener { Log.d("grusie","fail") }
+            }.addOnFailureListener {  }
 
 
     }

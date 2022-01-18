@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.chatting.ChatListActivity
-import com.example.chatting.MyApplication
-import com.example.chatting.MySharedPreferences
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {

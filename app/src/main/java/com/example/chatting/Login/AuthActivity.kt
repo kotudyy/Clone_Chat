@@ -1,15 +1,10 @@
 package com.example.chatting.Login
 
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import com.example.chatting.ChatListActivity
 import com.example.chatting.Model.UserData
-import com.example.chatting.MyApplication
-import com.example.chatting.UserFragment.UsersFragment
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
@@ -49,7 +44,6 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                     }
                 }else {
                     Toast.makeText(this,"회원가입 실패", Toast.LENGTH_SHORT).show()
-                    Log.d("Grusie","${task.exception}")
                 }
             }
         }
