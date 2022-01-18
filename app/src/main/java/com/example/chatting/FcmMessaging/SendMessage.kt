@@ -1,6 +1,6 @@
-package com.example.chatting
+package com.example.chatting.FcmMessaging
 
-import android.util.Log
+import com.example.chatting.storage.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -47,7 +47,6 @@ class SendMessage {
                     root.put("to", "$token");
 
                     val res = postMsg(root.toString());
-                    Log.d("grusie", "sendMessage: $root")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

@@ -1,4 +1,4 @@
-package com.example.chatting
+package com.example.chatting.ChatRoom
 
 
 import android.annotation.SuppressLint
@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -16,7 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
-import com.example.chatting.Model.chatRoomUser
+import com.example.chatting.storage.MyApplication
+import com.example.chatting.R
+import com.example.chatting.FcmMessaging.SendMessage
 import com.example.chatting.databinding.ActivityChatRoomBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -26,7 +27,6 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.text.SimpleDateFormat
-import kotlin.math.log
 
 class ChatRoomActivity : AppCompatActivity() {
     lateinit var userName: String
@@ -156,7 +156,6 @@ class ChatRoomActivity : AppCompatActivity() {
                                                 .addOnSuccessListener { document ->
                                                     for (field in document) {
                                                         oppToken = field["token"] as String
-                                                        Log.d("grusie","oppToken : $oppToken")
                                                         sendMsg.sendNoti(oppToken,"$chatRoomId");
                                                         break
                                                     }
