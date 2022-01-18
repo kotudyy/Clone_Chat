@@ -2,16 +2,14 @@ package com.example.chatting.UserFragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.chatting.Model.UserData
-import com.example.chatting.MyApplication
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding
 
@@ -95,12 +93,10 @@ class UsersFragment : Fragment() {
                             }
                         }
                         .addOnFailureListener {
-                            Log.d("test", "Failure...")
                         }
                 }
             }
             .addOnFailureListener {
-                Log.d("test", "Failure...")
             }
         return binding.root
     }

@@ -1,4 +1,4 @@
-package com.example.chatting
+package com.example.chatting.storage
 
 import android.content.Context
 import android.content.SharedPreferences

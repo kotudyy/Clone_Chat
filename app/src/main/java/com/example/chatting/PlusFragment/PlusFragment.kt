@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.Login.LoginActivity
-import com.example.chatting.MyApplication
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentPlusBinding
 

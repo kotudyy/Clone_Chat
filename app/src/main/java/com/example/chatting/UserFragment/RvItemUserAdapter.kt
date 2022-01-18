@@ -2,16 +2,13 @@ package com.example.chatting.UserFragment
 
 import android.content.Intent
 import android.graphics.Color
-import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.Model.UserData
-import com.example.chatting.MyApplication
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.ProfileDetail.MyProfileDetailActivity
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemUserBinding

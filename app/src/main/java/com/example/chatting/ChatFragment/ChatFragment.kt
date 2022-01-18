@@ -1,27 +1,18 @@
 package com.example.chatting.ChatFragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.chatting.Model.Messages
 import com.example.chatting.Model.UserRoom
 import com.example.chatting.Model.chatRoomUser
-import com.example.chatting.MyApplication
+import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 
 
@@ -131,7 +122,6 @@ class ChatFragment : Fragment() {
                 user1 = null
                 user2 = null
                 val chatRoomUserData = snapshot.getValue<chatRoomUser>()!!
-                Log.d("chatRoomuserdata", "${chatRoomUserData}")
                 user1 = chatRoomUserData.user1
                 user2 = chatRoomUserData.user2
                 if(chatRoomUserData.user2 == userEmail){
@@ -172,12 +162,10 @@ class ChatFragment : Fragment() {
                     var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
                     var timestamp: Long = 0
                     val userRoomData = snapshot.getValue<UserRoom>()!!
-                    Log.d("snapshot", "${userRoomData}")
                     lastmessage = userRoomData.lastmessage
                     timestamp = userRoomData.timestamp
 
                     chatListDatas.add(UserRoom(chatroomid, lastmessage, timestamp, sender))
-                    Log.d("snapshot", "chatListDatas${chatListDatas}")
                     chatListDatas.sortByDescending { it.timestamp }     //시간 순으로 정렬
                     adapter.notifyDataSetChanged()
                 }
