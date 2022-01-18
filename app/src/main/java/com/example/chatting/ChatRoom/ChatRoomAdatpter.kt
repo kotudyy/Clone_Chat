@@ -1,22 +1,17 @@
-package com.example.chatting
+package com.example.chatting.ChatRoom
 
 import android.content.Context
-import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.Model.Messages
+import com.example.chatting.storage.MyApplication
+import com.example.chatting.R
 import com.example.chatting.databinding.ItemDatetxtBinding
 import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 
