@@ -46,14 +46,14 @@ class SendMessage {
                     // TODO to 에 상대방 토큰값 넣으면 보내짐
                     root.put("to", "$token");
 
-                    val res = postMsg(root.toString());
+                    postMsg(root.toString())
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }).start()
         }
 
-        fun postMsg(js: String): String {
+        fun postMsg(js: String) {
             val FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send" //TODO 기본 URL
             val SERVER_KEY =    //TODO 서버키 넣기
                 "AAAAs7wNw1Y:APA91bFh7C74RQxm7Qd3AKIGLLfCvIGzn7vVunX14nU6LVqVIbPQNu3Bho63i7LB6PsQOi0KfJwbNqp75JljDj2ejXHd-37nHzXDuW56IiRdsVjtB-kk01kRixTmbEQIcitrKEt43DNJ"
@@ -63,7 +63,6 @@ class SendMessage {
                 .post(body)
                 .addHeader("Authorization", "key=${SERVER_KEY}")
                 .build()
-            val res = OkHttpClient().newCall(req).execute()
-            return res.body!!.string()
+            OkHttpClient().newCall(req).execute()
         }
 }
