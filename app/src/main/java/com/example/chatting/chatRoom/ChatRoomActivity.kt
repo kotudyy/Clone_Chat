@@ -29,8 +29,6 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 
 class ChatRoomActivity : AppCompatActivity() {
-    lateinit var userName: String
-    lateinit var userEmail: String
     var chatRoomId: String? = null
     private val database = Firebase.database
     private val messageRef = database.getReference("Messages")
@@ -58,13 +56,22 @@ class ChatRoomActivity : AppCompatActivity() {
         setSupportActionBar(binding.chatroomToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        try { userEmail = intent.getSerializableExtra("userEmail") as String } catch (e: Exception) { }
-        try { chatRoomId = intent.getStringExtra("chatRoomId") as String } catch (e: Exception) { }
         try {
-            userName = intent.getStringExtra("userName") as String
-            binding.chatroomToolbar.setTitle(userName)
-        } catch (e: Exception) {
-        }
+            chatRoomId = intent.getStringExtra("chatRoomId") as String
+            chatRoomUserRef.child(chatRoomId!!)
+                .get()
+                .addOnSuccessListener {
+                    for (user in it.children){
+                        if(user.value != MyApplication.auth.currentUser?.email){
+                            MyApplication.db.collection("profile").document(user.value as String)
+                                .get()
+                                .addOnSuccessListener { field ->
+                                    binding.chatroomToolbar.title = field.getString("name")
+                                }
+                        }
+                    }
+                }
+        } catch (e: Exception) { }
 
         adapter = ChatRoomAdatpter(messageList, chatRoomId!!)
 

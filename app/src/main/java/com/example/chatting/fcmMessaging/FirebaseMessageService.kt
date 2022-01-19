@@ -65,10 +65,10 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                         .addOnSuccessListener {
                                             serverMsg.byteArray = it
 
-                                            notifyMessage(serverMsg)
+                                            notifyMessage(serverMsg, chatRoomId)
                                         }
                                         .addOnFailureListener {
-                                            notifyMessage(serverMsg)
+                                            notifyMessage(serverMsg, chatRoomId)
                                         }
 
                                 }
@@ -80,7 +80,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
     }
 
-    private fun notifyMessage(message: ServerMsg){
+    private fun notifyMessage(message: ServerMsg, chatRoomId: String){
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val builder: NotificationCompat.Builder
 
@@ -120,6 +120,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
             setNumber(newMessageCount)
 
             val chatRoomIntent = Intent(this@FirebaseMessageService, ChatRoomActivity::class.java)
+            chatRoomIntent.putExtra("chatRoomId", chatRoomId)
             val pendingIntent =
                 PendingIntent.getActivity(this@FirebaseMessageService, 10, chatRoomIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             setContentIntent(pendingIntent)
