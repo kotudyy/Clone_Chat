@@ -1,4 +1,4 @@
-package com.example.chatting.ProfileDetail
+package com.example.chatting.profileDetail
 
 import android.Manifest
 import android.content.Intent
@@ -14,9 +14,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.chatting.ChatRoom.ChatRoomActivity
-import com.example.chatting.Model.UserData
-import com.example.chatting.Model.chatRoomUser
+import com.example.chatting.chatRoom.ChatRoomActivity
+import com.example.chatting.model.UserData
+import com.example.chatting.model.chatRoomUser
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding

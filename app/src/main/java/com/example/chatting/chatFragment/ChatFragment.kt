@@ -1,12 +1,12 @@
-package com.example.chatting.ChatFragment
+package com.example.chatting.chatFragment
 
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatting.Model.UserRoom
-import com.example.chatting.Model.chatRoomUser
+import com.example.chatting.model.UserRoom
+import com.example.chatting.model.chatRoomUser
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
