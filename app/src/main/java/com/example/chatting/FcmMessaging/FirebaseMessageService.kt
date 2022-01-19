@@ -63,7 +63,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                     Log.d("test", "$sender")
 
                                     MyApplication.storage.reference.child("${sender}/profile")
-                                        .getBytes(512 * 512) // 256 * 256 X
+                                        .getBytes(1024 * 1024) // 256 * 256 X
                                         .addOnSuccessListener {
                                             serverMsg.byteArray = it
 
