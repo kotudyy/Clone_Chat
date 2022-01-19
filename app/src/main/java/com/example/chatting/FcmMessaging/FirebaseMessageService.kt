@@ -18,9 +18,7 @@ import android.provider.MediaStore
 import android.graphics.Bitmap
 import android.util.Log
 import android.graphics.BitmapFactory
-
-
-
+import java.lang.Exception
 
 
 class FirebaseMessageService : FirebaseMessagingService() {
@@ -63,11 +61,15 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                     serverMsg.name = documentSnapShot.getString("name")!!
 
                                     Log.d("test", "$sender")
+
                                     MyApplication.storage.reference.child("${sender}/profile")
                                         .getBytes(512 * 512) // 256 * 256 X
                                         .addOnSuccessListener {
                                             serverMsg.byteArray = it
 
+                                            notifyMessage(serverMsg)
+                                        }
+                                        .addOnFailureListener {
                                             notifyMessage(serverMsg)
                                         }
 
@@ -103,7 +105,10 @@ class FirebaseMessageService : FirebaseMessagingService() {
             builder = NotificationCompat.Builder(this)
         }
 
-        val bitmap = BitmapFactory.decodeByteArray(message.byteArray, 0, message.byteArray!!.size)
+        var bitmap : Bitmap? = null
+        try {
+            bitmap = BitmapFactory.decodeByteArray(message.byteArray, 0, message.byteArray!!.size)
+        } catch (e: Exception){}
 
 
         builder.apply {
