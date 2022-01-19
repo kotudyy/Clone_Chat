@@ -1,9 +1,9 @@
-package com.example.chatting.Login
+package com.example.chatting.login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.chatting.Model.UserData
+import com.example.chatting.model.UserData
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.databinding.ActivityAuthBinding
 

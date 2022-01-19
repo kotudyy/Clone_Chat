@@ -1,4 +1,4 @@
-package com.example.chatting.Model
+package com.example.chatting.model
 
 data class Messages(
     var message: String = "",

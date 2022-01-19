@@ -3,10 +3,9 @@ package com.example.chatting
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.chatting.ChatFragment.ChatFragment
-import com.example.chatting.PlusFragment.PlusFragment
-import com.example.chatting.R
-import com.example.chatting.UserFragment.UsersFragment
+import com.example.chatting.chatFragment.ChatFragment
+import com.example.chatting.plusFragment.PlusFragment
+import com.example.chatting.userFragment.UsersFragment
 import com.example.chatting.databinding.ActivityChatListBinding
 import com.google.android.material.tabs.TabLayout
 

@@ -1,4 +1,4 @@
-package com.example.chatting.UserFragment
+package com.example.chatting.userFragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatting.Model.UserData
+import com.example.chatting.model.UserData
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding

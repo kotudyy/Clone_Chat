@@ -1,4 +1,4 @@
-package com.example.chatting.Model
+package com.example.chatting.model
 
 //마지막 메시지
 data class UserRoom(

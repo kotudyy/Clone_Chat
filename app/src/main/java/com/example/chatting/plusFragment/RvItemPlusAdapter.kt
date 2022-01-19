@@ -1,4 +1,4 @@
-package com.example.chatting.PlusFragment
+package com.example.chatting.plusFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
