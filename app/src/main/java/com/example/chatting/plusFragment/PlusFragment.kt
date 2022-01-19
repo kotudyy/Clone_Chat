@@ -1,4 +1,4 @@
-package com.example.chatting.PlusFragment
+package com.example.chatting.plusFragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chatting.Login.LoginActivity
+import com.example.chatting.login.LoginActivity
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentPlusBinding

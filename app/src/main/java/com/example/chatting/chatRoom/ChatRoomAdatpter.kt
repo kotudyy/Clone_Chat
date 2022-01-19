@@ -1,4 +1,4 @@
-package com.example.chatting.ChatRoom
+package com.example.chatting.chatRoom
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.chatting.Model.Messages
+import com.example.chatting.model.Messages
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.ItemDatetxtBinding

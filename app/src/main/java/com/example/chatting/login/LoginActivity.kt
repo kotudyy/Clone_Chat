@@ -1,4 +1,4 @@
-package com.example.chatting.Login
+package com.example.chatting.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

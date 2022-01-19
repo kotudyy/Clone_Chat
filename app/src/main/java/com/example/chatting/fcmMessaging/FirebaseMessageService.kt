@@ -1,19 +1,17 @@
-package com.example.chatting.FcmMessaging
+package com.example.chatting.fcmMessaging
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.example.chatting.ChatRoom.ChatRoomActivity
-import com.example.chatting.Model.ServerMsg
+import com.example.chatting.chatRoom.ChatRoomActivity
+import com.example.chatting.model.ServerMsg
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import android.provider.MediaStore
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -63,7 +61,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                     Log.d("test", "$sender")
 
                                     MyApplication.storage.reference.child("${sender}/profile")
-                                        .getBytes(512 * 512) // 256 * 256 X
+                                        .getBytes(1024 * 1024) // 256 * 256 X
                                         .addOnSuccessListener {
                                             serverMsg.byteArray = it
 
