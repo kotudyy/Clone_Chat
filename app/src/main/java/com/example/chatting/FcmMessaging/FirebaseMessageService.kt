@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.chatting.ChatRoom.ChatRoomActivity
@@ -12,6 +13,13 @@ import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import android.provider.MediaStore
+
+import android.graphics.Bitmap
+import android.util.Log
+import android.graphics.BitmapFactory
+import java.lang.Exception
+
 
 class FirebaseMessageService : FirebaseMessagingService() {
     override fun onNewToken(p0: String){
@@ -28,7 +36,8 @@ class FirebaseMessageService : FirebaseMessagingService() {
         val serverMsg = ServerMsg(
             "name",
             "text",
-            0
+            0,
+            null
         )
 
         MyApplication.realtime.child("UserRoom").child(chatRoomId!!)
@@ -50,7 +59,20 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                 .get()
                                 .addOnSuccessListener { documentSnapShot ->
                                     serverMsg.name = documentSnapShot.getString("name")!!
-                                    notifyMessage(serverMsg)
+
+                                    Log.d("test", "$sender")
+
+                                    MyApplication.storage.reference.child("${sender}/profile")
+                                        .getBytes(512 * 512) // 256 * 256 X
+                                        .addOnSuccessListener {
+                                            serverMsg.byteArray = it
+
+                                            notifyMessage(serverMsg)
+                                        }
+                                        .addOnFailureListener {
+                                            notifyMessage(serverMsg)
+                                        }
+
                                 }
                         }
                     }
@@ -83,11 +105,18 @@ class FirebaseMessageService : FirebaseMessagingService() {
             builder = NotificationCompat.Builder(this)
         }
 
+        var bitmap : Bitmap? = null
+        try {
+            bitmap = BitmapFactory.decodeByteArray(message.byteArray, 0, message.byteArray!!.size)
+        } catch (e: Exception){}
+
+
         builder.apply {
             setSmallIcon(R.drawable.kakao_notification_icon)  //스몰 아이콘
             setContentTitle(message.name)
             setContentText(message.text)
             setWhen(message.timestamp)
+            setLargeIcon(bitmap)
 
             val newMessageCount = 3
             setNumber(newMessageCount)
