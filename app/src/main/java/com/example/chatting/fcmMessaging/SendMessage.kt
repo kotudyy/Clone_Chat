@@ -13,31 +13,6 @@ class SendMessage {
             Thread(Runnable {   //TODO 메인스래드에서는 네트워크 통신 안되서 새로 만들어야됨
                 try {
                     val root = JSONObject()     //TODO JSON 구조
-                    val notification = JSONObject()
-                    root.put("notification", notification)
-
-                    MyApplication.realtime.child("UserRoom").child(ChatRoomID!!)
-                        .get()
-                        .addOnSuccessListener { dataSnapShot ->
-                            for (info in dataSnapShot.children){
-                                when(info.key){
-                                    "lastmessage" -> {
-                                        val lastMsg = info.value as String
-                                        notification.put("body", "$lastMsg")
-                                    }
-
-                                    "sender" -> {
-                                        val sender = info.value as String
-                                        MyApplication.db.collection("profile").document(sender)
-                                            .get()
-                                            .addOnSuccessListener { documentSnapShot ->
-                                                val senderName = documentSnapShot.getString("name")!!
-                                                notification.put("title", "$senderName")
-                                            }
-                                    }
-                                }
-                            }
-                        }
 
                     val data = JSONObject()
                     root.put("data", data)
