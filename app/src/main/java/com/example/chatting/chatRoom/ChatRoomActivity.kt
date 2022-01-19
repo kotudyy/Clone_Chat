@@ -1,4 +1,4 @@
-package com.example.chatting.ChatRoom
+package com.example.chatting.chatRoom
 
 
 import android.annotation.SuppressLint
@@ -13,11 +13,11 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chatting.Model.Messages
-import com.example.chatting.Model.UserRoom
+import com.example.chatting.model.Messages
+import com.example.chatting.model.UserRoom
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
-import com.example.chatting.FcmMessaging.SendMessage
+import com.example.chatting.fcmMessaging.SendMessage
 import com.example.chatting.databinding.ActivityChatRoomBinding
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

@@ -24,7 +24,7 @@
             android:value="fcm_default_channel"/>
 
         <service
-            android:name=".FcmMessaging.FirebaseMessageService"
+            android:name=".fcmMessaging.FirebaseMessageService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -33,17 +33,17 @@
         </service>
 
         <activity
-            android:name=".ProfileDetail.MyProfileDetailActivity"
+            android:name=".profileDetail.MyProfileDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ChatListActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatRoom.ChatRoomActivity"
+            android:name=".chatRoom.ChatRoomActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false"/>
         <activity
-            android:name=".Login.LoginActivity"
+            android:name=".login.LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Login.AuthActivity"
+            android:name=".login.AuthActivity"
             android:exported="true" />
 
     </application>

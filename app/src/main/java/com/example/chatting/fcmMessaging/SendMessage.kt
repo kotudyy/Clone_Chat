@@ -1,4 +1,4 @@
-package com.example.chatting.FcmMessaging
+package com.example.chatting.fcmMessaging
 
 import com.example.chatting.storage.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

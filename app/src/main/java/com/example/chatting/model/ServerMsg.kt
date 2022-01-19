@@ -1,6 +1,4 @@
-package com.example.chatting.Model
-
-import android.net.Uri
+package com.example.chatting.model
 
 data class ServerMsg(
     var name: String,
