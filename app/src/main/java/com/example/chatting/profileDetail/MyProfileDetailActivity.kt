@@ -114,7 +114,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     myProfileChat.visibility = View.GONE
                     myProfileEdit.visibility = View.GONE
                     myProfileBack.visibility = View.GONE
-                    myProfileFavorites.visibility = View.GONE
                     myProfileMusic.visibility = View.GONE
 
                     myProfileImage.isEnabled = true
@@ -132,7 +131,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                     myProfileChat.visibility = View.VISIBLE
                     myProfileEdit.visibility = View.VISIBLE
                     myProfileBack.visibility = View.VISIBLE
-                    myProfileFavorites.visibility = View.VISIBLE
                     myProfileName.visibility = View.VISIBLE
                     myProfileStatusMsg.visibility = View.VISIBLE
                     myProfileMusic.visibility = View.VISIBLE
@@ -151,7 +149,6 @@ class MyProfileDetailActivity : AppCompatActivity() {
                 binding.run {
                     myProfileChat.visibility = View.VISIBLE
                     myProfileBack.visibility = View.VISIBLE
-                    myProfileFavorites.visibility = View.VISIBLE
                     myProfileName.visibility = View.VISIBLE
                     myProfileStatusMsg.visibility = View.VISIBLE
                     myProfileMusic.visibility = View.VISIBLE

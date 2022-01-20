@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".profileDetail.MyProfileDetailActivity"
-    android:background="#424242">
+    tools:context=".profileDetail.MyProfileDetailActivity">
 
+    <!--프로필 배경사진-->
     <ImageView
         android:id="@+id/my_profile_background_img"
         android:layout_width="match_parent"
@@ -27,56 +27,13 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintVertical_bias="0"/>
 
-    <!--뒤로가기 버튼 : Edit-->
-    <ImageView
-        android:id="@+id/my_profile_back_edit"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@android:drawable/ic_menu_revert"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintVertical_bias="0"
-        android:visibility="gone"/>
-
-    <!--즐겨찾기 버튼-->
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/my_profile_favorites"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:civ_border_color="@color/white"
-        app:civ_border_width="2dp"
-        android:src="@android:drawable/btn_star_big_off"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintVertical_bias="0"/>
-
-    <!--수정 완료 버튼-->
-    <TextView
-        android:id="@+id/my_profile_save_edit"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:text="완료"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintVertical_bias="0"
-        android:visibility="gone"/>
-
     <!--프로필 뮤직-->
     <TextView
         android:id="@+id/my_profile_music"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_margin="5dp"
-        android:text="프로필 뮤직"
+        android:text="@string/profile_music"
         android:textColor="@color/white"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
@@ -116,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
-        android:text="이름"
+        android:text="@string/profile_name"
         android:gravity="center"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/my_profile_image"
@@ -124,15 +81,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/my_profile_statusMsg"/>
 
-    <!--이름 수정 EditText : 편집 시 visible-->
+    <!--이름 : Edit-->
     <EditText
         android:id="@+id/my_profile_name_edit"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:inputType="text"
         android:textSize="15sp"
         android:gravity="center"
         android:maxLines="1"
-        android:hint="이름을 입력해 주세요."
+        android:hint="@string/profile_name_edit"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:layout_marginTop="5dp"
@@ -150,17 +108,18 @@
         android:textSize="15sp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:text="상태메세지"
+        android:text="@string/profile_status_message"
         app:layout_constraintTop_toBottomOf="@+id/my_profile_name"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/my_profile_container"/>
 
-    <!--상태메시지 수정 EditText : 편집 시 visible-->
+    <!--상태메시지 : Edit-->
     <EditText
         android:id="@+id/my_profile_statusMsg_edit"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:inputType="text"
         android:textSize="15sp"
         android:gravity="center"
         android:layout_marginTop="5dp"
@@ -172,6 +131,34 @@
         app:layout_constraintBottom_toTopOf="@+id/my_profile_container"
         android:visibility="invisible"/>
 
+    <!--뒤로가기 버튼 : Edit-->
+    <ImageView
+        android:id="@+id/my_profile_back_edit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        android:visibility="gone"/>
+
+    <!--수정 완료 버튼 : Edit-->
+    <TextView
+        android:id="@+id/my_profile_save_edit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:text="@string/profile_save_edit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0"
+        android:visibility="gone"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/my_profile_container"
         android:layout_width="match_parent"
@@ -181,7 +168,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
-        <!--채팅 버튼 : 편집 시 invisible-->
+        <!--채팅 버튼-->
         <ImageView
             android:id="@+id/my_profile_chat"
             android:layout_width="60dp"
@@ -193,7 +180,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:visibility="visible"/>
 
-        <!--편집 버튼 : 편집 시 invisible-->
+        <!--편집 버튼-->
         <ImageView
             android:id="@+id/my_profile_edit"
             android:layout_width="60dp"
@@ -205,17 +192,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:visibility="visible"/>
 
+        <!--배경사진 변경-->
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/my_profile_edit_camera"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="10dp"
             android:src="@android:drawable/ic_menu_camera"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#50000000"
+            app:civ_circle_background_color="#FFFFFF"
+            android:background=""
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="1"
             app:layout_constraintLeft_toLeftOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
