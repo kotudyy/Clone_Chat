@@ -115,6 +115,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
             setContentText(message.text)
             setWhen(message.timestamp)
             setLargeIcon(bitmap)
+            setAutoCancel(true)
 
             val newMessageCount = 3
             setNumber(newMessageCount)
