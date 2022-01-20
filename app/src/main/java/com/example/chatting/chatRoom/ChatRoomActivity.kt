@@ -29,7 +29,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 
 class ChatRoomActivity : AppCompatActivity() {
-    var chatRoomId: String? = null
+    private var chatRoomId: String? = null
     private val database = Firebase.database
     private val messageRef = database.getReference("Messages")
     private val userRoomRef = database.getReference("UserRoom")
@@ -43,9 +43,9 @@ class ChatRoomActivity : AppCompatActivity() {
     var lastDate:Long ?= 0
     var currentDate:Long ?= 0
     var loadMsg : Messages ?= null
-    var myUser = ""
-    val sendMsg = SendMessage()
-    var oppToken = ""
+    private var myUser = ""
+    private val sendMsg = SendMessage()
+    private var oppToken = ""
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +61,7 @@ class ChatRoomActivity : AppCompatActivity() {
             chatRoomUserRef.child(chatRoomId!!)
                 .get()
                 .addOnSuccessListener {
+                    val userList = mutableListOf<String>()
                     for (user in it.children){
                         if(user.value != MyApplication.auth.currentUser?.email){
                             MyApplication.db.collection("profile").document(user.value as String)
@@ -69,6 +70,14 @@ class ChatRoomActivity : AppCompatActivity() {
                                     binding.chatroomToolbar.title = field.getString("name")
                                 }
                         }
+                        userList.add(user.value as String)
+                    }
+                    if(userList[0] == userList[1]){
+                        MyApplication.db.collection("profile").document(MyApplication.auth.currentUser?.email!!)
+                            .get()
+                            .addOnSuccessListener { field ->
+                                binding.chatroomToolbar.title = field.getString("name")
+                            }
                     }
                 }
         } catch (e: Exception) { }
@@ -163,7 +172,7 @@ class ChatRoomActivity : AppCompatActivity() {
                                                 .addOnSuccessListener { document ->
                                                     for (field in document) {
                                                         oppToken = field["token"] as String
-                                                        sendMsg.sendNoti(oppToken,"$chatRoomId");
+                                                        sendMsg.sendNoti(oppToken,"$chatRoomId")
                                                         break
                                                     }
                                                 }
@@ -239,7 +248,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
     //액션버튼 클릭 했을 때
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item?.itemId){
+        when(item.itemId){
             android.R.id.home -> {
                 finish()
                 return true
@@ -277,7 +286,7 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    fun dateCalc() {
+    private fun dateCalc() {
         if(lastDate != null && currentDate !=null) {
             if(SimpleDateFormat("yyyy년 MM월 dd일").format(lastDate) < SimpleDateFormat("yyyy년 MM월 dd일").format(currentDate)) {
                 lastDate = currentDate
@@ -289,7 +298,7 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    fun addDate() {
+    private fun addDate() {
         messageList.add(
             Messages(
                 message = "",
