@@ -12,9 +12,7 @@ import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-
 import android.graphics.Bitmap
-import android.util.Log
 import android.graphics.BitmapFactory
 import java.lang.Exception
 
@@ -28,9 +26,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
         super.onMessageReceived(p0)
 
         val serverData = p0.data as Map<String, String>
-
         val chatRoomId = serverData["ChatRoomID"]
-
         val serverMsg = ServerMsg(
             "name",
             "text",
@@ -57,14 +53,11 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                 .get()
                                 .addOnSuccessListener { documentSnapShot ->
                                     serverMsg.name = documentSnapShot.getString("name")!!
-
-                                    Log.d("test", "$sender")
-
+                                    val maxBytes : Long = 1024 * 1024
                                     MyApplication.storage.reference.child("${sender}/profile")
-                                        .getBytes(1024 * 1024) // 256 * 256 X
+                                        .getBytes(maxBytes)
                                         .addOnSuccessListener {
                                             serverMsg.byteArray = it
-
                                             notifyMessage(serverMsg, chatRoomId)
                                         }
                                         .addOnFailureListener {
