@@ -31,7 +31,7 @@ class ChatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentChatBinding.inflate(inflater, container, false)
 
         //프래그먼트에서 toolbar 사용하기 위함
@@ -116,7 +116,7 @@ class ChatFragment : Fragment() {
     }
 
     //채팅방 리스트 가져오기 searchChatRoom() -> getChatRoomList()
-    fun searchChatRoom() {
+    private fun searchChatRoom() {
         val userDataListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 user1 = null
