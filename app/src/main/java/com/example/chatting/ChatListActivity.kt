@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.chatting.chatFragment.ChatFragment
-import com.example.chatting.plusFragment.PlusFragment
 import com.example.chatting.userFragment.UsersFragment
 import com.example.chatting.databinding.ActivityChatListBinding
 import com.google.android.material.tabs.TabLayout
@@ -35,11 +34,6 @@ class ChatListActivity : AppCompatActivity() {
                     1 -> {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.mainFrameLayout, ChatFragment())
-                            .commit()
-                    }
-                    2-> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.mainFrameLayout, PlusFragment())
                             .commit()
                     }
                 }
