@@ -1,6 +1,7 @@
 package com.example.chatting.userFragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import com.example.chatting.model.UserData
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding
+import com.example.chatting.login.LoginActivity
 
 class UsersFragment : Fragment() {
 
@@ -39,6 +41,7 @@ class UsersFragment : Fragment() {
                     }
                     R.id.user_menu_allsettings -> {
                         Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(activity, LoginActivity::class.java))
                     }
                     R.id.user_menu_music -> {
                         Toast.makeText(this.context, "Music", Toast.LENGTH_SHORT).show()

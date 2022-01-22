@@ -1,9 +1,15 @@
 package com.example.chatting.profileDetail
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -24,8 +30,12 @@ import com.example.chatting.util.URIPathHelper
 import com.example.chatting.util.myCheckPermission
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.io.File
 import java.lang.Exception
+
+import android.util.Log
+import androidx.annotation.RequiresApi
+import java.io.*
+
 
 class MyProfileDetailActivity : AppCompatActivity() {
     private lateinit var userData: UserData
@@ -336,12 +346,64 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
     }
 
+    //비트맵 resize 및, url로 변환
+    private fun saveBitmapToJpeg(context: Context, bitmap: Bitmap, name: String): String? {
+        val maximagesize = 1024 * 1024
+        var realimagesize = maximagesize
+        var quality = 100 //사진퀄리티는 최대가 100
+        val storage: File = context.getCacheDir()
+        val fileName = "$name.jpg" // 임시파일로 저장
+        val tempFile = File(storage, fileName)
+        try {
+            tempFile.createNewFile() // 파일을 생성해주고
+            while (realimagesize >= maximagesize) {
+                if (quality < 0) {
+                    return "too big"
+                }
+                val out = FileOutputStream(tempFile)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
+                realimagesize = tempFile.length().toInt() //작아진 본 파일의 크기를 저장하여 다시 비교
+                quality -= 20   // 용량 줄이기
+                out.close()
+            }
+            Log.d("grusie", "imagelocation resizefilesize result: $realimagesize")
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return tempFile.absolutePath //임시파일 경로로 리턴.
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun bitmapRotate(uri : Uri, bitmap : Bitmap): Bitmap? {
+        val input = contentResolver.openInputStream(uri)!!
+        val exif = ExifInterface(input)
+        input.close()
+
+        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL)
+        val metrix = Matrix()
+        if(orientation == ExifInterface.ORIENTATION_ROTATE_90){
+            metrix.postRotate(90F)
+        }
+        else if(orientation == ExifInterface.ORIENTATION_ROTATE_180){
+            metrix.postRotate(180F)
+        }
+        else if(orientation == ExifInterface.ORIENTATION_ROTATE_270){
+            metrix.postRotate(270F)
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, metrix, true)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun saveStorage(imageKind: String, filePath: String) {
         val storage = MyApplication.storage
         val storageRef = storage.reference
         val imgRef =
             storageRef.child("${MyApplication.auth.currentUser?.email}/${imageKind}")
-        val file = Uri.fromFile(File(filePath))
+        val bitmapImg = BitmapFactory.decodeFile(filePath)
+        val rotateImg = bitmapRotate(Uri.fromFile(File(filePath)), bitmapImg)!!
+        val file = Uri.fromFile(File(saveBitmapToJpeg(this,rotateImg,"tempFile")))
 
         imgRef
             .putFile(file)
