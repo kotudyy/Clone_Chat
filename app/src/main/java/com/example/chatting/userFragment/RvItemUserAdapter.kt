@@ -19,15 +19,14 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
 
     fun setData(data: UserData) {
         binding.run {
-            username.text = data.name
-            if(data.statusMsg.trim() == "" || data.statusMsg == null)
-                statusMessage.visibility = View.GONE
-            else
-                statusMessage.text = data.statusMsg
-            if(data.profileMusic == "" || data.profileMusic == null)
+            username.text = data.name.trim()
+            statusMessage.text = data.statusMsg.trim()
+            profileMusic.text = data.profileMusic.trim()
+
+            if(profileMusic.text == "")
                 profileMusic.visibility = View.GONE
-            else
-                profileMusic.text = data.profileMusic
+            if(statusMessage.text == "")
+                statusMessage.visibility = View.GONE
 
             MyApplication.storage.reference.child("${data.email}/profile")
                 .downloadUrl
