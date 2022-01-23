@@ -1,9 +1,11 @@
 package com.example.chatting.chatRoom
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatting.model.Messages
@@ -12,6 +14,9 @@ import com.example.chatting.R
 import com.example.chatting.databinding.ItemDatetxtBinding
 import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
+import com.example.chatting.model.UserData
+import com.example.chatting.profileDetail.MyProfileDetailActivity
+import com.google.firebase.firestore.auth.User
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 
@@ -19,8 +24,7 @@ import java.text.SimpleDateFormat
 class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var context: Context
     lateinit var time: String
-    lateinit var lastDate: String
-    lateinit var currentDate: String
+    lateinit var userData : UserData
     var type: Int = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -41,7 +45,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             2 -> {
                 val binding =
                     ItemDatetxtBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                dateViewHolder(binding)
+                    dateViewHolder(binding)
             }
             else -> throw RuntimeException("Error")
         }
@@ -72,7 +76,19 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     .whereEqualTo("email", data.sender)
                     .get()
                     .addOnSuccessListener { document ->
-                        for (field in document) tvChatroomUsername.text = field["name"] as String
+                        for (field in document) {
+                            tvChatroomUsername.text = field["name"] as String
+                            userData = UserData(
+                                field["email"] as String,
+                                field["name"] as String,
+                                field["statusMsg"] as String,
+                                field["profileMusic"] as String)
+                        }
+                        ivChatProfile.setOnClickListener {
+                            val intent = Intent(binding.root.context, MyProfileDetailActivity::class.java)
+                            intent.putExtra("userData", userData)
+                            ContextCompat.startActivity(binding.root.context, intent, null)
+                        }
                     }
                 tvChatroomReceivemsg.text = data.message
                 tvChatroomReceivetime.text = time
