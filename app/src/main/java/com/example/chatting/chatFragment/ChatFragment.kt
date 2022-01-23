@@ -1,5 +1,6 @@
 package com.example.chatting.chatFragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -10,6 +11,7 @@ import com.example.chatting.model.chatRoomUser
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
+import com.example.chatting.login.LoginActivity
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -49,6 +51,7 @@ class ChatFragment : Fragment() {
                     }
                     R.id.chatting_menu_allsettings -> {
                         Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(activity, LoginActivity::class.java))
                         true
                     }
                     R.id.chatting_menu_music -> {
