@@ -3,6 +3,7 @@ package com.example.chatting.userFragment
 import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,9 +19,14 @@ class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHo
 
     fun setData(data: UserData) {
         binding.run {
-            username.text = data.name
-            statusMessage.text = data.statusMsg
-            profileMusic.text = data.profileMusic
+            username.text = data.name.trim()
+            statusMessage.text = data.statusMsg.trim()
+            profileMusic.text = data.profileMusic.trim()
+
+            if(profileMusic.text == "")
+                profileMusic.visibility = View.GONE
+            if(statusMessage.text == "")
+                statusMessage.visibility = View.GONE
 
             MyApplication.storage.reference.child("${data.email}/profile")
                 .downloadUrl

@@ -1,7 +1,9 @@
 package com.example.chatting.userFragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.example.chatting.model.UserData
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentUsersBinding
+import com.example.chatting.login.LoginActivity
 
 class UsersFragment : Fragment() {
 
@@ -39,6 +42,7 @@ class UsersFragment : Fragment() {
                     }
                     R.id.user_menu_allsettings -> {
                         Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(activity, LoginActivity::class.java))
                     }
                     R.id.user_menu_music -> {
                         Toast.makeText(this.context, "Music", Toast.LENGTH_SHORT).show()
@@ -58,7 +62,12 @@ class UsersFragment : Fragment() {
         binding.rvUser.layoutManager = LinearLayoutManager(this.context)
 
         //RecyclerView에 User 정보 삽입
+        insertUser()
 
+        return binding.root
+    }
+
+    private fun insertUser(){
         val documentName = MyApplication.auth.currentUser?.email
         userData.clear()
 
@@ -74,7 +83,6 @@ class UsersFragment : Fragment() {
                         myField["profileMusic"] as String)
 
                     userData.add(myProfileData)
-                    adapter.notifyDataSetChanged()
 
                     // 성공 시 나머지 항목들 출력
                     MyApplication.db.collection("profile")
@@ -89,8 +97,8 @@ class UsersFragment : Fragment() {
                                     field["profileMusic"] as String)
 
                                 userData.add(myProfileData)
-                                adapter.notifyDataSetChanged()
                             }
+                            adapter.notifyDataSetChanged()
                         }
                         .addOnFailureListener {
                         }
@@ -98,13 +106,9 @@ class UsersFragment : Fragment() {
             }
             .addOnFailureListener {
             }
-        return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
-
-        adapter.notifyDataSetChanged()
     }
 }
