@@ -2,6 +2,7 @@ package com.example.chatting.chatRoom
 
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -81,7 +82,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
         } catch (e: Exception) { }
 
-        adapter = ChatRoomAdatpter(messageList)
+        adapter = ChatRoomAdatpter(messageList, chatRoomId!!)
 
         binding.rvChatroom.adapter = adapter
         binding.rvChatroom.layoutManager = LinearLayoutManager(this)
@@ -122,7 +123,7 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
 
-        myRecyclerView.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+        myRecyclerView.addOnLayoutChangeListener { view, i, i2, i3, bottom, i5, i6, i7, oldBottom ->
             if(bottom < oldBottom)
                 binding.rvChatroom.scrollBy(0, oldBottom - bottom)
         }
@@ -161,8 +162,8 @@ class ChatRoomActivity : AppCompatActivity() {
                                     .get()
                                     .addOnSuccessListener { userStatus ->
                                         if(userStatus.value == "In"){
-                                            val inMsg = messageData.copy(read = true)
-                                            messageRef.child("$chatRoomId").child(key!!).setValue(inMsg)
+                                            val msg = messageData.copy(read = true)
+                                            messageRef.child("$chatRoomId").child(key!!).setValue(msg)
                                         } else {
                                             messageRef.child("$chatRoomId").child(key!!).setValue(messageData)
                                             MyApplication.db.collection("profile")
@@ -187,8 +188,8 @@ class ChatRoomActivity : AppCompatActivity() {
                         }
 
                         if(userList[0] == userList[1]){
-                            val myMsg = messageData.copy(read = true)
-                            messageRef.child("$chatRoomId").child(key!!).setValue(myMsg)
+                            val msg = messageData.copy(read = true)
+                            messageRef.child("$chatRoomId").child(key!!).setValue(msg)
                             userRoomRef.child("$chatRoomId").setValue(userRoom)
                             adapter.notifyDataSetChanged()
                             currentDate = messageData.timestamp
@@ -201,7 +202,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
     private fun loadChatData() {
         val messagesDataListener = object : ChildEventListener{
-            @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 lastDate = loadMsg?.timestamp
                 loadMsg = snapshot.getValue<Messages>()!!
@@ -212,7 +212,6 @@ class ChatRoomActivity : AppCompatActivity() {
                 myRecyclerView.scrollToPosition(adapter.itemCount-1)
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val newMsgList = mutableListOf<Messages>()
                 for(message in messageList){
@@ -259,29 +258,26 @@ class ChatRoomActivity : AppCompatActivity() {
                     setTitle("확인")
                     setMessage("채팅방을 나가시겠습니까?")
                     setPositiveButton(
-                        "OK"
-                    ) { _, _ ->
-                        MyApplication.realtime.child("chatRoomUser")
-                            .child(chatRoomId.toString())
-                            .removeValue()
+                        "OK",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            MyApplication.realtime.child("chatRoomUser")
+                                .child(chatRoomId.toString())
+                                .removeValue()
 
-                        MyApplication.realtime.child("UserRoom")
-                            .child(chatRoomId.toString())
-                            .removeValue()
+                            MyApplication.realtime.child("UserRoom")
+                                .child(chatRoomId.toString())
+                                .removeValue()
 
-                        MyApplication.realtime.child("Messages")
-                            .child(chatRoomId.toString())
-                            .removeValue()
-                        MyApplication.realtime.child("UserStatus")
-                            .child(chatRoomId.toString())
-                            .removeValue()
-                        finish()
-                    }
+                            MyApplication.realtime.child("Messages")
+                                .child(chatRoomId.toString())
+                                .removeValue()
+                            finish()
+                        })
                     setNegativeButton(
-                        "Cancel"
-                    ) { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                        "Cancel",
+                        DialogInterface.OnClickListener { dialog, which ->
+                            dialog.dismiss()
+                        })
                     show()
                 }
                 return super.onOptionsItemSelected(item)
@@ -290,7 +286,6 @@ class ChatRoomActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     private fun dateCalc() {
         if(lastDate != null && currentDate !=null) {
             if(SimpleDateFormat("yyyy년 MM월 dd일").format(lastDate) < SimpleDateFormat("yyyy년 MM월 dd일").format(currentDate)) {
