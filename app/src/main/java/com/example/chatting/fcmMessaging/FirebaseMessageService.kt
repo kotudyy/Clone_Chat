@@ -1,6 +1,5 @@
 package com.example.chatting.fcmMessaging
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -54,7 +53,7 @@ class FirebaseMessageService : FirebaseMessagingService() {
                                 .get()
                                 .addOnSuccessListener { documentSnapShot ->
                                     serverMsg.name = documentSnapShot.getString("name")!!
-                                    val maxBytes : Long = (1024 * 1024).toLong()
+                                    val maxBytes : Long = 1024 * 1024
                                     MyApplication.storage.reference.child("${sender}/profile")
                                         .getBytes(maxBytes)
                                         .addOnSuccessListener {
@@ -74,7 +73,6 @@ class FirebaseMessageService : FirebaseMessagingService() {
 
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     private fun notifyMessage(message: ServerMsg, chatRoomId: String){
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val builder: NotificationCompat.Builder
