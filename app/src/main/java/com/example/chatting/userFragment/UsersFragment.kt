@@ -26,6 +26,7 @@ class UsersFragment : Fragment() {
     ): View {
         binding = FragmentUsersBinding.inflate(inflater, container, false)
 
+        //프래그먼트에서 toolbar 사용하기 위함
         binding.userToolbar.apply {
             inflateMenu(R.menu.menu_user)
             setOnMenuItemClickListener {
@@ -38,10 +39,12 @@ class UsersFragment : Fragment() {
             }
         }
 
+        //RecyclerView Adapter 연결
         adapter = RvItemUserAdapter(userData)
         binding.rvUser.adapter = adapter
         binding.rvUser.layoutManager = LinearLayoutManager(this.context)
 
+        //RecyclerView 에 User 정보 삽입
         insertUser()
 
         return binding.root
@@ -52,6 +55,7 @@ class UsersFragment : Fragment() {
         val documentName = MyApplication.auth.currentUser?.email
         userData.clear()
 
+        // 내 정보 첫 번째 항목으로 출력
         MyApplication.db.collection("profile")
             .whereEqualTo("email", documentName)
             .get()
@@ -65,6 +69,7 @@ class UsersFragment : Fragment() {
 
                     userData.add(myProfileData)
 
+                    // 성공 시 나머지 항목들 출력
                     MyApplication.db.collection("profile")
                         .whereNotEqualTo("email", documentName)
                         .get()

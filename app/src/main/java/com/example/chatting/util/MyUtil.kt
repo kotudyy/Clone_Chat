@@ -31,8 +31,9 @@ fun myCheckPermission(context: Context) {
 class URIPathHelper {
     fun getPath(context: Context, uri: Uri): String? {
 
+        // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
-
+            // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":".toRegex()).toTypedArray()

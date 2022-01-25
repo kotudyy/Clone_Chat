@@ -23,9 +23,9 @@ class MyApplication: MultiDexApplication() {
 
         var email: String? = null
 
-        fun checkAuth(): Boolean {
+        fun checkAuth(): Boolean {     //이메일 인증 완료해야만 true 반환
             val currentUser = auth.currentUser
-            return currentUser?.let {
+            return currentUser?.let {  //유저가 저장되어있는지
                 email = currentUser.email
                 currentUser.isEmailVerified
             } ?: let{

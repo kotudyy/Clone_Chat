@@ -348,23 +348,23 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
     }
 
-
+    //비트맵 resize 및, url로 변환
     private fun saveBitmapToJpeg(context: Context, bitmap: Bitmap, name: String): String? {
         val maxImageSize = 1024 * 1024
         var realImageSize = maxImageSize
-        var quality = 100
+        var quality = 100 //사진퀄리티는 최대가 100
         val storage: File = context.cacheDir
-        val tempFile = File(storage, "$name.jpg")
+        val tempFile = File(storage, "$name.jpg") // 임시파일로 저장
         try {
-            tempFile.createNewFile()
+            tempFile.createNewFile() // 파일을 생성해주고
             while (realImageSize >= maxImageSize) {
                 if (quality < 0) {
                     return "too big"
                 }
                 val out = FileOutputStream(tempFile)
                 bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
-                realImageSize = tempFile.length().toInt()
-                quality -= 20
+                realImageSize = tempFile.length().toInt() //작아진 본 파일의 크기를 저장하여 다시 비교
+                quality -= 20 // 용량 줄이기
                 out.close()
             }
         } catch (e: FileNotFoundException) {
@@ -372,7 +372,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return tempFile.absolutePath
+        return tempFile.absolutePath //임시파일 경로로 리턴.
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
