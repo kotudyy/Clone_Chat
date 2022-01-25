@@ -17,4 +17,16 @@
     <string name="users">사용자</string>
     <string name="chatting">채팅</string>
 
+    <string name="sign_in">회원가입</string>
+    <string name="email">E-mail</string>
+    <string name="password">password</string>
+    <string name="login">로그인</string>
+    <string name="logout">로그아웃</string>
+
+    <string name="go_chatting">채팅 이용하기</string>
+    <string name="test">테스트입니다.</string>
+    <string name="test_time">오후 11:05</string>
+
+    <string name="text_not_read">1</string>
+
 </resources>
