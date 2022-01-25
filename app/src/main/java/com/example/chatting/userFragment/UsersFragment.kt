@@ -34,21 +34,8 @@ class UsersFragment : Fragment() {
             inflateMenu(R.menu.menu_user)
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.user_menu_edit -> {
-                        Toast.makeText(this.context, "Edit", Toast.LENGTH_SHORT).show()
-                    }
-                    R.id.user_menu_sort -> {
-                        Toast.makeText(this.context, "Sort", Toast.LENGTH_SHORT).show()
-                    }
                     R.id.user_menu_allsettings -> {
-                        Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(activity, LoginActivity::class.java))
-                    }
-                    R.id.user_menu_music -> {
-                        Toast.makeText(this.context, "Music", Toast.LENGTH_SHORT).show()
-                    }
-                    R.id.user_menu_add -> {
-                        Toast.makeText(this.context, "Add", Toast.LENGTH_SHORT).show()
                     }
 
                 }
