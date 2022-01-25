@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.chatting">
+    package="com.kotudyy.chatting">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".storage.MyApplication"
+        android:name="com.kotudyy.chatting.storage.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,7 +24,7 @@
             android:value="fcm_default_channel"/>
 
         <service
-            android:name=".fcmMessaging.FirebaseMessageService"
+            android:name="com.kotudyy.chatting.fcmMessaging.FirebaseMessageService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -33,17 +33,17 @@
         </service>
 
         <activity
-            android:name=".profileDetail.MyProfileDetailActivity"
+            android:name="com.kotudyy.chatting.profileDetail.MyProfileDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatListActivity"
+            android:name="com.kotudyy.chatting.ChatListActivity"
             android:exported="false" />
         <activity
-            android:name=".chatRoom.ChatRoomActivity"
+            android:name="com.kotudyy.chatting.chatRoom.ChatRoomActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false"/>
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.kotudyy.chatting.login.LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".login.AuthActivity"
+            android:name="com.kotudyy.chatting.login.AuthActivity"
             android:exported="true" />
 
     </application>
