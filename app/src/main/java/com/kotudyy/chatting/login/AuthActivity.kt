@@ -29,7 +29,7 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                         //회원가입 시 firebase에 새로운 ProfileData 추가 -> 이메일 인증 성공을 전제
                         val userEmail = MyApplication.auth.currentUser?.email!!
                         val userData = UserData(
-                            userEmail, "","", "", ""
+                            userEmail, "",userEmail, "", ""
                         )
 
                         MyApplication.db.collection("profile").document(userEmail)
