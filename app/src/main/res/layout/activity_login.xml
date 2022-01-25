@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="로그인"
-        android:textSize="20dp"
+        android:text="@string/login"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:hint="E-mail"
+            android:hint="@string/email"
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
     </LinearLayout>
 
@@ -50,8 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/loginTextView"
         android:layout_marginTop="30dp"
-        android:text="로그아웃"
-        android:textSize="20dp"
+        android:text="@string/logout"
+        android:textSize="20sp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@+id/loginLinear" />
 
@@ -60,8 +60,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logoutBtn"
-        android:text="채팅 이용하기"
-        android:textSize="20dp"
+        android:text="@string/go_chatting"
+        android:textSize="20sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/logoutBtn" />
 
@@ -80,8 +80,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="회원가입"
-            android:textSize="20dp"
+            android:text="@string/sign_in"
+            android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@+id/loginLinear" />
 
         <Button
@@ -89,8 +89,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="로그인"
-            android:textSize="20dp"
+            android:text="@string/login"
+            android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@+id/authBtn" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

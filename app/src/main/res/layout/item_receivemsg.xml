@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingVertical="@dimen/style_margin">
@@ -11,7 +10,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:cardCornerRadius="@dimen/message_size"
-        android:layout_marginLeft="@dimen/style_margin"
+        android:layout_marginStart="@dimen/style_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cardElevation="0dp">
@@ -28,9 +27,9 @@
         android:id="@+id/tv_chatroom_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="사용자"
+        android:text="@string/users"
         android:textSize="@dimen/username_size"
-        android:layout_marginLeft="@dimen/style_margin"
+        android:layout_marginStart="@dimen/style_margin"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toTopOf="@+id/cardView" />
 
@@ -41,9 +40,9 @@
         android:background="@drawable/border_receivemsg"
         android:paddingHorizontal="10dp"
         android:paddingVertical="@dimen/style_margin"
-        android:text="테스트입니다"
+        android:text="@string/test"
         android:textSize="@dimen/message_size"
-        android:layout_marginLeft="@dimen/style_margin"
+        android:layout_marginStart="@dimen/style_margin"
         android:maxWidth="250dp"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toBottomOf="@+id/tv_chatroom_username"/>
@@ -52,9 +51,9 @@
         android:id="@+id/tv_chatroom_receivetime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/style_margin"
-        android:text="오후 11:05"
-        android:textSize="10dp"
+        android:layout_marginStart="@dimen/style_margin"
+        android:text="@string/test_time"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_chatroom_receivemsg"
         app:layout_constraintStart_toEndOf="@+id/tv_chatroom_receivemsg" />
 

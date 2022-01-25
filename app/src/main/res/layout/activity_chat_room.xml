@@ -22,9 +22,7 @@
         android:layout_above="@+id/btn_send"
         android:layout_below="@+id/chatroom_toolbar"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:background="@color/sky"
         tools:listitem="@layout/item_receivemsg" />
 
@@ -32,20 +30,20 @@
         android:id="@+id/et_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_toLeftOf="@+id/btn_send"
+        android:layout_toStartOf="@+id/btn_send"
         android:background="#00000000" />
 
     <ImageButton
         android:id="@+id/btn_send"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:clickable="false"
