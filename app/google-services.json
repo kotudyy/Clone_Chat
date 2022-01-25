@@ -1,18 +1,27 @@
 {
   "project_info": {
     "project_number": "771954164566",
+    "firebase_url": "https://clonechat-a64cf-default-rtdb.firebaseio.com",
     "project_id": "clonechat-a64cf",
     "storage_bucket": "clonechat-a64cf.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:771954164566:android:4b3ed73a08d5e9656c0cf7",
+        "mobilesdk_app_id": "1:771954164566:android:f660943c21588e2a6c0cf7",
         "android_client_info": {
-          "package_name": "com.example.chatting"
+          "package_name": "com.kotudyy.chatting"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "771954164566-qg70tgk4v9cvrn442vr7oekopcm761sn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kotudyy.chatting",
+            "certificate_hash": "fc972699e796d6dec2975184f7ce01eaf887549c"
+          }
+        },
         {
           "client_id": "771954164566-9aecgkr6gk22qgisdt5idj76dnm1622k.apps.googleusercontent.com",
           "client_type": 3
