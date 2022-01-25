@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.model.UserRoom
-import com.example.chatting.model.chatRoomUser
+import com.example.chatting.model.ChatRoomUser
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.FragmentChatBinding
@@ -124,7 +124,7 @@ class ChatFragment : Fragment() {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 user1 = null
                 user2 = null
-                val chatRoomUserData = snapshot.getValue<chatRoomUser>()!!
+                val chatRoomUserData = snapshot.getValue<ChatRoomUser>()!!
                 user1 = chatRoomUserData.user1
                 user2 = chatRoomUserData.user2
                 if(chatRoomUserData.user2 == userEmail){
