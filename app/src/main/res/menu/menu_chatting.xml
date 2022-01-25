@@ -2,35 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group>
-        <item
-            android:id="@+id/chatting_menu_edit"
-            android:title="편집" />
-        <item
-            android:id="@+id/chatting_menu_sort"
-            android:title="정렬"/>
-        <item
-            android:id="@+id/chatting_menu_allsettings"
-            android:title="전체 설정"/>
-    </group>
-
     <item
-        android:id="@+id/chatting_menu_search"
-        app:showAsAction="always"
-        app:actionViewClass="android.widget.SearchView"
-        android:icon="@drawable/icon_search"
-        android:title="검색"/>
-
-    <item
-        android:id="@+id/chatting_menu_add"
-        app:showAsAction="always"
-        android:icon="@drawable/icon_addchat"
-        android:title="새로운 채팅"/>
-
-    <item
-        android:id="@+id/chatting_menu_music"
-        app:showAsAction="always"
-        android:icon="@drawable/icon_music"
-        android:title="음악"/>
+        android:id="@+id/chat_menu_login_screen"
+        android:title="@string/login_screen"/>
 
 </menu>
