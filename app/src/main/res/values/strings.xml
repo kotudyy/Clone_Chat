@@ -28,5 +28,6 @@
     <string name="test_time">오후 11:05</string>
 
     <string name="text_not_read">1</string>
+    <string name="delete_chatroom">채팅방 나가기</string>
 
 </resources>

@@ -272,6 +272,7 @@ class ChatRoomActivity : AppCompatActivity() {
                         MyApplication.realtime.child("Messages")
                             .child(chatRoomId.toString())
                             .removeValue()
+
                         MyApplication.realtime.child("UserStatus")
                             .child(chatRoomId.toString())
                             .removeValue()
