@@ -14,43 +14,11 @@ import com.example.chatting.profileDetail.MyProfileDetailActivity
 import com.example.chatting.R
 import com.example.chatting.databinding.RvitemUserBinding
 
+class RvItemUserAdapter(private var userData: MutableList<UserData>) :
+    RecyclerView.Adapter<RvItemUserAdapter.RvItemUserViewHolder>() {
 
-class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    fun setData(data: UserData) {
-        binding.run {
-            username.text = data.name.trim()
-            statusMessage.text = data.statusMsg.trim()
-            profileMusic.text = data.profileMusic.trim()
-
-            if(profileMusic.text == "")
-                profileMusic.visibility = View.GONE
-            if(statusMessage.text == "")
-                statusMessage.visibility = View.GONE
-
-            MyApplication.storage.reference.child("${data.email}/profile")
-                .downloadUrl
-                .addOnSuccessListener {
-                    Glide.with(binding.root.context)
-                        .load(it)
-                        .error(R.drawable.img_profile)
-                        .into(ivChatProfile)
-                }
-        }
-    }
-
-}
-
-class RvItemUserAdapter(var userData: MutableList<UserData>) :
-    RecyclerView.Adapter<RvItemUserViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RvItemUserViewHolder =
-        RvItemUserViewHolder(
-            RvitemUserBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        RvItemUserViewHolder(RvitemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: RvItemUserViewHolder, position: Int) {
         val data = userData[position]
@@ -75,4 +43,29 @@ class RvItemUserAdapter(var userData: MutableList<UserData>) :
 
     override fun getItemCount(): Int = userData.size
 
+    inner class RvItemUserViewHolder(val binding: RvitemUserBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun setData(data: UserData) {
+            binding.run {
+
+                username.text = data.name.trim()
+                statusMessage.text = data.statusMsg.trim()
+                profileMusic.text = data.profileMusic.trim()
+
+                if(profileMusic.text == "")
+                    profileMusic.visibility = View.GONE
+
+                if(statusMessage.text == "")
+                    statusMessage.visibility = View.GONE
+
+                MyApplication.storage.reference.child("${data.email}/profile")
+                    .downloadUrl
+                    .addOnSuccessListener {
+                        Glide.with(binding.root.context)
+                            .load(it)
+                            .error(R.drawable.img_profile)
+                            .into(ivChatProfile)
+                    }
+            }
+        }
+    }
 }

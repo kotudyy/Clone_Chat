@@ -22,7 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.chatting.chatRoom.ChatRoomActivity
 import com.example.chatting.model.UserData
-import com.example.chatting.model.chatRoomUser
+import com.example.chatting.model.ChatRoomUser
 import com.example.chatting.storage.MyApplication
 import com.example.chatting.R
 import com.example.chatting.databinding.ActivityMyProfileDetailBinding
@@ -32,7 +32,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.io.*
 
@@ -54,6 +53,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     val binding by lazy { ActivityMyProfileDetailBinding.inflate(layoutInflater) }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -280,13 +280,13 @@ class MyProfileDetailActivity : AppCompatActivity() {
     private fun createChatRoomData() {
         val key = chatRoomRef.push().key!!
 
-        val chatRoomUserdata = chatRoomUser(
+        val chatRoomUserdata = ChatRoomUser(
             user1 = MyApplication.auth.currentUser?.email!!,
             user2 = userData.email
         )
         chatRoomRef.child(key).setValue(chatRoomUserdata)
 
-        val userStatusData = chatRoomUser(
+        val userStatusData = ChatRoomUser(
             user1 = "In",
             user2 = "N"
         )
@@ -319,6 +319,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun saveProfileChanges() {
         val newName = binding.myProfileNameEdit.text.toString()
         val newStatusMsg = binding.myProfileStatusMsgEdit.text.toString()
@@ -337,6 +338,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun saveImages() {
         if(profileImgFilePath != null){
             saveStorage("profile", profileImgFilePath!!)
@@ -348,25 +350,23 @@ class MyProfileDetailActivity : AppCompatActivity() {
 
     //비트맵 resize 및, url로 변환
     private fun saveBitmapToJpeg(context: Context, bitmap: Bitmap, name: String): String? {
-        val maximagesize = 1024 * 1024
-        var realimagesize = maximagesize
+        val maxImageSize = 1024 * 1024
+        var realImageSize = maxImageSize
         var quality = 100 //사진퀄리티는 최대가 100
-        val storage: File = context.getCacheDir()
-        val fileName = "$name.jpg" // 임시파일로 저장
-        val tempFile = File(storage, fileName)
+        val storage: File = context.cacheDir
+        val tempFile = File(storage, "$name.jpg") // 임시파일로 저장
         try {
             tempFile.createNewFile() // 파일을 생성해주고
-            while (realimagesize >= maximagesize) {
+            while (realImageSize >= maxImageSize) {
                 if (quality < 0) {
                     return "too big"
                 }
                 val out = FileOutputStream(tempFile)
                 bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)
-                realimagesize = tempFile.length().toInt() //작아진 본 파일의 크기를 저장하여 다시 비교
-                quality -= 20   // 용량 줄이기
+                realImageSize = tempFile.length().toInt() //작아진 본 파일의 크기를 저장하여 다시 비교
+                quality -= 20 // 용량 줄이기
                 out.close()
             }
-            Log.d("grusie", "imagelocation resizefilesize result: $realimagesize")
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } catch (e: IOException) {
@@ -382,17 +382,19 @@ class MyProfileDetailActivity : AppCompatActivity() {
         input.close()
 
         val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL)
-        val metrix = Matrix()
-        if(orientation == ExifInterface.ORIENTATION_ROTATE_90){
-            metrix.postRotate(90F)
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                matrix.postRotate(90F)
+            }
+            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                matrix.postRotate(180F)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                matrix.postRotate(270F)
+            }
         }
-        else if(orientation == ExifInterface.ORIENTATION_ROTATE_180){
-            metrix.postRotate(180F)
-        }
-        else if(orientation == ExifInterface.ORIENTATION_ROTATE_270){
-            metrix.postRotate(270F)
-        }
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, metrix, true)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -403,7 +405,7 @@ class MyProfileDetailActivity : AppCompatActivity() {
             storageRef.child("${MyApplication.auth.currentUser?.email}/${imageKind}")
         val bitmapImg = BitmapFactory.decodeFile(filePath)
         val rotateImg = bitmapRotate(Uri.fromFile(File(filePath)), bitmapImg)!!
-        val file = Uri.fromFile(File(saveBitmapToJpeg(this,rotateImg,"tempFile")))
+        val file = Uri.fromFile(File(saveBitmapToJpeg(this,rotateImg,"tempFile")!!))
 
         imgRef
             .putFile(file)
