@@ -15,7 +15,7 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
         setContentView(binding.root)
 
         binding.authBtn.setOnClickListener {
-            //이메일,비밀번호 회원가입........................
+            //이메일,비밀번호 회원가입........................=
             val email: String = binding.authEmail.text.toString()
             val password:String = binding.authPassword.text.toString()
             MyApplication.auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this) {
@@ -32,7 +32,7 @@ class AuthActivity : AppCompatActivity() {      //회원가입 액티비티
                             userEmail, "","", "", ""
                         )
 
-                        MyApplication.db.collection("profile").document(userEmail)
+                        MyApplication.db.collection("profile").document("$userEmail")
                             .set(userData)
                             .addOnSuccessListener { Toast.makeText(this,"프로필 정보 추가 완료", Toast.LENGTH_SHORT).show() }
                             .addOnFailureListener { Toast.makeText(this,"프로필 정보 추가 실패", Toast.LENGTH_SHORT).show()  }
