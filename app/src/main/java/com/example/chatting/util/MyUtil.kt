@@ -18,7 +18,7 @@ fun myCheckPermission(context: Context) {
     if (ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE
-        ) !== PackageManager.PERMISSION_GRANTED
+        ) != PackageManager.PERMISSION_GRANTED
     ) {
         ActivityCompat.requestPermissions(
             context as Activity,
@@ -29,7 +29,6 @@ fun myCheckPermission(context: Context) {
 }
 
 class URIPathHelper {
-
     fun getPath(context: Context, uri: Uri): String? {
 
         if (DocumentsContract.isDocumentUri(context, uri)) {
