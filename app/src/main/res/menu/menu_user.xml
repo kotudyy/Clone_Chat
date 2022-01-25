@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <group>
-        <item
-            android:id="@+id/user_menu_allsettings"
-            android:title="인증"/>
-    </group>
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/user_menu_login_screen"
+        android:title="@string/login_screen"/>
 </menu>

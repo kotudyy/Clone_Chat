@@ -3,12 +3,10 @@ package com.example.chatting.userFragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.model.UserData
 import com.example.chatting.storage.MyApplication
@@ -19,10 +17,9 @@ import com.example.chatting.login.LoginActivity
 class UsersFragment : Fragment() {
 
     lateinit var binding: FragmentUsersBinding
-    lateinit var adapter: RvItemUserAdapter
-    val userData = mutableListOf<UserData>()
+    private lateinit var adapter: RvItemUserAdapter
+    private val userData = mutableListOf<UserData>()
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,10 +31,9 @@ class UsersFragment : Fragment() {
             inflateMenu(R.menu.menu_user)
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.user_menu_allsettings -> {
+                    R.id.user_menu_login_screen -> {
                         startActivity(Intent(activity, LoginActivity::class.java))
                     }
-
                 }
                 false
             }
@@ -48,17 +44,19 @@ class UsersFragment : Fragment() {
         binding.rvUser.adapter = adapter
         binding.rvUser.layoutManager = LinearLayoutManager(this.context)
 
-        //RecyclerView에 User 정보 삽입
+        //RecyclerView 에 User 정보 삽입
         insertUser()
 
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun insertUser(){
         val documentName = MyApplication.auth.currentUser?.email
         userData.clear()
 
-        MyApplication.db.collection("profile") // 내 정보 첫 번째 항목으로 출력
+        // 내 정보 첫 번째 항목으로 출력
+        MyApplication.db.collection("profile")
             .whereEqualTo("email", documentName)
             .get()
             .addOnSuccessListener { myDocument ->
@@ -77,25 +75,18 @@ class UsersFragment : Fragment() {
                         .get()
                         .addOnSuccessListener { document ->
                             for (field in document) {
-                                val myProfileData = UserData(
-                                    field["email"] as String,
-                                    field["name"] as String,
-                                    field["statusMsg"] as String,
-                                    field["profileMusic"] as String)
-
-                                userData.add(myProfileData)
+                                userData.add(
+                                    UserData(
+                                        field["email"] as String,
+                                        field["name"] as String,
+                                        field["statusMsg"] as String,
+                                        field["profileMusic"] as String
+                                    )
+                                )
                             }
                             adapter.notifyDataSetChanged()
                         }
-                        .addOnFailureListener {
-                        }
                 }
             }
-            .addOnFailureListener {
-            }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 }
