@@ -1,6 +1,5 @@
 package com.example.chatting.chatFragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -78,8 +77,8 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 if(snapshot.key == chatRoomID) {
-                    val lastMessage: String
-                    val timestamp: Long
+                    var lastMessage = ""
+                    var timestamp: Long = 0
                     val userRoomData = snapshot.getValue<UserRoom>()!!
                     lastMessage = userRoomData.lastmessage
                     timestamp = userRoomData.timestamp
@@ -105,7 +104,6 @@ class RvItemChatViewHolder(val binding: RvitemChatBinding) : RecyclerView.ViewHo
         MyApplication.realtime.child("UserRoom").addChildEventListener(chatRoomListener)
     }
 
-    @SuppressLint("SimpleDateFormat")
     fun dateCalc(timestamp: Long) {
         val cal = Calendar.getInstance()
         cal.time = Date()
