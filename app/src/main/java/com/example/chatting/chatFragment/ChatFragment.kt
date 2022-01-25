@@ -1,9 +1,9 @@
 package com.example.chatting.chatFragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatting.model.UserRoom
@@ -41,65 +41,13 @@ class ChatFragment : Fragment() {
             inflateMenu(R.menu.menu_chatting)
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.chatting_menu_edit -> {
-                        Toast.makeText(this.context, "Edit", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.chatting_menu_sort -> {
-                        Toast.makeText(this.context, "Sort", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.chatting_menu_allsettings -> {
-                        Toast.makeText(this.context, "All Settings", Toast.LENGTH_SHORT).show()
+                    R.id.chat_menu_login_screen -> {
                         startActivity(Intent(activity, LoginActivity::class.java))
-                        true
                     }
-                    R.id.chatting_menu_music -> {
-                        Toast.makeText(this.context, "Music", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.chatting_menu_add -> {
-                        Toast.makeText(this.context, "Add", Toast.LENGTH_SHORT).show()
-                        true
-                    }
-
                 }
                 false
             }
         }
-
-//        // 스와이프 시 삭제
-//        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback (
-//            ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
-//        ){
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean {
-//                TODO("Not yet implemented")
-//            }
-////            override fun onMove(
-////                recyclerView: RecyclerView,
-////                viewHolder: RecyclerView.ViewHolder,
-////                target: RecyclerView.ViewHolder
-////            ): Boolean {
-////                val fromPos: Int = viewHolder.adapterPosition
-////                val toPos: Int = target.adapterPosition
-////                rvAdapter.swapData(fromPos, toPos)
-////                return true
-////            }
-//
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                adapter.removeData(viewHolder.layoutPosition)
-////                chatListDatas.removeAt(viewHolder.layoutPosition)
-////                adapter.notifyDataSetChanged()
-//                refreshFragment(this@ChatFragment, parentFragmentManager)
-//            }
-//        }
-//
-//        ItemTouchHelper(itemTouchCallback).attachToRecyclerView(binding.rvChat)
-
 
         return binding.root
     }
@@ -107,7 +55,7 @@ class ChatFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        chatListDatas = mutableListOf<UserRoom>()
+        chatListDatas = mutableListOf()
         searchChatRoom()
         initDogRecyclerView()
     }
@@ -119,6 +67,7 @@ class ChatFragment : Fragment() {
     }
 
     //채팅방 리스트 가져오기 searchChatRoom() -> getChatRoomList()
+    @SuppressLint("NotifyDataSetChanged")
     private fun searchChatRoom() {
         val userDataListener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -134,7 +83,6 @@ class ChatFragment : Fragment() {
                     if (user1 == userEmail) {
                         chatRoomId = snapshot.key as String
                         getChatRoomList(chatRoomId!!, user2!!)
-                        adapter.notifyDataSetChanged()
                     }
             }
 
@@ -155,20 +103,28 @@ class ChatFragment : Fragment() {
             }
         }
         MyApplication.realtime.child("chatRoomUser").addChildEventListener(userDataListener)
+        adapter.notifyDataSetChanged()
     }
+
 
     fun getChatRoomList(chatroomid: String, chatroomuser: String) {
         val chatRoomListener = object : ChildEventListener{
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 if(snapshot.key == chatroomid) {
-                    var lastmessage = ""
-                    var sender = chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
-                    var timestamp: Long = 0
+                    val lastmessage: String
+                    val timestamp: Long
                     val userRoomData = snapshot.getValue<UserRoom>()!!
                     lastmessage = userRoomData.lastmessage
                     timestamp = userRoomData.timestamp
 
-                    chatListDatas.add(UserRoom(chatroomid, lastmessage, timestamp, sender))
+                    chatListDatas.add(
+                        UserRoom(
+                            chatroomid,
+                            lastmessage,
+                            timestamp,
+                            chatroomuser       //이름 및 이미지는 어댑터에서 sender로 처리하기 위해 상대방 이메일 지정해줌
+                        ))
                     chatListDatas.sortByDescending { it.timestamp }     //시간 순으로 정렬
                     adapter.notifyDataSetChanged()
                 }
