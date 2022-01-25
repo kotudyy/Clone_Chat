@@ -1,5 +1,6 @@
 package com.example.chatting.chatRoom
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -16,12 +17,11 @@ import com.example.chatting.databinding.ItemReceivemsgBinding
 import com.example.chatting.databinding.ItemSendmsgBinding
 import com.example.chatting.model.UserData
 import com.example.chatting.profileDetail.MyProfileDetailActivity
-import com.google.firebase.firestore.auth.User
 import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 
 
-class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatRoomAdatpter(var messages : MutableList<Messages>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     lateinit var context: Context
     lateinit var time: String
     lateinit var userData : UserData
@@ -32,7 +32,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             0 -> {
                 val binding =
                     ItemSendmsgBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                sendViewHolder(binding)
+                SendViewHolder(binding)
             }
             1 -> {
                 val binding = ItemReceivemsgBinding.inflate(
@@ -40,18 +40,18 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
                     parent,
                     false
                 )
-                receiveViewHolder(binding)
+                ReceiveViewHolder(binding)
             }
             2 -> {
                 val binding =
                     ItemDatetxtBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                    dateViewHolder(binding)
+                    DataViewHolder(binding)
             }
             else -> throw RuntimeException("Error")
         }
     }
 
-    inner class sendViewHolder(val binding: ItemSendmsgBinding) :
+    inner class SendViewHolder(val binding: ItemSendmsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Messages) {
             binding.apply {
@@ -68,7 +68,7 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
     }
 
 
-    inner class receiveViewHolder(private val binding: ItemReceivemsgBinding) :
+    inner class ReceiveViewHolder(private val binding: ItemReceivemsgBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Messages) {
             binding.apply {
@@ -101,8 +101,9 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             }
         }
     }
-        inner class dateViewHolder(private val binding: ItemDatetxtBinding) :
+        inner class DataViewHolder(private val binding: ItemDatetxtBinding) :
             RecyclerView.ViewHolder(binding.root) {
+            @SuppressLint("SimpleDateFormat")
             fun bind(data: Messages) {
                 binding.apply {
                     tvChatroomDatetxt.text =
@@ -111,14 +112,15 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
             }
         }
 
+        @SuppressLint("SimpleDateFormat")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val data = messages[position]
             time = SimpleDateFormat("hh:mm").format(data.timestamp)
 
             when (type) {
-                0 -> (holder as sendViewHolder).bind(data)
-                1 -> (holder as receiveViewHolder).bind(data)
-                2 -> (holder as dateViewHolder).bind(data)
+                0 -> (holder as SendViewHolder).bind(data)
+                1 -> (holder as ReceiveViewHolder).bind(data)
+                2 -> (holder as DataViewHolder).bind(data)
             }
         }
 
@@ -134,10 +136,10 @@ class ChatRoomAdatpter(var messages : MutableList<Messages>, val chatRoomID: Str
         }
 
         override fun getItemCount(): Int {
-            if (messages != null) return messages.size
-            else return 0
+            return messages.size
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         fun removeItem(removeMsg: Messages) {
             messages.remove(removeMsg)
             notifyDataSetChanged()
