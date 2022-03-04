@@ -55,6 +55,7 @@
 
 * 파이어베이스 실시간 데이터베이스 구조
 
+'''bash
 Messages  (메세지 정보)
 |----ChatRoomId  (채팅방 아이디)
 |   |----MessageId   (각 메세지의 아이디(random))
@@ -81,7 +82,7 @@ chatRoomUser  (생성된 채팅방 정보)
 |----ChatRoomId  (채팅방 아이디)
 |   |----user1   (사용자 이메일) - String
 |   |----user2   (사용자 이메일) - String
-
+'''
 
 ## 보완할 점
 1. 비동기 중복 Callback 해결
