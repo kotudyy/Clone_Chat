@@ -4,6 +4,7 @@
 ![KakaoTalk_20220304_094211863](https://user-images.githubusercontent.com/77681440/156677628-81314361-9060-40c5-9442-11d0d5943d7a.jpg)
 ![KakaoTalk_20220304_094211863_01](https://user-images.githubusercontent.com/77681440/156677630-bf81086c-de42-4cf3-ab89-e373239af87a.jpg)
 ![KakaoTalk_20220304_094211863_02](https://user-images.githubusercontent.com/77681440/156677616-7c1f6590-be09-49a9-bc10-1f7af762e886.jpg)
+
 Firebase에서 제공하는 회원가입, 로그인 함수를 이용해서 Firebase Database에 사용자의 Email 정보를 저장하고,
 채팅을 이용하면 사용자의 FCM Token을 저장한다.
 사용자의 정보는 Firebase Database의 컬렉션 'profile' 내 사용자의 Email을 이름으로 하는 파일에 저장된다.
