@@ -86,13 +86,14 @@ chatRoomUser  (생성된 채팅방 정보)
 
 ## 보완할 점
 1. 비동기 중복 Callback 해결
-2. Local DB 사용을 통해 채팅 데이터를 Firebase에 저장하지 않기
-3. 클린 아키텍쳐 - MVVM 패턴 사용
-4. 1대다 채팅 구조를 위한 데이터 구조 수정
-5. fcm messaging의 token 보안
-6. RecyclerView notifyDataSetChanged() 사용 자제
-7. 버튼 중복클릭 방지
-8. 다크모드 등을 고려한 디자인으로 수정
-9. xml value 적극 활용
+2. UI 생성 시 데이터를 비동기 처리
+3. Local DB 사용을 통해 채팅 데이터를 Firebase에 저장하지 않기
+4. 클린 아키텍쳐 - MVVM 패턴 사용
+5. 1대다 채팅 구조를 위한 데이터 구조 수정
+6. fcm messaging의 token 보안
+7. RecyclerView notifyDataSetChanged() 사용 자제
+8. 버튼 중복클릭 방지
+9. 다크모드 등을 고려한 디자인으로 수정
+10. xml value 적극 활용
 
 ## 
